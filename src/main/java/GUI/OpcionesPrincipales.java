@@ -5,20 +5,28 @@ import java.awt.*;
 
 public class OpcionesPrincipales extends JPanel {
 
+    private JButton btnAsignarRoles;
+    private JButton btnRegistrarUsuarios;
     private JButton btnGestionInventario;
     private JButton btnGestionPresupuestos;
+    private boolean esAdmin;
 
     private Vprin ventana; // Referencia a la ventana principal para poder usar ponPanel()
 
-    public OpcionesPrincipales(Vprin ventana) {
+    public OpcionesPrincipales(Vprin ventana, boolean esAdmin) {
         this.ventana = ventana;
+        this.esAdmin = esAdmin;
 
         inicializarComponentes();
         configurarPanel();
         agregarEventos();
+
     }
 
     private void inicializarComponentes() {
+
+        btnAsignarRoles = crearBoton("Asignar Roles");
+        btnRegistrarUsuarios = crearBoton("Registrar Usuario");
         btnGestionInventario = crearBoton("Gestión de Inventario");
         btnGestionPresupuestos = crearBoton("Gestión de Presupuestos");
     }
@@ -31,11 +39,21 @@ public class OpcionesPrincipales extends JPanel {
         gbc.insets = new Insets(20, 20, 20, 20);
         gbc.gridx = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
+        int fila = 0;
 
-        gbc.gridy = 0;
+        if (esAdmin) {
+
+            gbc.gridy = fila++;
+            add(btnAsignarRoles, gbc);
+
+            gbc.gridy = fila++;
+            add(btnRegistrarUsuarios, gbc);
+        }
+
+        gbc.gridy = fila++;
         add(btnGestionInventario, gbc);
 
-        gbc.gridy = 1;
+        gbc.gridy = fila++;
         add(btnGestionPresupuestos, gbc);
     }
 

@@ -5,24 +5,18 @@ import java.awt.*;
 
 public class GestionUsuarios extends JPanel {
 
-    private JButton btnAsignarRoles;
-    private JButton btnRegistrarUsuarios;
     private JButton btnIniciarSesion;
 
-    private boolean esAdmin;
     private Vprin ventana; // Para poder hacer ponPanel()
 
-    public GestionUsuarios(Vprin ventana, boolean esAdmin) {
+    public GestionUsuarios(Vprin ventana) {
         this.ventana = ventana;
-        this.esAdmin = esAdmin;
         inicializarComponentes();
         configurarPanel();
         agregarEventos();
     }
 
     private void inicializarComponentes() {
-        btnAsignarRoles = crearBoton("Asignar Roles");
-        btnRegistrarUsuarios = crearBoton("Registrar Usuarios");
         btnIniciarSesion = crearBoton("Iniciar Sesión");
     }
 
@@ -37,21 +31,11 @@ public class GestionUsuarios extends JPanel {
 
         int fila = 0;
 
-        if (esAdmin) {
-            gbc.gridy = fila++;
-            add(btnAsignarRoles, gbc);
-
-            gbc.gridy = fila++;
-            add(btnRegistrarUsuarios, gbc);
-        }
-
         gbc.gridy = fila++;
         add(btnIniciarSesion, gbc);
     }
 
     private void agregarEventos() {
-        btnAsignarRoles.addActionListener(e -> mostrarMensaje("Asignar Roles seleccionado"));
-        btnRegistrarUsuarios.addActionListener(e -> mostrarMensaje("Registrar Usuarios seleccionado"));
         btnIniciarSesion.addActionListener(e -> iniciarSesion());
     }
 
@@ -72,7 +56,7 @@ public class GestionUsuarios extends JPanel {
 
     private void iniciarSesion() {
         // Simulamos que el login ha sido exitoso
-        OpcionesPrincipales opciones = new OpcionesPrincipales(ventana);
+        OpcionesPrincipales opciones = new OpcionesPrincipales(ventana, true);
         ventana.ponPanel(opciones);
     }
 }

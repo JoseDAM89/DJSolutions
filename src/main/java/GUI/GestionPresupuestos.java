@@ -59,7 +59,7 @@ public class GestionPresupuestos extends JPanel {
         btnEnviarPresupuesto.addActionListener(e -> mostrarMensaje("Enviando presupuesto..."));
         btnAtras.addActionListener(e -> {
             GestionPresupuestos gestionPresupuestos = new GestionPresupuestos(ventana);
-            ventana.ponPanel(new OpcionesPrincipales(ventana));
+            ventana.ponPanel(new OpcionesPrincipales(ventana, true));
         });
     }
 

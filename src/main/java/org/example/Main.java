@@ -9,7 +9,7 @@ public class Main {
 
 
             Vprin ventana = new Vprin();
-            ventana.ponPanel(new GestionUsuarios(ventana,false));
+            ventana.ponPanel(new GestionUsuarios(ventana));
             ventana.setVisible(true);
 
     }
