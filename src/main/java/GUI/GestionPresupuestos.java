@@ -9,8 +9,11 @@ public class GestionPresupuestos extends JPanel {
     private JButton btnSeleccionarMateriales;
     private JButton btnHistorialPresupuestos;
     private JButton btnEnviarPresupuesto;
+    private JButton btnAtras;
+    private Vprin ventana;
 
-    public GestionPresupuestos() {
+    public GestionPresupuestos(Vprin ventana) {
+        this.ventana = ventana;
         inicializarComponentes();
         configurarPanel();
         agregarEventos();
@@ -21,6 +24,7 @@ public class GestionPresupuestos extends JPanel {
         btnSeleccionarMateriales = crearBoton("Seleccionar Materiales");
         btnHistorialPresupuestos = crearBoton("Historial de Presupuestos");
         btnEnviarPresupuesto = crearBoton("Enviar Presupuesto");
+        btnAtras = crearBoton("Atras");
     }
 
     private void configurarPanel() {
@@ -43,6 +47,9 @@ public class GestionPresupuestos extends JPanel {
 
         gbc.gridy = 3;
         add(btnEnviarPresupuesto, gbc);
+
+        gbc.gridy = 4;
+        add(btnAtras, gbc);
     }
 
     private void agregarEventos() {
@@ -50,6 +57,10 @@ public class GestionPresupuestos extends JPanel {
         btnSeleccionarMateriales.addActionListener(e -> mostrarMensaje("Seleccionando materiales..."));
         btnHistorialPresupuestos.addActionListener(e -> mostrarMensaje("Mostrando historial de presupuestos..."));
         btnEnviarPresupuesto.addActionListener(e -> mostrarMensaje("Enviando presupuesto..."));
+        btnAtras.addActionListener(e -> {
+            GestionPresupuestos gestionPresupuestos = new GestionPresupuestos(ventana);
+            ventana.ponPanel(new OpcionesPrincipales(ventana));
+        });
     }
 
     private JButton crearBoton(String texto) {

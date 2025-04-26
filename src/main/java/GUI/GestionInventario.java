@@ -10,7 +10,7 @@ public class GestionInventario extends JPanel {
     private JButton btnEditarProductos;
     private JButton btnVerAlertaStock;
     private JButton btnConsultarStock;
-
+    private JButton btnAtras;
     private Vprin ventana;
 
     public GestionInventario(Vprin ventana) {
@@ -26,6 +26,7 @@ public class GestionInventario extends JPanel {
         btnEditarProductos = crearBoton("Editar Productos");
         btnVerAlertaStock = crearBoton("Ver Alerta de Stock Bajo");
         btnConsultarStock = crearBoton("Consultar Stock");
+        btnAtras = crearBoton("Atras");
     }
 
     private void configurarPanel() {
@@ -53,6 +54,9 @@ public class GestionInventario extends JPanel {
 
         gbc.gridy = fila++;
         add(btnConsultarStock, gbc);
+
+        gbc.gridy = fila++;
+        add(btnAtras, gbc);
     }
 
     private void agregarEventos() {
@@ -61,6 +65,10 @@ public class GestionInventario extends JPanel {
         btnEditarProductos.addActionListener(e -> mostrarMensaje("Editar Productos seleccionado"));
         btnVerAlertaStock.addActionListener(e -> mostrarMensaje("Ver Alerta de Stock Bajo seleccionado"));
         btnConsultarStock.addActionListener(e -> mostrarMensaje("Consultar Stock seleccionado"));
+        btnAtras.addActionListener(e -> {
+            GestionInventario gestionInventario = new GestionInventario(ventana);
+            ventana.ponPanel(new OpcionesPrincipales(ventana));
+        });
     }
 
     private JButton crearBoton(String texto) {

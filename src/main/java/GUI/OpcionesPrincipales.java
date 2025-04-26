@@ -46,8 +46,8 @@ public class OpcionesPrincipales extends JPanel {
         });
 
         btnGestionPresupuestos.addActionListener(e -> {
-            GestionPresupuestos gestionPresupuestos = new GestionPresupuestos();
-            ventana.ponPanel(gestionPresupuestos);
+            GestionPresupuestos gestionPresupuestos = new GestionPresupuestos(ventana);
+            ventana.ponPanel(new GestionPresupuestos(ventana));
         });
     }
 
