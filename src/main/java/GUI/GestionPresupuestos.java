@@ -1,5 +1,10 @@
 package GUI;
 
+import FuncionesPrincipalesDePresupuestos.EnviarPresupuesto;
+import FuncionesPrincipalesDePresupuestos.GenerarPresupuesto;
+import FuncionesPrincipalesDePresupuestos.HistorialDePresupuestos;
+import FuncionesPrincipalesDePresupuestos.SeleccionarMateriales;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -53,10 +58,22 @@ public class GestionPresupuestos extends JPanel {
     }
 
     private void agregarEventos() {
-        btnGenerarPresupuesto.addActionListener(e -> mostrarMensaje("Generando presupuesto..."));
-        btnSeleccionarMateriales.addActionListener(e -> mostrarMensaje("Seleccionando materiales..."));
-        btnHistorialPresupuestos.addActionListener(e -> mostrarMensaje("Mostrando historial de presupuestos..."));
-        btnEnviarPresupuesto.addActionListener(e -> mostrarMensaje("Enviando presupuesto..."));
+        btnGenerarPresupuesto.addActionListener(e -> {
+            GenerarPresupuesto generarPresupuesto = new GenerarPresupuesto();
+            ventana.ponPanel(new GenerarPresupuesto());
+        });
+        btnSeleccionarMateriales.addActionListener(e -> {
+            SeleccionarMateriales seleccionarMateriales = new SeleccionarMateriales();
+            ventana.ponPanel(new SeleccionarMateriales());
+        });
+        btnHistorialPresupuestos.addActionListener(e -> {
+            HistorialDePresupuestos historialDePresupuestos = new HistorialDePresupuestos();
+            ventana.ponPanel(new HistorialDePresupuestos());
+        });
+        btnEnviarPresupuesto.addActionListener(e -> {
+            EnviarPresupuesto enviarPresupuesto = new EnviarPresupuesto();
+            ventana.ponPanel(new EnviarPresupuesto());
+        });
         btnAtras.addActionListener(e -> {
             GestionPresupuestos gestionPresupuestos = new GestionPresupuestos(ventana);
             ventana.ponPanel(new OpcionesPrincipales(ventana, true));

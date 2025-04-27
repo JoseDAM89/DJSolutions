@@ -1,5 +1,7 @@
 package GUI;
 
+import FuncionesPrincipalesDeInventario.*;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -60,11 +62,26 @@ public class GestionInventario extends JPanel {
     }
 
     private void agregarEventos() {
-        btnAgregarProductos.addActionListener(e -> mostrarMensaje("Agregar Productos seleccionado"));
-        btnEliminarProductos.addActionListener(e -> mostrarMensaje("Eliminar Productos seleccionado"));
-        btnEditarProductos.addActionListener(e -> mostrarMensaje("Editar Productos seleccionado"));
-        btnVerAlertaStock.addActionListener(e -> mostrarMensaje("Ver Alerta de Stock Bajo seleccionado"));
-        btnConsultarStock.addActionListener(e -> mostrarMensaje("Consultar Stock seleccionado"));
+        btnAgregarProductos.addActionListener(e -> {
+            AgregarProductos agregarProductos = new AgregarProductos();
+            ventana.ponPanel(new AgregarProductos());
+        });
+        btnEliminarProductos.addActionListener(e -> {
+            EliminarProductos eliminarProductos = new EliminarProductos();
+            ventana.ponPanel(new EliminarProductos());
+        });
+        btnEditarProductos.addActionListener(e -> {
+            EditarProductos editarProductos = new EditarProductos();
+            ventana.ponPanel(new EditarProductos());
+        });
+        btnVerAlertaStock.addActionListener(e -> {
+            VerAlertaStock verAlertaStock = new VerAlertaStock();
+            ventana.ponPanel(new VerAlertaStock());
+        });
+        btnConsultarStock.addActionListener(e -> {
+            ConsultarStock consultarStock = new ConsultarStock();
+            ventana.ponPanel(new ConsultarStock());
+        });
         btnAtras.addActionListener(e -> {
             GestionInventario gestionInventario = new GestionInventario(ventana);
             ventana.ponPanel(new OpcionesPrincipales(ventana, true));
