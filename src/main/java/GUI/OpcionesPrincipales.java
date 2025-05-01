@@ -9,6 +9,7 @@ public class OpcionesPrincipales extends JPanel {
     private JButton btnRegistrarUsuarios;
     private JButton btnGestionInventario;
     private JButton btnGestionPresupuestos;
+    private JButton btnGestionClientes;
     private boolean esAdmin;
 
     private Vprin ventana; // Referencia a la ventana principal para poder usar ponPanel()
@@ -29,6 +30,8 @@ public class OpcionesPrincipales extends JPanel {
         btnRegistrarUsuarios = crearBoton("Registrar Usuario");
         btnGestionInventario = crearBoton("Gestión de Inventario");
         btnGestionPresupuestos = crearBoton("Gestión de Presupuestos");
+        btnGestionClientes = crearBoton("Gestión de Clientes");
+
     }
 
     private void configurarPanel() {
@@ -55,6 +58,9 @@ public class OpcionesPrincipales extends JPanel {
 
         gbc.gridy = fila++;
         add(btnGestionPresupuestos, gbc);
+
+        gbc.gridy = fila++;
+        add(btnGestionClientes, gbc);
     }
 
     private void agregarEventos() {
@@ -66,6 +72,11 @@ public class OpcionesPrincipales extends JPanel {
         btnGestionPresupuestos.addActionListener(e -> {
             GestionPresupuestos gestionPresupuestos = new GestionPresupuestos(ventana);
             ventana.ponPanel(new GestionPresupuestos(ventana));
+        });
+
+        btnGestionClientes.addActionListener(e -> {
+            GestionClientes gestionClientes = new GestionClientes(ventana);
+            ventana.ponPanel(new GestionClientes(ventana));
         });
     }
 
