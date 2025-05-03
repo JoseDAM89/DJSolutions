@@ -66,13 +66,9 @@ public class GestionInventario extends JPanel {
             AgregarProductos agregarProductos = new AgregarProductos();
             ventana.ponPanel(new AgregarProductos());
         });
-        btnEliminarProductos.addActionListener(e -> {
-            EliminarProductos eliminarProductos = new EliminarProductos();
-            ventana.ponPanel(new EliminarProductos());
-        });
         btnEditarProductos.addActionListener(e -> {
-            EditarProductos editarProductos = new EditarProductos();
-            ventana.ponPanel(new EditarProductos());
+            ListarProductos editarProductos = new ListarProductos();
+            ventana.ponPanel(new ListarProductos());
         });
         btnVerAlertaStock.addActionListener(e -> {
             VerAlertaStock verAlertaStock = new VerAlertaStock();

@@ -1,6 +1,5 @@
 package GUI;
 
-import FuncionesPrincipalesDePresupuestos.EnviarPresupuesto;
 import FuncionesPrincipalesDePresupuestos.GenerarPresupuesto;
 import FuncionesPrincipalesDePresupuestos.HistorialDePresupuestos;
 import FuncionesPrincipalesDePresupuestos.SeleccionarMateriales;
@@ -69,10 +68,6 @@ public class GestionPresupuestos extends JPanel {
         btnHistorialPresupuestos.addActionListener(e -> {
             HistorialDePresupuestos historialDePresupuestos = new HistorialDePresupuestos();
             ventana.ponPanel(new HistorialDePresupuestos());
-        });
-        btnEnviarPresupuesto.addActionListener(e -> {
-            EnviarPresupuesto enviarPresupuesto = new EnviarPresupuesto();
-            ventana.ponPanel(new EnviarPresupuesto());
         });
         btnAtras.addActionListener(e -> {
             GestionPresupuestos gestionPresupuestos = new GestionPresupuestos(ventana);
