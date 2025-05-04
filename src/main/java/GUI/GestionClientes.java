@@ -56,20 +56,28 @@ public class GestionClientes extends JPanel {
         */
         btnAltaCliente.addActionListener(e -> {
             JFrame ventanaAlta = new JFrame("Alta Cliente");
-            ventanaAlta.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Cierra solo esta ventana
-            ventanaAlta.setSize(1000, 500); // Ajusta al tamaño que necesites
-            ventanaAlta.setLocationRelativeTo(null); // Centrada en pantalla
+            ventanaAlta.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            ventanaAlta.setSize(1000, 500);
+            ventanaAlta.setLocationRelativeTo(null);
 
-            AltaCliente altaCliente = new AltaCliente(); // Este es un JPanel, por lo que lo añadimos
-            ventanaAlta.setContentPane(altaCliente);
+            // Creamos la instancia lógica de AltaCliente
+            AltaCliente altaCliente = new AltaCliente();
+
+            // Obtenemos el formulario (que es un JPanel)
+            JPanel formulario = altaCliente.construirFormulario();
+
+            // Lo insertamos en la ventana
+            ventanaAlta.setContentPane(formulario);
             ventanaAlta.setVisible(true);
         });
-       /*
+
+
         btnListadoClientes.addActionListener(e -> {
-            ListarClientes listarClientes = new ListarClientes();
-            ventana.ponPanel(new ListarClientes());
+            ListarClientes listar = new ListarClientes();
+            listar.mostrarVentana();
         });
-        */
+
+
         btnAtras.addActionListener(e -> {
             GestionInventario gestionInventario = new GestionInventario(ventana);
             ventana.ponPanel(new OpcionesPrincipales(ventana, true));

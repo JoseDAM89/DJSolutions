@@ -17,7 +17,7 @@ public class ListarProductos extends JPanel {
     private JButton btnVolver;
     private JTable tabla;
     private JScrollPane scrollPane;
-    private final String nombreTabla = "empresas";
+    private final String nombreTabla = "productos";
     private Vprin ventana;
 
     public ListarProductos(Vprin ventana) {
@@ -105,8 +105,14 @@ public class ListarProductos extends JPanel {
     private void mostrarDatosDeTabla() {
         String consultaSQL = "SELECT * FROM " + nombreTabla;
 
-        try (Connection conn = ConexionBD.conectar();
-             Statement stmt = conn.createStatement();
+        Connection conn = ConexionBD.conectar();
+        if (conn == null) {
+            JOptionPane.showMessageDialog(this, "Error: No se pudo establecer conexión con la base de datos.",
+                    "Error de Conexión", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(consultaSQL)) {
 
             ResultSetMetaData metaData = rs.getMetaData();
@@ -128,9 +134,11 @@ public class ListarProductos extends JPanel {
             tabla.setModel(modelo);
 
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error al mostrar datos: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error al mostrar datos: " + e.getMessage(),
+                    "Error SQL", JOptionPane.ERROR_MESSAGE);
         }
     }
+
 
     public void editarRegistro(String tabla, String columna, Object nuevoValor, String columnaID, Object idValor) {
         String sql = "UPDATE " + tabla + " SET " + columna + " = ? WHERE " + columnaID + " = ?";

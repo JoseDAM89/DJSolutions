@@ -1,148 +1,62 @@
 package FuncionesPrincipalesDeClientes;
 
+import Datos.ClienteDAO;
+import GUI.FormularioGenericoAlta;
+import Modelos.Cliente;
+
 import javax.swing.*;
-import java.awt.*;
+import java.awt.event.ActionListener;
+import java.util.HashMap;
 
-public class AltaCliente extends JPanel {
+public class AltaCliente {
 
-    private JTextField campoIdcliente;
-    private JTextField campoNombre;
-    private JTextField campoCIF;
-    private JTextField campoEmail;
-    private JTextField campoPersonaDeContacto;
-    private JTextField campoDireccion;
-    private JTextArea campoDescripcion;
-    private JButton btnGuardar;
+    /**
+     * Método que construye el formulario genérico para dar de alta un cliente.
+     * @return JPanel listo para insertar en una ventana
+     */
+    public JPanel construirFormulario() {
+        // Campos que queremos que aparezcan en el formulario
+        String[] campos = {
+                "Nombre", "CIF", "Email", "Persona de Contacto", "Dirección", "Descripción"
+        };
 
-    public AltaCliente() {
-        inicializarComponentes();
-        configurarPanel();
-        agregarEventos();
-    }
+        // Usamos un array para poder usar la variable dentro del ActionListener
+        final FormularioGenericoAlta[] formulario = new FormularioGenericoAlta[1];
 
-    private void inicializarComponentes() {
-        campoIdcliente = new JTextField(20);
-        campoNombre = new JTextField(20);
-        campoDescripcion = new JTextArea(5, 20);
-        campoDescripcion.setLineWrap(true);
-        campoDescripcion.setWrapStyleWord(true);
-        campoCIF = new JTextField(10);
-        campoEmail = new JTextField(30);
-        campoPersonaDeContacto = new JTextField(20);
-        campoDireccion = new JTextField(50);
+        // Definimos la acción del botón guardar
+        ActionListener accionGuardar = e -> {
+            HashMap<String, String> valores = formulario[0].getValores();
 
+            // Validamos que no haya campos vacíos
+            if (valores.values().stream().anyMatch(String::isEmpty)) {
+                JOptionPane.showMessageDialog(null, "Todos los campos son obligatorios.");
+                return;
+            }
 
-        btnGuardar = new JButton("Alta Cliente");
-        btnGuardar.setBackground(new Color(34, 139, 34));
-        btnGuardar.setForeground(Color.WHITE);
-        btnGuardar.setFont(new Font("Segoe UI", Font.BOLD, 16));
-    }
+            // Creamos el objeto Cliente con los valores
+            Cliente cliente = new Cliente(
+                    valores.get("Nombre"),
+                    valores.get("CIF"),
+                    valores.get("Email"),
+                    valores.get("Persona de Contacto"),
+                    valores.get("Dirección"),
+                    valores.get("Descripción")
+            );
 
-    private void configurarPanel() {
-        setLayout(new GridBagLayout());
-        setBackground(new Color(245, 245, 245)); // Fondo claro
+            // Insertamos el cliente en la base de datos
+            boolean guardado = ClienteDAO.insertar(cliente);
 
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+            if (guardado) {
+                JOptionPane.showMessageDialog(null, "Cliente guardado en la base de datos correctamente.");
+                formulario[0].limpiarCampos();
+            } else {
+                JOptionPane.showMessageDialog(null, "Error al guardar el cliente en la base de datos.");
+            }
+        };
 
+        // Creamos el formulario genérico pasándole los campos y la acción del botón
+        formulario[0] = new FormularioGenericoAlta(campos, accionGuardar);
 
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        add(new JLabel("ID:"), gbc);
-        gbc.gridx++;
-        add(campoCIF, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy++;
-        add(new JLabel("CIF:"), gbc);
-        gbc.gridx++;
-        add(campoCIF, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy++;
-        add(new JLabel("Nombre"), gbc);
-        gbc.gridx++;
-        add(campoNombre, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy++;
-        add(new JLabel("Email"), gbc);
-        gbc.gridx++;
-        add(campoEmail, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy++;
-        add(new JLabel("Persona de Contacto"), gbc);
-        gbc.gridx++;
-        add(campoPersonaDeContacto, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy++;
-        add(new JLabel("Direccion"), gbc);
-        gbc.gridx++;
-        add(campoDireccion, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy++;
-        add(new JLabel("Descripcion"), gbc);
-        gbc.gridx++;
-        add(campoDescripcion, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.gridwidth = 2;
-        gbc.anchor = GridBagConstraints.CENTER;
-        add(btnGuardar, gbc);
-    }
-
-    private void agregarEventos() {
-        btnGuardar.addActionListener(e -> guardarProducto());
-    }
-
-    private void guardarProducto() {
-        String cif = campoCIF.getText().trim();
-        String nombre = campoNombre.getText().trim();
-        String email = campoEmail.getText().trim();
-        String personaCOntacto = campoPersonaDeContacto.getText().trim();
-        String direccion = campoDireccion.getText().trim();
-        String descripcion = campoDescripcion.getText().trim();
-
-
-        if (cif.isEmpty() ||nombre.isEmpty() || email.isEmpty() || personaCOntacto.isEmpty() || direccion.isEmpty() || descripcion.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Por favor, completa todos los campos.", "Campos incompletos", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-/*
-        // Aquí podrías validar que precio y cantidad sean números
-        try {
-            double precio = Double.parseDouble(precioStr);
-            int cantidad = Integer.parseInt(cantidadStr);
-
-            // Aquí podrías guardar el producto en una base de datos o en memoria
-            JOptionPane.showMessageDialog(this, "Producto guardado exitosamente:\n" +
-                    "Nombre: " + nombre +
-                    "\nDescripción: " + descripcion +
-                    "\nPrecio: " + precio +
-                    "\nCantidad: " + cantidad +
-                    "\nCategoría: " + categoria, "Producto Guardado", JOptionPane.INFORMATION_MESSAGE);
-
-            limpiarCampos();
-
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "Precio y Cantidad deben ser valores numéricos válidos.", "Error de formato", JOptionPane.ERROR_MESSAGE);
-        }
-
-*/
-    }
-
-    private void limpiarCampos() {
-        campoCIF.setText("");
-        campoNombre.setText("");
-        campoEmail.setText("");
-        campoPersonaDeContacto.setText("");
-        campoDireccion.setText("");
-        campoDescripcion.setText("");
+        return formulario[0];
     }
 }
