@@ -12,7 +12,6 @@ public class GestionPresupuestos extends JPanel {
     private JButton btnGenerarPresupuesto;
     private JButton btnSeleccionarMateriales;
     private JButton btnHistorialPresupuestos;
-    private JButton btnEnviarPresupuesto;
     private JButton btnAtras;
     private Vprin ventana;
 
@@ -25,9 +24,7 @@ public class GestionPresupuestos extends JPanel {
 
     private void inicializarComponentes() {
         btnGenerarPresupuesto = crearBoton("Generar Presupuesto");
-        btnSeleccionarMateriales = crearBoton("Seleccionar Materiales");
         btnHistorialPresupuestos = crearBoton("Historial de Presupuestos");
-        btnEnviarPresupuesto = crearBoton("Enviar Presupuesto");
         btnAtras = crearBoton("Atras");
     }
 
@@ -40,19 +37,17 @@ public class GestionPresupuestos extends JPanel {
         gbc.gridx = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        gbc.gridy = 0;
+        int fila = 0;
+
+        gbc.gridy = fila++;
         add(btnGenerarPresupuesto, gbc);
 
-        gbc.gridy = 1;
-        add(btnSeleccionarMateriales, gbc);
 
-        gbc.gridy = 2;
+        gbc.gridy = fila++;
         add(btnHistorialPresupuestos, gbc);
 
-        gbc.gridy = 3;
-        add(btnEnviarPresupuesto, gbc);
 
-        gbc.gridy = 4;
+        gbc.gridy = fila++;
         add(btnAtras, gbc);
     }
 
@@ -60,10 +55,6 @@ public class GestionPresupuestos extends JPanel {
         btnGenerarPresupuesto.addActionListener(e -> {
             GenerarPresupuesto generarPresupuesto = new GenerarPresupuesto();
             ventana.ponPanel(new GenerarPresupuesto());
-        });
-        btnSeleccionarMateriales.addActionListener(e -> {
-            SeleccionarMateriales seleccionarMateriales = new SeleccionarMateriales();
-            ventana.ponPanel(new SeleccionarMateriales());
         });
         btnHistorialPresupuestos.addActionListener(e -> {
             HistorialDePresupuestos historialDePresupuestos = new HistorialDePresupuestos();

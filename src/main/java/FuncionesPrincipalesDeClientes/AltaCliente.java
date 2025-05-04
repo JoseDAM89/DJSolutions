@@ -5,6 +5,7 @@ import java.awt.*;
 
 public class AltaCliente extends JPanel {
 
+    private JTextField campoIdcliente;
     private JTextField campoNombre;
     private JTextField campoCIF;
     private JTextField campoEmail;
@@ -20,6 +21,7 @@ public class AltaCliente extends JPanel {
     }
 
     private void inicializarComponentes() {
+        campoIdcliente = new JTextField(20);
         campoNombre = new JTextField(20);
         campoDescripcion = new JTextArea(5, 20);
         campoDescripcion.setLineWrap(true);
@@ -45,8 +47,15 @@ public class AltaCliente extends JPanel {
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
+
         gbc.gridx = 0;
         gbc.gridy = 0;
+        add(new JLabel("ID:"), gbc);
+        gbc.gridx++;
+        add(campoCIF, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy++;
         add(new JLabel("CIF:"), gbc);
         gbc.gridx++;
         add(campoCIF, gbc);
