@@ -8,8 +8,7 @@ import java.awt.*;
 public class GestionInventario extends JPanel {
 
     private JButton btnAgregarProductos;
-    private JButton btnEliminarProductos;
-    private JButton btnEditarProductos;
+    private JButton btnListarProductos;
     private JButton btnVerAlertaStock;
     private JButton btnConsultarStock;
     private JButton btnAtras;
@@ -24,10 +23,9 @@ public class GestionInventario extends JPanel {
 
     private void inicializarComponentes() {
         btnAgregarProductos = crearBoton("Agregar Productos");
-        btnEliminarProductos = crearBoton("Eliminar Productos");
-        btnEditarProductos = crearBoton("Editar Productos");
         btnVerAlertaStock = crearBoton("Ver Alerta de Stock Bajo");
         btnConsultarStock = crearBoton("Consultar Stock");
+        btnListarProductos = crearBoton("Listar Productos");
         btnAtras = crearBoton("Atras");
     }
 
@@ -46,16 +44,13 @@ public class GestionInventario extends JPanel {
         add(btnAgregarProductos, gbc);
 
         gbc.gridy = fila++;
-        add(btnEliminarProductos, gbc);
-
-        gbc.gridy = fila++;
-        add(btnEditarProductos, gbc);
-
-        gbc.gridy = fila++;
         add(btnVerAlertaStock, gbc);
 
         gbc.gridy = fila++;
         add(btnConsultarStock, gbc);
+
+        gbc.gridy = fila++;
+        add(btnListarProductos, gbc);
 
         gbc.gridy = fila++;
         add(btnAtras, gbc);
@@ -66,10 +61,6 @@ public class GestionInventario extends JPanel {
             AgregarProductos agregarProductos = new AgregarProductos();
             ventana.ponPanel(new AgregarProductos());
         });
-        btnEditarProductos.addActionListener(e -> {
-            ListarProductos editarProductos = new ListarProductos();
-            ventana.ponPanel(new ListarProductos());
-        });
         btnVerAlertaStock.addActionListener(e -> {
             VerAlertaStock verAlertaStock = new VerAlertaStock();
             ventana.ponPanel(new VerAlertaStock());
@@ -77,6 +68,10 @@ public class GestionInventario extends JPanel {
         btnConsultarStock.addActionListener(e -> {
             ConsultarStock consultarStock = new ConsultarStock();
             ventana.ponPanel(new ConsultarStock());
+        });
+        btnListarProductos.addActionListener(e -> {
+            ListarProductos listarProductos = new ListarProductos(ventana);
+            ventana.ponPanel(new ListarProductos(ventana));
         });
         btnAtras.addActionListener(e -> {
             GestionInventario gestionInventario = new GestionInventario(ventana);
