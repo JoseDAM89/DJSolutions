@@ -54,4 +54,8 @@ public class FormularioGenericoAlta extends JPanel {
     public void limpiarCampos() {
         campos.values().forEach(campo -> campo.setText(""));
     }
+
+    public JButton getBtnGuardar() {
+        return btnGuardar;
+    }
 }

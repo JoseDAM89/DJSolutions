@@ -58,9 +58,9 @@ public class GestionInventario extends JPanel {
 
     private void agregarEventos() {
         btnAgregarProductos.addActionListener(e -> {
-            AgregarProductos agregarProductos = new AgregarProductos();
-            ventana.ponPanel(new AgregarProductos());
+            ventana.ponPanel(new AgregarProductos(ventana));
         });
+
         btnVerAlertaStock.addActionListener(e -> {
             VerAlertaStock verAlertaStock = new VerAlertaStock();
             ventana.ponPanel(new VerAlertaStock());
