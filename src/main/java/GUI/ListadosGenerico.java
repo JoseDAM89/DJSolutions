@@ -10,7 +10,7 @@ public class ListadosGenerico extends JFrame {
 
     private JTable tabla;                         // Tabla para mostrar los datos
     private DefaultTableModel modelo;             // Modelo de la tabla
-    private JButton botonAccion;                  // Botón para editar/ver
+    public JButton botonAccion;                  // Botón para editar/ver
     private JTextField campoBuscar;               // Campo para escribir el texto a buscar
     private TableRowSorter<DefaultTableModel> sorter; // Permite ordenar y filtrar
 

@@ -1,176 +1,113 @@
 package FuncionesPrincipalesDeInventario;
 
 import Datos.ConexionBD;
-import GUI.GestionInventario;
+import GUI.ListadosGenerico;
 import GUI.Vprin;
+import GUI.EditarGenerico;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.*;
 
-public class ListarProductos extends JPanel {
+public class ListarProductos {
 
-    private JButton btnMostrar;
-    private JButton btnEliminar;
-    private JButton btnEditar;
-    private JButton btnVolver;
-    private JTable tabla;
-    private JScrollPane scrollPane;
     private final String nombreTabla = "productos";
-    private Vprin ventana;
+    private final Vprin ventana;
 
     public ListarProductos(Vprin ventana) {
         this.ventana = ventana;
-
-        setLayout(new BorderLayout());
-        setBackground(new Color(245, 245, 245));
-
-        JPanel panelSuperior = new JPanel();
-        panelSuperior.setBackground(new Color(220, 235, 250));
-        panelSuperior.setLayout(new FlowLayout());
-
-        btnMostrar = new JButton("Mostrar");
-        btnEliminar = new JButton("Eliminar");
-        btnEditar = new JButton("Editar");
-        btnVolver = new JButton("Volver al Menú");
-
-        panelSuperior.add(btnMostrar);
-        panelSuperior.add(btnEliminar);
-        panelSuperior.add(btnEditar);
-        panelSuperior.add(btnVolver);
-
-        tabla = new JTable();
-        scrollPane = new JScrollPane(tabla);
-
-        add(panelSuperior, BorderLayout.NORTH);
-        add(scrollPane, BorderLayout.CENTER);
-
-        agregarEventos();
-        mostrarDatosDeTabla(); // Mostrar al inicio
+        mostrarListado();
     }
 
-    private void agregarEventos() {
-        btnMostrar.addActionListener(e -> mostrarDatosDeTabla());
+    private void mostrarListado() {
+        Object[][] datos = obtenerDatosDeTabla();
+        if (datos == null) return;
 
-        btnEliminar.addActionListener(e -> {
-            int fila = tabla.getSelectedRow();
-            if (fila != -1) {
-                String columnaID = tabla.getColumnName(0);
-                Object idValor = tabla.getValueAt(fila, 0);
-                eliminarRegistro(nombreTabla, columnaID, idValor);
-                mostrarDatosDeTabla(); // Refrescar tabla
-            } else {
-                JOptionPane.showMessageDialog(this, "Selecciona una fila para eliminar.");
+        String[] columnas = obtenerNombresDeColumnas();
+
+        // Creamos el ActionListener con acceso a las variables necesarias
+        ActionListener accionEditar = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ListadosGenerico origen = (ListadosGenerico) SwingUtilities.getWindowAncestor((Component) e.getSource());
+                Object[] fila = origen.getFilaSeleccionada();
+                if (fila == null) return;
+
+                // Llamamos al EditarGenerico para manejar la edición
+                EditarGenerico.mostrarFormularioDeEdicion(nombreTabla, columnas, fila);
+
+                origen.dispose(); // Cerramos la ventana actual
+                mostrarListado(); // Recargamos la lista
             }
-        });
+        };
 
-        btnEditar.addActionListener(e -> {
-            int fila = tabla.getSelectedRow();
-            if (fila != -1) {
-                String columnaID = tabla.getColumnName(0);
-                Object idValor = tabla.getValueAt(fila, 0);
+        // Creamos la ventana de listado y le pasamos la acción
+        ListadosGenerico listado = new ListadosGenerico(
+                "Listado de Productos",
+                columnas,
+                datos,
+                "Editar",
+                accionEditar
+        );
 
-                int columnas = tabla.getColumnCount();
-                JTextField[] campos = new JTextField[columnas];
-                JPanel panel = new JPanel(new GridLayout(columnas, 2));
-
-                for (int i = 0; i < columnas; i++) {
-                    panel.add(new JLabel(tabla.getColumnName(i)));
-                    campos[i] = new JTextField(tabla.getValueAt(fila, i).toString());
-                    panel.add(campos[i]);
-                }
-
-                int resultado = JOptionPane.showConfirmDialog(this, panel, "Editar Registro",
-                        JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-
-                if (resultado == JOptionPane.OK_OPTION) {
-                    for (int i = 1; i < columnas; i++) {
-                        String columna = tabla.getColumnName(i);
-                        Object nuevoValor = campos[i].getText();
-                        editarRegistro(nombreTabla, columna, nuevoValor, columnaID, idValor);
-                    }
-                    mostrarDatosDeTabla();
-                }
-            } else {
-                JOptionPane.showMessageDialog(this, "Selecciona una fila para editar.");
-            }
-        });
-
-        btnVolver.addActionListener(e -> {
-            ventana.ponPanel(new GestionInventario(ventana));
-        });
+        listado.setVisible(true);
     }
 
-    private void mostrarDatosDeTabla() {
-        String consultaSQL = "SELECT * FROM " + nombreTabla;
-
-        Connection conn = ConexionBD.conectar();
-        if (conn == null) {
-            JOptionPane.showMessageDialog(this, "Error: No se pudo establecer conexión con la base de datos.",
-                    "Error de Conexión", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(consultaSQL)) {
+    private Object[][] obtenerDatosDeTabla() {
+        try (Connection conn = ConexionBD.conectar();
+             Statement stmt = conn.createStatement(
+                     ResultSet.TYPE_SCROLL_INSENSITIVE,
+                     ResultSet.CONCUR_READ_ONLY
+             );
+             ResultSet rs = stmt.executeQuery("SELECT * FROM " + nombreTabla)) {
 
             ResultSetMetaData metaData = rs.getMetaData();
             int columnas = metaData.getColumnCount();
-            DefaultTableModel modelo = new DefaultTableModel();
 
-            for (int i = 1; i <= columnas; i++) {
-                modelo.addColumn(metaData.getColumnName(i));
-            }
+            rs.last();
+            int filas = rs.getRow();
+            rs.beforeFirst();
+
+            Object[][] datos = new Object[filas][columnas];
+            int filaActual = 0;
 
             while (rs.next()) {
-                Object[] fila = new Object[columnas];
                 for (int i = 0; i < columnas; i++) {
-                    fila[i] = rs.getObject(i + 1);
+                    datos[filaActual][i] = rs.getObject(i + 1);
                 }
-                modelo.addRow(fila);
+                filaActual++;
             }
 
-            tabla.setModel(modelo);
+            return datos;
 
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error al mostrar datos: " + e.getMessage(),
+            JOptionPane.showMessageDialog(null, "Error al cargar productos: " + e.getMessage(),
                     "Error SQL", JOptionPane.ERROR_MESSAGE);
+            return null;
         }
     }
 
-
-    public void editarRegistro(String tabla, String columna, Object nuevoValor, String columnaID, Object idValor) {
-        String sql = "UPDATE " + tabla + " SET " + columna + " = ? WHERE " + columnaID + " = ?";
-
+    private String[] obtenerNombresDeColumnas() {
         try (Connection conn = ConexionBD.conectar();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM " + nombreTabla + " LIMIT 1")) {
 
-            stmt.setObject(1, nuevoValor);
-            stmt.setObject(2, idValor);
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error al actualizar: " + e.getMessage());
-        }
-    }
+            ResultSetMetaData metaData = rs.getMetaData();
+            int columnas = metaData.getColumnCount();
+            String[] nombres = new String[columnas];
 
-    public void eliminarRegistro(String tabla, String columnaID, Object idValor) {
-        String sql = "DELETE FROM " + tabla + " WHERE " + columnaID + " = ?";
-
-        int confirmacion = JOptionPane.showConfirmDialog(this,
-                "¿Estás seguro de que quieres eliminar este registro?", "Confirmar eliminación",
-                JOptionPane.YES_NO_OPTION);
-
-        if (confirmacion == JOptionPane.YES_OPTION) {
-            try (Connection conn = ConexionBD.conectar();
-                 PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-                stmt.setObject(1, idValor);
-                stmt.executeUpdate();
-                JOptionPane.showMessageDialog(this, "Registro eliminado correctamente.");
-            } catch (SQLException e) {
-                JOptionPane.showMessageDialog(this, "Error al eliminar: " + e.getMessage());
+            for (int i = 0; i < columnas; i++) {
+                nombres[i] = metaData.getColumnName(i + 1);
             }
+
+            return nombres;
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Error al obtener columnas: " + e.getMessage(),
+                    "Error SQL", JOptionPane.ERROR_MESSAGE);
+            return new String[0];
         }
     }
 }
