@@ -2,112 +2,102 @@ package FuncionesPrincipalesDeInventario;
 
 import Datos.ConexionBD;
 import GUI.ListadosGenerico;
-import GUI.Vprin;
 import GUI.EditarGenerico;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.*;
+import java.util.ArrayList;
 
+/**
+ * Clase que se encarga de listar todos los productos de la base de datos
+ * y mostrarlos en una tabla reutilizable (ListadosGenerico).
+ */
 public class ListarProductos {
 
-    private final String nombreTabla = "productos";
-    private final Vprin ventana;
+    /**
+     * Este método se ejecuta cuando el usuario pulsa el botón "Listar Productos".
+     */
+    public void mostrarVentana() {
+        Connection conexion = null;
+        PreparedStatement sentencia = null;
+        ResultSet resultado = null;
 
-    public ListarProductos(Vprin ventana) {
-        this.ventana = ventana;
-        mostrarListado();
-    }
+        try {
+            // Establecer conexión con la base de datos
+            conexion = ConexionBD.conectar();
 
-    private void mostrarListado() {
-        Object[][] datos = obtenerDatosDeTabla();
-        if (datos == null) return;
+            // Consulta SQL para obtener datos de productos
+            String sql = """
+                         SELECT codproduct, nombreproduct, precioproduct, descripcionproduct, 
+                         stockproduct, materiaprima, idmateriaprima
+                         FROM productos
+                         """;
 
-        String[] columnas = obtenerNombresDeColumnas();
+            sentencia = conexion.prepareStatement(sql);
+            resultado = sentencia.executeQuery();
 
-        // Creamos el ActionListener con acceso a las variables necesarias
-        ActionListener accionEditar = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ListadosGenerico origen = (ListadosGenerico) SwingUtilities.getWindowAncestor((Component) e.getSource());
-                Object[] fila = origen.getFilaSeleccionada();
-                if (fila == null) return;
-
-                // Llamamos al EditarGenerico para manejar la edición
-                EditarGenerico.mostrarFormularioDeEdicion(nombreTabla, columnas, fila);
-
-                origen.dispose(); // Cerramos la ventana actual
-                mostrarListado(); // Recargamos la lista
-            }
-        };
-
-        // Creamos la ventana de listado y le pasamos la acción
-        ListadosGenerico listado = new ListadosGenerico(
-                "Listado de Productos",
-                columnas,
-                datos,
-                "Editar",
-                accionEditar
-        );
-
-        listado.setVisible(true);
-    }
-
-    private Object[][] obtenerDatosDeTabla() {
-        try (Connection conn = ConexionBD.conectar();
-             Statement stmt = conn.createStatement(
-                     ResultSet.TYPE_SCROLL_INSENSITIVE,
-                     ResultSet.CONCUR_READ_ONLY
-             );
-             ResultSet rs = stmt.executeQuery("SELECT * FROM " + nombreTabla)) {
-
-            ResultSetMetaData metaData = rs.getMetaData();
-            int columnas = metaData.getColumnCount();
-
-            rs.last();
-            int filas = rs.getRow();
-            rs.beforeFirst();
-
-            Object[][] datos = new Object[filas][columnas];
-            int filaActual = 0;
-
-            while (rs.next()) {
-                for (int i = 0; i < columnas; i++) {
-                    datos[filaActual][i] = rs.getObject(i + 1);
-                }
-                filaActual++;
+            // Guardar los resultados en una lista
+            ArrayList<Object[]> listaDatos = new ArrayList<>();
+            while (resultado.next()) {
+                Object[] fila = new Object[] {
+                        resultado.getInt("codproduct"),
+                        resultado.getString("nombreproduct"),
+                        resultado.getDouble("precioproduct"),
+                        resultado.getString("descripcionproduct"),
+                        resultado.getInt("stockproduct"),
+                        resultado.getString("materiaprima"),
+                        resultado.getInt("idmateriaprima")
+                };
+                listaDatos.add(fila);
             }
 
-            return datos;
+            // Convertimos la lista en un array bidimensional
+            Object[][] datos = listaDatos.toArray(new Object[0][]);
 
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Error al cargar productos: " + e.getMessage(),
-                    "Error SQL", JOptionPane.ERROR_MESSAGE);
-            return null;
-        }
-    }
+            // Definimos los nombres de columnas
+            String[] columnas = {
+                    "ID", "Nombre", "Referencia", "Precio", "Cantidad", "Descripción"
+            };
 
-    private String[] obtenerNombresDeColumnas() {
-        try (Connection conn = ConexionBD.conectar();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM " + nombreTabla + " LIMIT 1")) {
+            // Creamos un array final para el acceso desde el ActionListener
+            final ListadosGenerico[] tablaProductos = new ListadosGenerico[1];
 
-            ResultSetMetaData metaData = rs.getMetaData();
-            int columnas = metaData.getColumnCount();
-            String[] nombres = new String[columnas];
+            // Creamos la tabla con botón Editar
+            ListadosGenerico tabla = new ListadosGenerico(
+                    "Listado de Productos",
+                    columnas,
+                    datos,
+                    "Editar",
+                    e -> {
+                        Object[] fila = tablaProductos[0].getFilaSeleccionada();
+                        if (fila != null) {
+                            int id = (int) fila[0];
+                            String nombre = (String) fila[1];
+                            System.out.println("Editar Producto con ID: " + id + ", Nombre: " + nombre);
 
-            for (int i = 0; i < columnas; i++) {
-                nombres[i] = metaData.getColumnName(i + 1);
+                            // Llamamos a EditarGenerico para editar el producto
+                            EditarGenerico.mostrarFormularioDeEdicion(
+                                    "productos",  // Nombre de la tabla
+                                    columnas,     // Nombres de las columnas
+                                    fila          // Fila seleccionada
+                            );
+                        }
+                    }
+            );
+
+            tablaProductos[0] = tabla;
+            tabla.setVisible(true);
+
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Error al obtener productos: " + ex.getMessage());
+        } finally {
+            try {
+                if (resultado != null) resultado.close();
+                if (sentencia != null) sentencia.close();
+                if (conexion != null) conexion.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
             }
-
-            return nombres;
-
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Error al obtener columnas: " + e.getMessage(),
-                    "Error SQL", JOptionPane.ERROR_MESSAGE);
-            return new String[0];
         }
     }
 }

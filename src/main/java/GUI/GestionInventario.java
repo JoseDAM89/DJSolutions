@@ -58,10 +58,24 @@ public class GestionInventario extends JPanel {
 
     private void agregarEventos() {
         btnAgregarProductos.addActionListener(e -> {
-            ventana.ponPanel(new AgregarProductos(ventana));
-        });
+                JFrame ventanaAlta = new JFrame("Alta Producto");
+                ventanaAlta.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                ventanaAlta.setSize(1000, 500);
+                ventanaAlta.setLocationRelativeTo(null);
 
-        btnVerAlertaStock.addActionListener(e -> {
+                // Creamos la instancia lógica de AgregarProductos
+                AgregarProductos altaProducto = new AgregarProductos();
+
+                // Obtenemos el formulario (que es un JPanel)
+                JPanel formulario = altaProducto.construirFormulario();
+
+                // Lo insertamos en la ventana
+                ventanaAlta.setContentPane(formulario);
+                ventanaAlta.setVisible(true);
+            });
+
+
+            btnVerAlertaStock.addActionListener(e -> {
             VerAlertaStock verAlertaStock = new VerAlertaStock();
             ventana.ponPanel(new VerAlertaStock());
         });
@@ -69,7 +83,11 @@ public class GestionInventario extends JPanel {
             ConsultarStock consultarStock = new ConsultarStock();
             ventana.ponPanel(new ConsultarStock());
         });
-        btnListarProductos.addActionListener(e -> new ListarProductos(ventana));
+        btnListarProductos.addActionListener(e -> {
+            ListarProductos listar = new ListarProductos();
+            listar.mostrarVentana();
+        });
+
 
         btnAtras.addActionListener(e -> {
             GestionInventario gestionInventario = new GestionInventario(ventana);

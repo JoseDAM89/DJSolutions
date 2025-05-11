@@ -2,6 +2,7 @@ package FuncionesPrincipalesDeClientes;
 
 import Datos.ConexionBD;
 import GUI.ListadosGenerico;
+import GUI.EditarGenerico;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -62,7 +63,7 @@ public class ListarClientes {
             // Creamos un array final para poder usar dentro del ActionListener
             final ListadosGenerico[] tablaClientes = new ListadosGenerico[1];
 
-            // Creamos el botón editar con acceso al objeto final
+            // Creamos la tabla con botón Editar
             ListadosGenerico tabla = new ListadosGenerico(
                     "Listado de Clientes",
                     columnas,
@@ -74,7 +75,13 @@ public class ListarClientes {
                             int id = (int) fila[0];
                             String nombre = (String) fila[1];
                             System.out.println("Editar Cliente con ID: " + id + ", Nombre: " + nombre);
-                            // Aquí puedes llamar al formulario de edición si lo necesitas
+
+                            // Llamamos a EditarGenerico para editar el cliente
+                            EditarGenerico.mostrarFormularioDeEdicion(
+                                    "clientes",  // Nombre de la tabla
+                                    columnas,    // Nombres de las columnas
+                                    fila         // Fila seleccionada
+                            );
                         }
                     }
             );
