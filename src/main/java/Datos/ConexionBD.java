@@ -2,30 +2,24 @@ package Datos;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.sql.SQLException;
 
 public class ConexionBD {
 
-    private static final String URL = "jdbc:postgresql://localhost:5433/EmpresaPrueba1";
-    private static final String USUARIO = "postgres";
-    private static final String CONTRASENA = "123456"; // Contraseña de PostgreSQL
+    private static final String URL = "jdbc:postgresql://ep-late-art-a2jopc25-pooler.eu-central-1.aws.neon.tech:5432/neondb?sslmode=require";
+    private static final String USUARIO = "neondb_owner";
+    private static final String CONTRASENA = "npg_LkV2h8vgPlfy"; // cópiala desde Neon (con el ojito)
 
-    // Método para obtener conexión
     public static Connection conectar() {
-        Connection conexion = null;
         try {
             System.out.println("Intentando conectar a: " + URL);
-            conexion = DriverManager.getConnection(URL.trim(), USUARIO.trim(), CONTRASENA.trim());
-            System.out.println("Conexión exitosa a PostgreSQL.");
+            Connection conexion = DriverManager.getConnection(URL, USUARIO, CONTRASENA);
+            System.out.println("✅ Conexión exitosa a Neon.");
+            return conexion;
         } catch (SQLException e) {
-            System.err.println("Error al conectar a PostgreSQL: " + e.getMessage());
-            e.printStackTrace();  // 👈 Esto te da más detalle
+            System.err.println("❌ Error al conectar a Neon: " + e.getMessage());
+            e.printStackTrace();
+            return null;
         }
-        return conexion;
     }
-
-
-
 }
