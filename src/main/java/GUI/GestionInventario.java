@@ -9,7 +9,6 @@ public class GestionInventario extends JPanel {
 
     private JButton btnAgregarProductos;
     private JButton btnListarProductos;
-    private JButton btnVerAlertaStock;
     private JButton btnConsultarStock;
     private JButton btnAtras;
     private Vprin ventana;
@@ -23,7 +22,6 @@ public class GestionInventario extends JPanel {
 
     private void inicializarComponentes() {
         btnAgregarProductos = crearBoton("Agregar Productos");
-        btnVerAlertaStock = crearBoton("Ver Alerta de Stock Bajo");
         btnConsultarStock = crearBoton("Consultar Stock");
         btnListarProductos = crearBoton("Listar Productos");
         btnAtras = crearBoton("Atras");
@@ -42,9 +40,6 @@ public class GestionInventario extends JPanel {
 
         gbc.gridy = fila++;
         add(btnAgregarProductos, gbc);
-
-        gbc.gridy = fila++;
-        add(btnVerAlertaStock, gbc);
 
         gbc.gridy = fila++;
         add(btnConsultarStock, gbc);
@@ -74,14 +69,16 @@ public class GestionInventario extends JPanel {
                 ventanaAlta.setVisible(true);
             });
 
-
-            btnVerAlertaStock.addActionListener(e -> {
-            VerAlertaStock verAlertaStock = new VerAlertaStock();
-            ventana.ponPanel(new VerAlertaStock());
-        });
         btnConsultarStock.addActionListener(e -> {
+            JFrame ventanaStock = new JFrame("Consultar Stock");
+            ventanaStock.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            ventanaStock.setSize(1000, 500);
+            ventanaStock.setLocationRelativeTo(null);
             ConsultarStock consultarStock = new ConsultarStock();
-            ventana.ponPanel(new ConsultarStock());
+
+            ventanaStock.setContentPane(consultarStock);
+            ventanaStock.setVisible(true);
+
         });
         btnListarProductos.addActionListener(e -> {
             ListarProductos listar = new ListarProductos();
