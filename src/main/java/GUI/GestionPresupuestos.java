@@ -53,15 +53,29 @@ public class GestionPresupuestos extends JPanel {
 
     private void agregarEventos() {
         btnGenerarPresupuesto.addActionListener(e -> {
+            JFrame ventanaPresupuesto = new JFrame("Generar Presupuesto");
+            ventanaPresupuesto.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            ventanaPresupuesto.setSize(1000, 500);
+            ventanaPresupuesto.setLocationRelativeTo(null);
+
             GenerarPresupuesto generarPresupuesto = new GenerarPresupuesto();
-            ventana.ponPanel(new GenerarPresupuesto());
+            ventanaPresupuesto.setContentPane(generarPresupuesto);
+            ventanaPresupuesto.setVisible(true);
         });
+
         btnHistorialPresupuestos.addActionListener(e -> {
+            JFrame ventanaHistorial = new JFrame("Historial de Presupuestos");
+            ventanaHistorial.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            ventanaHistorial.setSize(1000, 500);
+            ventanaHistorial.setLocationRelativeTo(null);
+
             HistorialDePresupuestos historialDePresupuestos = new HistorialDePresupuestos();
-            ventana.ponPanel(new HistorialDePresupuestos());
+            ventanaHistorial.setContentPane(historialDePresupuestos);
+            ventanaHistorial.setVisible(true);
         });
+
         btnAtras.addActionListener(e -> {
-            GestionPresupuestos gestionPresupuestos = new GestionPresupuestos(ventana);
+
             ventana.ponPanel(new OpcionesPrincipales(ventana, true));
         });
     }
