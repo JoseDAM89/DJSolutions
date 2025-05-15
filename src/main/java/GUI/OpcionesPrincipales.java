@@ -1,11 +1,15 @@
 package GUI;
 
+import GestionDeUsuarios.RegistrarUser;
+import GestionDeUsuarios.VerUsuarios;
+import Modelos.Sesion;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class OpcionesPrincipales extends JPanel {
 
-    private JButton btnAsignarRoles;
+    private JButton btnVerUsuarios;
     private JButton btnRegistrarUsuarios;
     private JButton btnGestionInventario;
     private JButton btnGestionPresupuestos;
@@ -14,9 +18,9 @@ public class OpcionesPrincipales extends JPanel {
 
     private Vprin ventana; // Referencia a la ventana principal para poder usar ponPanel()
 
-    public OpcionesPrincipales(Vprin ventana, boolean esAdmin) {
+    public OpcionesPrincipales(Vprin ventana) {
         this.ventana = ventana;
-        this.esAdmin = esAdmin;
+        this.esAdmin = Sesion.esAdmin();
 
         inicializarComponentes();
         configurarPanel();
@@ -26,7 +30,7 @@ public class OpcionesPrincipales extends JPanel {
 
     private void inicializarComponentes() {
 
-        btnAsignarRoles = crearBoton("Asignar Roles");
+        btnVerUsuarios = crearBoton("Ver Usuarios");
         btnRegistrarUsuarios = crearBoton("Registrar Usuario");
         btnGestionInventario = crearBoton("Gestión de Inventario");
         btnGestionPresupuestos = crearBoton("Gestión de Presupuestos");
@@ -47,7 +51,7 @@ public class OpcionesPrincipales extends JPanel {
         if (esAdmin) {
 
             gbc.gridy = fila++;
-            add(btnAsignarRoles, gbc);
+            add(btnVerUsuarios, gbc);
 
             gbc.gridy = fila++;
             add(btnRegistrarUsuarios, gbc);
@@ -64,6 +68,17 @@ public class OpcionesPrincipales extends JPanel {
     }
 
     private void agregarEventos() {
+
+        btnRegistrarUsuarios.addActionListener(e -> {
+            ventana.ponPanel(new RegistrarUser(ventana));
+        });
+
+        btnVerUsuarios.addActionListener(e -> {
+           ventana.ponPanel(new VerUsuarios());
+        });
+
+
+
         btnGestionInventario.addActionListener(e -> {
             GestionInventario gestionInventario = new GestionInventario(ventana);
             ventana.ponPanel(gestionInventario);

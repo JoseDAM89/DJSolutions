@@ -55,8 +55,8 @@ public class GestionUsuarios extends JPanel {
     }
 
     private void iniciarSesion() {
-        // Simulamos que el login ha sido exitoso
-        OpcionesPrincipales opciones = new OpcionesPrincipales(ventana, true);
-        ventana.ponPanel(opciones);
+        InicioSesion panelInicio = new InicioSesion(ventana);
+        ventana.ponPanel(panelInicio);
     }
+
 }
