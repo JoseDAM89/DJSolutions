@@ -8,6 +8,8 @@ import com.itextpdf.text.pdf.*;
 import javax.swing.*;
 import java.awt.*;
 import java.io.FileOutputStream;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class GenerarPresupuesto extends JPanel {
@@ -75,7 +77,14 @@ public class GenerarPresupuesto extends JPanel {
         }
 
         try {
-            String destino = System.getProperty("user.home") + "/Downloads/presupuesto.pdf";
+            // Crear nombre único con fecha y hora
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HHmmss");
+            String timestamp = LocalDateTime.now().format(formatter);
+            String nombreArchivo = "presupuesto_" + timestamp + ".pdf";
+
+            // Ruta de destino
+            String destino = System.getProperty("user.home") + "/Downloads/" + nombreArchivo;
+
             Document documento = new Document(PageSize.A4, 50, 50, 50, 50); // márgenes básicos
             PdfWriter.getInstance(documento, new FileOutputStream(destino));
             documento.open();
@@ -115,5 +124,6 @@ public class GenerarPresupuesto extends JPanel {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(this, "Error al generar PDF: " + ex.getMessage());
         }
+
     }
 }

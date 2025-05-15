@@ -6,6 +6,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 
 public class HistorialDePresupuestos extends JPanel {
 
@@ -38,9 +39,15 @@ public class HistorialDePresupuestos extends JPanel {
         JWindow previewWindow = new JWindow();
         previewWindow.setBackground(new Color(255, 255, 255, 220));
 
-        // Cargar PDFs
-        File[] archivos = carpetaPresupuestos.listFiles((dir, name) -> name.toLowerCase().endsWith(".pdf"));
+        // Cargar PDFs que empiecen por "presupuesto_" y terminen en ".pdf"
+        File[] archivos = carpetaPresupuestos.listFiles((dir, name) ->
+                name.toLowerCase().endsWith(".pdf") && name.toLowerCase().startsWith("presupuesto_")
+        );
+
         if (archivos != null && archivos.length > 0) {
+            // Ordenar por fecha descendente (más reciente primero)
+            Arrays.sort(archivos, (a, b) -> Long.compare(b.lastModified(), a.lastModified()));
+
             for (File archivo : archivos) {
                 JPanel item = crearItemDePresupuesto(archivo, previewWindow);
                 panelLista.add(item);
