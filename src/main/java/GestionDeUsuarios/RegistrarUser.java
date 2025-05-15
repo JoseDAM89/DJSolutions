@@ -3,6 +3,7 @@ package GestionDeUsuarios;
 import Datos.ConexionBD;
 import GUI.OpcionesPrincipales;
 import GUI.Vprin;
+import Modelos.Usuario;
 import org.mindrot.jbcrypt.BCrypt;
 
 import javax.swing.*;
@@ -68,10 +69,11 @@ public class RegistrarUser extends JPanel {
                 return;
             }
 
-            // Sincronizar la secuencia antes de insertar, por si está desincronizada
             sincronizarSecuenciaId();
 
-            if (registrar(nombre, apellido, correo, password, esAdmin)) {
+            Usuario nuevoUsuario = new Usuario(nombre, apellido, correo, password, esAdmin);
+
+            if (registrar(nuevoUsuario)) {
                 JOptionPane.showMessageDialog(this, "Usuario registrado con éxito.");
                 ventana.ponPanel(new OpcionesPrincipales(ventana));
             } else {
@@ -82,17 +84,18 @@ public class RegistrarUser extends JPanel {
         btnVolver.addActionListener(e -> ventana.ponPanel(new OpcionesPrincipales(ventana)));
     }
 
-    public static boolean registrar(String nombre, String apellido, String correo, String password, boolean esAdmin) {
-        String hashed = BCrypt.hashpw(password, BCrypt.gensalt());
+    // Cambiado para usar el modelo Usuario
+    public static boolean registrar(Usuario usuario) {
+        String hashed = BCrypt.hashpw(usuario.getContrasena(), BCrypt.gensalt());
 
         try (Connection conn = ConexionBD.conectar()) {
             String sql = "INSERT INTO usuarios (nombre, apellido, correo_electronico, contraseña, admin) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setString(1, nombre);
-            stmt.setString(2, apellido);
-            stmt.setString(3, correo);
+            stmt.setString(1, usuario.getNombre());
+            stmt.setString(2, usuario.getApellido());
+            stmt.setString(3, usuario.getCorreoElectronico());
             stmt.setString(4, hashed);
-            stmt.setBoolean(5, esAdmin);
+            stmt.setBoolean(5, usuario.isAdmin());
             return stmt.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();
@@ -113,8 +116,6 @@ public class RegistrarUser extends JPanel {
         }
     }
 
-
-    // Nueva función para sincronizar la secuencia de id con el máximo id actual en la tabla
     public static void sincronizarSecuenciaId() {
         try (Connection conn = ConexionBD.conectar()) {
             String sql = "SELECT setval('usuarios_id_seq', (SELECT COALESCE(MAX(id), 1) FROM usuarios))";
@@ -122,7 +123,6 @@ public class RegistrarUser extends JPanel {
             stmt.execute();
         } catch (Exception e) {
             e.printStackTrace();
-            // No abortar el flujo, solo informamos el error
         }
     }
 }
