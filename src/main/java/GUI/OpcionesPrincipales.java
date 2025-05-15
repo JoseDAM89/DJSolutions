@@ -1,7 +1,7 @@
 package GUI;
 
-import GestionDeUsuarios.AsignarRoles;
 import GestionDeUsuarios.RegistrarUser;
+import GestionDeUsuarios.VerUsuarios;
 import Modelos.Sesion;
 
 import javax.swing.*;
@@ -9,7 +9,7 @@ import java.awt.*;
 
 public class OpcionesPrincipales extends JPanel {
 
-    private JButton btnAsignarRoles;
+    private JButton btnVerUsuarios;
     private JButton btnRegistrarUsuarios;
     private JButton btnGestionInventario;
     private JButton btnGestionPresupuestos;
@@ -30,7 +30,7 @@ public class OpcionesPrincipales extends JPanel {
 
     private void inicializarComponentes() {
 
-        btnAsignarRoles = crearBoton("Asignar Roles");
+        btnVerUsuarios = crearBoton("Ver Usuarios");
         btnRegistrarUsuarios = crearBoton("Registrar Usuario");
         btnGestionInventario = crearBoton("Gestión de Inventario");
         btnGestionPresupuestos = crearBoton("Gestión de Presupuestos");
@@ -51,7 +51,7 @@ public class OpcionesPrincipales extends JPanel {
         if (esAdmin) {
 
             gbc.gridy = fila++;
-            add(btnAsignarRoles, gbc);
+            add(btnVerUsuarios, gbc);
 
             gbc.gridy = fila++;
             add(btnRegistrarUsuarios, gbc);
@@ -73,9 +73,9 @@ public class OpcionesPrincipales extends JPanel {
             ventana.ponPanel(new RegistrarUser(ventana));
         });
 
-//        btnAsignarRoles.addActionListener(e -> {
-//            ventana.ponPanel(new AsignarRoles(ventana));
-//        });
+        btnVerUsuarios.addActionListener(e -> {
+           ventana.ponPanel(new VerUsuarios());
+        });
 
 
 
