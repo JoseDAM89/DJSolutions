@@ -1,6 +1,6 @@
 package FuncionesPrincipalesDePresupuestos;
 
-import Modelos.ProductoPresupuesto;
+import Modelos.Presupuesto;
 import com.itextpdf.text.*;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.pdf.*;
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 public class GenerarPresupuesto extends JPanel {
 
-    private final ArrayList<ProductoPresupuesto> productos = new ArrayList<>();
+    private final ArrayList<Presupuesto> productos = new ArrayList<>();
     private final JPanel panelLista = new JPanel(new GridLayout(0, 1));
     private final JButton btnAgregar = new JButton("Agregar Producto");
     private final JButton btnGenerar = new JButton("Generar PDF");
@@ -54,7 +54,7 @@ public class GenerarPresupuesto extends JPanel {
         int result = JOptionPane.showConfirmDialog(this, formulario, "Agregar Producto", JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION) {
             try {
-                ProductoPresupuesto p = new ProductoPresupuesto(
+                Presupuesto p = new Presupuesto(
                         Integer.parseInt(campoID.getText()),
                         campoNombre.getText(),
                         Integer.parseInt(campoCantidad.getText()),
@@ -104,7 +104,7 @@ public class GenerarPresupuesto extends JPanel {
             }
 
             double total = 0;
-            for (ProductoPresupuesto p : productos) {
+            for (Presupuesto p : productos) {
                 tabla.addCell(String.valueOf(p.id));
                 tabla.addCell(p.nombre);
                 tabla.addCell(String.valueOf(p.cantidad));
