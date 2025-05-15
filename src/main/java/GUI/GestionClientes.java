@@ -80,7 +80,7 @@ public class GestionClientes extends JPanel {
 
         btnAtras.addActionListener(e -> {
             GestionInventario gestionInventario = new GestionInventario(ventana);
-            ventana.ponPanel(new OpcionesPrincipales(ventana, true));
+            ventana.ponPanel(new OpcionesPrincipales(ventana));
         });
     }
 

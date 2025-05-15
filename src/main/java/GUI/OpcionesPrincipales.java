@@ -1,5 +1,9 @@
 package GUI;
 
+import GestionDeUsuarios.AsignarRoles;
+import GestionDeUsuarios.RegistrarUser;
+import Modelos.Sesion;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -14,9 +18,9 @@ public class OpcionesPrincipales extends JPanel {
 
     private Vprin ventana; // Referencia a la ventana principal para poder usar ponPanel()
 
-    public OpcionesPrincipales(Vprin ventana, boolean esAdmin) {
+    public OpcionesPrincipales(Vprin ventana) {
         this.ventana = ventana;
-        this.esAdmin = esAdmin;
+        this.esAdmin = Sesion.esAdmin();
 
         inicializarComponentes();
         configurarPanel();
@@ -64,6 +68,17 @@ public class OpcionesPrincipales extends JPanel {
     }
 
     private void agregarEventos() {
+
+        btnRegistrarUsuarios.addActionListener(e -> {
+            ventana.ponPanel(new RegistrarUser(ventana));
+        });
+
+//        btnAsignarRoles.addActionListener(e -> {
+//            ventana.ponPanel(new AsignarRoles(ventana));
+//        });
+
+
+
         btnGestionInventario.addActionListener(e -> {
             GestionInventario gestionInventario = new GestionInventario(ventana);
             ventana.ponPanel(gestionInventario);
