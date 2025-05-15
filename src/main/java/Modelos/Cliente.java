@@ -2,16 +2,19 @@ package Modelos;
 
 public class Cliente {
 
+    private int idcliente; // Clave primaria
 
-    String campoNombre;
-    String campoCIF;
-    String campoEmail;
-    String campoPersonaDeContacto;
-    String campoDireccion;
-    String campoDescripcion;
+    private String campoNombre;
+    private String campoCIF;
+    private String campoEmail;
+    private String campoPersonaDeContacto;
+    private String campoDireccion;
+    private String campoDescripcion;
 
-    public Cliente(String campoNombre, String campoCIF, String campoEmail, String campoPersonaDeContacto, String campoDireccion, String campoDescripcion) {
-
+    // 🔹 Constructor completo con ID (para consultas y edición)
+    public Cliente(int idcliente, String campoNombre, String campoCIF, String campoEmail,
+                   String campoPersonaDeContacto, String campoDireccion, String campoDescripcion) {
+        this.idcliente = idcliente;
         this.campoNombre = campoNombre;
         this.campoCIF = campoCIF;
         this.campoEmail = campoEmail;
@@ -20,6 +23,21 @@ public class Cliente {
         this.campoDescripcion = campoDescripcion;
     }
 
+    // 🔹 Constructor sin ID (para inserciones nuevas)
+    public Cliente(String campoNombre, String campoCIF, String campoEmail,
+                   String campoPersonaDeContacto, String campoDireccion, String campoDescripcion) {
+        this.campoNombre = campoNombre;
+        this.campoCIF = campoCIF;
+        this.campoEmail = campoEmail;
+        this.campoPersonaDeContacto = campoPersonaDeContacto;
+        this.campoDireccion = campoDireccion;
+        this.campoDescripcion = campoDescripcion;
+    }
+
+    // 🔹 Getters
+    public int getIdcliente() {
+        return idcliente;
+    }
 
     public String getCampoNombre() {
         return campoNombre;
@@ -45,6 +63,10 @@ public class Cliente {
         return campoDescripcion;
     }
 
+    // 🔹 Setters
+    public void setIdcliente(int idcliente) {
+        this.idcliente = idcliente;
+    }
 
     public void setCampoNombre(String campoNombre) {
         this.campoNombre = campoNombre;

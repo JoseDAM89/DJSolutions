@@ -90,4 +90,8 @@ public class ListadosGenerico extends JFrame {
 
         return datos;
     }
+    public JTable getTabla() {
+        return tabla;
+    }
+
 }

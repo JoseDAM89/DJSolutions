@@ -71,18 +71,27 @@ public class ListarClientes {
                     "Editar",
                     e -> {
                         Object[] fila = tablaClientes[0].getFilaSeleccionada();
+
                         if (fila != null) {
                             int id = (int) fila[0];
                             String nombre = (String) fila[1];
                             System.out.println("Editar Cliente con ID: " + id + ", Nombre: " + nombre);
 
+                            int filaSeleccionada = tablaClientes[0].getTabla().getSelectedRow(); // ✅ Añade esta línea
+
                             // Llamamos a EditarGenerico para editar el cliente
                             EditarGenerico.mostrarFormularioDeEdicion(
-                                    "clientes",  // Nombre de la tabla
-                                    columnas,    // Nombres de las columnas
-                                    fila         // Fila seleccionada
+                                    "clientes",
+                                    columnas,
+                                    fila,
+                                    "idcliente",
+                                    fila[0],
+                                    "INTEGER",
+                                    tablaClientes[0].getTabla(),
+                                    filaSeleccionada
                             );
                         }
+
                     }
             );
 

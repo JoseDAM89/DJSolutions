@@ -3,6 +3,9 @@ package Datos;
 import Modelos.Cliente;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClienteDAO {
 
@@ -31,4 +34,108 @@ public class ClienteDAO {
             return false;
         }
     }
+
+    public static List<Cliente> listarTodos() {
+        List<Cliente> lista = new ArrayList<>();
+        String sql = """
+        SELECT idcliente, camponombre, campocif, campoemail,
+               campopersonadecontacto, campodireccion, campodescripcion
+        FROM clientes
+    """;
+
+        try (Connection conn = ConexionBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Cliente cliente = new Cliente(
+                        rs.getInt("idcliente"),
+                        rs.getString("camponombre"),
+                        rs.getString("campocif"),
+                        rs.getString("campoemail"),
+                        rs.getString("campopersonadecontacto"),
+                        rs.getString("campodireccion"),
+                        rs.getString("campodescripcion")
+                );
+                lista.add(cliente);
+            }
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return lista;
+    }
+
+    public static boolean actualizarPorID(Cliente cliente) {
+        String sql = """
+        UPDATE clientes SET
+        camponombre = ?,
+        campocif = ?,
+        campoemail = ?,
+        campopersonadecontacto = ?,
+        campodireccion = ?,
+        campodescripcion = ?
+        WHERE idcliente = ?
+    """;
+
+        try (Connection conn = ConexionBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, cliente.getCampoNombre());
+            stmt.setString(2, cliente.getCampoCIF());
+            stmt.setString(3, cliente.getCampoEmail());
+            stmt.setString(4, cliente.getCampoPersonaDeContacto());
+            stmt.setString(5, cliente.getCampoDireccion());
+            stmt.setString(6, cliente.getCampoDescripcion());
+            stmt.setInt(7, cliente.getIdcliente());
+
+            return stmt.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
+    public static boolean actualizar(Cliente cliente) {
+        String sql = """
+        UPDATE clientes SET
+        campoNombre = ?, campoEmail = ?, campoPersonaDeContacto = ?, campoDireccion = ?, campoDescripcion = ?
+        WHERE campoCIF = ?
+    """;
+        try (Connection conn = ConexionBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, cliente.getCampoNombre());
+            stmt.setString(2, cliente.getCampoEmail());
+            stmt.setString(3, cliente.getCampoPersonaDeContacto());
+            stmt.setString(4, cliente.getCampoDireccion());
+            stmt.setString(5, cliente.getCampoDescripcion());
+            stmt.setString(6, cliente.getCampoCIF()); // CIF como identificador único
+
+            return stmt.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean eliminar(String cif) {
+        String sql = "DELETE FROM clientes WHERE campoCIF = ?";
+        try (Connection conn = ConexionBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, cif);
+            return stmt.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
 }

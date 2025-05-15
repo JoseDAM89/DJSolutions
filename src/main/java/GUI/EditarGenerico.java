@@ -1,6 +1,7 @@
 package GUI;
 
 import Datos.ConexionBD;
+import Modelos.Cliente;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,36 +19,148 @@ public class EditarGenerico {
      * @param columnas Nombres visibles de las columnas (los que ve el usuario).
      * @param fila     Datos actuales de la fila seleccionada.
      */
-    public static void mostrarFormularioDeEdicion(String tabla, String[] columnas, Object[] fila) {
+    public static void mostrarFormularioDeEdicion(String tabla, String[] columnas, Object[] fila,
+                                                  String columnaID, Object idValor, String tipoID,
+                                                  JTable tablaSwing, int filaTabla) {
         JTextField[] campos = new JTextField[fila.length];
         JPanel panel = new JPanel(new GridLayout(fila.length, 2));
 
-        // Creamos los campos de texto para cada dato de la fila
         for (int i = 0; i < fila.length; i++) {
-            panel.add(new JLabel(columnas[i]));  // Etiqueta visible
-            campos[i] = new JTextField(fila[i].toString()); // Valor actual editable
-            panel.add(campos[i]);
+            panel.add(new JLabel(columnas[i]));
+            if (columnas[i].equalsIgnoreCase("Materia Prima")) {
+                JComboBox<String> combo = new JComboBox<>(new String[]{"Sí", "No"});
+                combo.setSelectedItem(fila[i].toString());
+                campos[i] = new JTextField(); // usamos esto como marcador
+                campos[i].setName("comboMateriaPrima");
+                panel.add(combo);
+            } else {
+                campos[i] = new JTextField(fila[i].toString());
+                panel.add(campos[i]);
+            }
         }
 
-        // Mostramos el cuadro de diálogo con el formulario
         int resultado = JOptionPane.showConfirmDialog(null, panel, "Editar Registro",
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
         if (resultado == JOptionPane.OK_OPTION) {
-            // Obtenemos un mapeo entre nombre visible → nombre real en BD
-            Map<String, String> mapeo = generarMapeoColumnas(tabla, columnas);
 
-            // Primera columna: ID (clave primaria)
-            String columnaID = mapeo.getOrDefault(columnas[0], columnas[0]);
-            Object idValor = fila[0]; // Valor actual del ID
+            if (tabla.equalsIgnoreCase("clientes")) {
+                try {
+                    String nombre = "", cif = "", email = "", contacto = "", direccion = "", descripcion = "";
 
-            // Recorremos cada campo (excepto el ID) y actualizamos en la BD
-            for (int i = 1; i < columnas.length; i++) {
-                String columnaBD = mapeo.getOrDefault(columnas[i], columnas[i]); // nombre real en BD
-                actualizarBD(tabla, columnaBD, campos[i].getText(), columnaID, idValor);
+                    for (int i = 0; i < columnas.length; i++) {
+                        String col = columnas[i].toLowerCase();
+                        String valor = campos[i].getText();
+                        switch (col) {
+                            case "nombre" -> nombre = valor;
+                            case "cif" -> cif = valor;
+                            case "email" -> email = valor;
+                            case "persona de contacto" -> contacto = valor;
+                            case "dirección", "direccion" -> direccion = valor;
+                            case "descripción", "descripcion" -> descripcion = valor;
+                        }
+                    }
+
+                    if (cif.length() > 15) {
+                        JOptionPane.showMessageDialog(null, "❌ El CIF no puede tener más de 15 caracteres.");
+                        return;
+                    }
+
+                    Cliente cliente = new Cliente((int) idValor, nombre, cif, email, contacto, direccion, descripcion);
+                    boolean actualizado = Datos.ClienteDAO.actualizarPorID(cliente);
+
+                    if (actualizado) {
+                        tablaSwing.setValueAt(nombre, filaTabla, 1);
+                        tablaSwing.setValueAt(cif, filaTabla, 2);
+                        tablaSwing.setValueAt(email, filaTabla, 3);
+                        tablaSwing.setValueAt(contacto, filaTabla, 4);
+                        tablaSwing.setValueAt(direccion, filaTabla, 5);
+                        tablaSwing.setValueAt(descripcion, filaTabla, 6);
+
+                        JOptionPane.showMessageDialog(null, "✅ Cliente actualizado correctamente.");
+                    } else {
+                        JOptionPane.showMessageDialog(null, "❌ Error al actualizar el cliente.");
+                    }
+
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "❌ Error al procesar los datos del formulario.");
+                    e.printStackTrace();
+                }
+
+            } else if (tabla.equalsIgnoreCase("productos")) {
+                try {
+                    String nombre = "";
+                    double precio = 0.0;
+                    String descripcion = "";
+                    int stock = 0;
+                    boolean materiaPrima = true;
+                    int idMateriaPrima = 0;
+
+                    for (int i = 0; i < columnas.length; i++) {
+                        String col = columnas[i].toLowerCase();
+                        String valor;
+                        if (campos[i].getName() != null && campos[i].getName().equals("comboMateriaPrima")) {
+                            JComboBox combo = (JComboBox) panel.getComponent(i * 2 + 1);
+                            valor = combo.getSelectedItem().toString();
+                        } else {
+                            valor = campos[i].getText();
+                        }
+
+                        switch (col) {
+                            case "nombre" -> nombre = valor;
+                            case "precio" -> precio = Double.parseDouble(valor);
+                            case "descripción", "descripcion" -> descripcion = valor;
+                            case "stock", "cantidad" -> stock = Integer.parseInt(valor);
+                            case "materia prima" -> materiaPrima = valor.equalsIgnoreCase("sí");
+                            case "id materia", "idmateriaprima" -> idMateriaPrima = Integer.parseInt(valor);
+                        }
+                    }
+
+                    Modelos.Producto producto = new Modelos.Producto(
+                            (int) idValor,
+                            nombre,
+                            precio,
+                            descripcion,
+                            stock,
+                            materiaPrima,
+                            idMateriaPrima
+                    );
+
+                    boolean actualizado = Datos.ProductoDAO.actualizarPorID(producto);
+
+                    if (actualizado) {
+                        tablaSwing.setValueAt(nombre, filaTabla, 1);
+                        tablaSwing.setValueAt(precio, filaTabla, 2);
+                        tablaSwing.setValueAt(descripcion, filaTabla, 3);
+                        tablaSwing.setValueAt(stock, filaTabla, 4);
+                        tablaSwing.setValueAt(materiaPrima ? "Sí" : "No", filaTabla, 5);
+                        tablaSwing.setValueAt(idMateriaPrima, filaTabla, 6);
+
+                        JOptionPane.showMessageDialog(null, "✅ Producto actualizado correctamente.");
+                    } else {
+                        JOptionPane.showMessageDialog(null, "❌ Error al actualizar el producto.");
+                    }
+
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "❌ Error al procesar los datos del producto.");
+                    e.printStackTrace();
+                }
+
+            } else {
+                Map<String, String> mapeo = generarMapeoColumnas(tabla, columnas);
+
+                for (int i = 0; i < columnas.length; i++) {
+                    String columnaBD = mapeo.getOrDefault(columnas[i], columnas[i]);
+                    String nuevoValor = campos[i].getText();
+                    actualizarBD(tabla, columnaBD, nuevoValor, columnaID, idValor, tipoID);
+                }
+
+                JOptionPane.showMessageDialog(null, "✅ Registro actualizado correctamente.");
             }
+
         }
     }
+
 
     /**
      * Ejecuta un UPDATE en la base de datos con el nuevo valor para una columna.
@@ -58,20 +171,30 @@ public class EditarGenerico {
      * @param columnaID  Nombre de la columna clave primaria (ej: idcliente).
      * @param idValor    Valor del ID del registro a actualizar.
      */
-    private static void actualizarBD(String tabla, String columna, String nuevoValor, String columnaID, Object idValor) {
+    private static void actualizarBD(String tabla, String columna, String nuevoValor,
+                                     String columnaID, Object idValor, String tipoID) {
         String sql = "UPDATE " + tabla + " SET " + columna + " = ? WHERE " + columnaID + " = ?";
 
         try (Connection conn = ConexionBD.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setObject(1, nuevoValor); // Valor nuevo para la columna
-            stmt.setObject(2, idValor);    // Valor del ID para localizar la fila
+            stmt.setObject(1, nuevoValor);
+
+            // Convertir correctamente el tipo de clave
+            if (tipoID.equalsIgnoreCase("INTEGER")) {
+                stmt.setInt(2, Integer.parseInt(idValor.toString()));
+            } else {
+                stmt.setObject(2, idValor);
+            }
+
             stmt.executeUpdate();
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Error al actualizar: " + e.getMessage());
+            e.printStackTrace();
         }
     }
+
 
     /**
      * Genera un mapa entre los nombres visibles de las columnas y sus nombres reales en la base de datos.
