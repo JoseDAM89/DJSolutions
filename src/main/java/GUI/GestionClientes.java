@@ -1,6 +1,6 @@
 package GUI;
 
-import FuncionesPrincipalesDeClientes.*;
+import FuncionesCliente.*;
 
 import javax.swing.*;
 import java.awt.*;

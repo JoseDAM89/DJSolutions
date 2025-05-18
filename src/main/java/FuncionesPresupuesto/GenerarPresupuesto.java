@@ -1,4 +1,4 @@
-package FuncionesPrincipalesDePresupuestos;
+package FuncionesPresupuesto;
 
 import Modelos.Presupuesto;
 import com.itextpdf.text.*;

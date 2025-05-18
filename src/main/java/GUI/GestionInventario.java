@@ -1,6 +1,6 @@
 package GUI;
 
-import FuncionesPrincipalesDeInventario.*;
+import FuncionesInventario.*;
 
 import javax.swing.*;
 import java.awt.*;

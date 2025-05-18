@@ -1,4 +1,4 @@
-package FuncionesPrincipalesDeClientes;
+package FuncionesCliente;
 
 import Datos.ConexionBD;
 import GUI.ListadosGenerico;

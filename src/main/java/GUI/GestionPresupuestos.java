@@ -1,8 +1,7 @@
 package GUI;
 
-import FuncionesPrincipalesDePresupuestos.GenerarPresupuesto;
-import FuncionesPrincipalesDePresupuestos.HistorialDePresupuestos;
-import FuncionesPrincipalesDePresupuestos.SeleccionarMateriales;
+import FuncionesPresupuesto.GenerarPresupuesto;
+import FuncionesPresupuesto.HistorialDePresupuestos;
 
 import javax.swing.*;
 import java.awt.*;

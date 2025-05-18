@@ -1,4 +1,4 @@
-package FuncionesPrincipalesDeClientes;
+package FuncionesCliente;
 
 import Datos.ClienteDAO;
 import GUI.FormularioGenericoAlta;

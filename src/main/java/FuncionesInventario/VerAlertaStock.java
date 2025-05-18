@@ -1,4 +1,4 @@
-package FuncionesPrincipalesDeInventario;
+package FuncionesInventario;
 
 import javax.swing.*;
 

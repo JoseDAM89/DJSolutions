@@ -1,4 +1,4 @@
-package FuncionesPrincipalesDePresupuestos;
+package FuncionesPresupuesto;
 
 import javax.swing.*;
 
