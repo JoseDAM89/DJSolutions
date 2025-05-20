@@ -15,7 +15,18 @@ import java.sql.ResultSet;
 public class RegistrarUser extends JPanel {
 
     public RegistrarUser(Vprin ventana) {
-        setLayout(new GridLayout(6, 2, 10, 10));
+        setLayout(new BorderLayout(10, 10));
+        setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30)); // padding
+
+        // Título superior
+        JLabel titulo = new JLabel("Registro de nuevo usuario", SwingConstants.CENTER);
+        titulo.setFont(new Font("Arial", Font.BOLD, 18));
+        add(titulo, BorderLayout.NORTH);
+
+        // Panel central con los campos
+        JPanel panelCampos = new JPanel();
+        panelCampos.setLayout(new GridLayout(5, 2, 10, 10)); // 5 filas
+        panelCampos.setBorder(BorderFactory.createTitledBorder("Datos del usuario"));
 
         JLabel lblNombre = new JLabel("Nombre:");
         JTextField txtNombre = new JTextField();
@@ -31,27 +42,33 @@ public class RegistrarUser extends JPanel {
 
         JCheckBox chkAdmin = new JCheckBox("¿Es administrador?");
 
+        panelCampos.add(lblNombre);
+        panelCampos.add(txtNombre);
+
+        panelCampos.add(lblApellido);
+        panelCampos.add(txtApellido);
+
+        panelCampos.add(lblCorreo);
+        panelCampos.add(txtCorreo);
+
+        panelCampos.add(lblPassword);
+        panelCampos.add(txtPassword);
+
+        panelCampos.add(new JLabel()); // vacío
+        panelCampos.add(chkAdmin);
+
+        add(panelCampos, BorderLayout.CENTER);
+
+        // Panel de botones
+        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
         JButton btnRegistrar = new JButton("Registrar");
         JButton btnVolver = new JButton("Volver");
+        panelBotones.add(btnVolver);
+        panelBotones.add(btnRegistrar);
 
-        add(lblNombre);
-        add(txtNombre);
+        add(panelBotones, BorderLayout.SOUTH);
 
-        add(lblApellido);
-        add(txtApellido);
-
-        add(lblCorreo);
-        add(txtCorreo);
-
-        add(lblPassword);
-        add(txtPassword);
-
-        add(new JLabel());
-        add(chkAdmin);
-
-        add(btnVolver);
-        add(btnRegistrar);
-
+        // Lógica de botones
         btnRegistrar.addActionListener(e -> {
             String nombre = txtNombre.getText().trim();
             String apellido = txtApellido.getText().trim();
@@ -60,12 +77,12 @@ public class RegistrarUser extends JPanel {
             boolean esAdmin = chkAdmin.isSelected();
 
             if (nombre.isEmpty() || apellido.isEmpty() || correo.isEmpty() || password.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Rellena todos los campos.");
+                JOptionPane.showMessageDialog(this, "Rellena todos los campos.", "Campos vacíos", JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
             if (correoYaExiste(correo)) {
-                JOptionPane.showMessageDialog(this, "Ese correo ya está registrado.");
+                JOptionPane.showMessageDialog(this, "Ese correo ya está registrado.", "Correo duplicado", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
@@ -84,7 +101,6 @@ public class RegistrarUser extends JPanel {
         btnVolver.addActionListener(e -> ventana.ponPanel(new OpcionesPrincipales(ventana)));
     }
 
-    // Cambiado para usar el modelo Usuario
     public static boolean registrar(Usuario usuario) {
         String hashed = BCrypt.hashpw(usuario.getContrasena(), BCrypt.gensalt());
 
@@ -112,7 +128,7 @@ public class RegistrarUser extends JPanel {
             return rs.next();
         } catch (Exception e) {
             e.printStackTrace();
-            return true; // Por seguridad, asumimos que sí existe si hay error
+            return true; // asumimos que sí existe si hay error
         }
     }
 
