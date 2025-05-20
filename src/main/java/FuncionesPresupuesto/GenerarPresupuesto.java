@@ -4,6 +4,7 @@ import Modelos.Presupuesto;
 import com.itextpdf.text.*;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Image;
+import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.*;
 
 import javax.swing.*;
@@ -16,6 +17,8 @@ import java.util.ArrayList;
 
 public class GenerarPresupuesto extends JPanel {
 
+    private static final String CALLE = "Calle delmonte 78";
+    private static final String CIUDAD = "MADRID";
     private static final String NOMBRE_EMPRESA = "DJSolutions S.A.";
     private static final String EMAIL_EMPRESA = "djsolutionssa@gmail.com";
     private static final String TELEFONO_EMPRESA = "123 456 789";
@@ -82,11 +85,18 @@ public class GenerarPresupuesto extends JPanel {
             return;
         }
 
-        // Pedir nombre del cliente o empresa
+        // Formulario para el cliente
         JTextField campoNombreCliente = new JTextField();
+        JTextField campoDireccionCliente = new JTextField();
+        JTextField campoTelefonoCliente = new JTextField();
+
         JPanel formularioCliente = new JPanel(new GridLayout(0, 1));
         formularioCliente.add(new JLabel("Nombre del cliente o empresa:"));
         formularioCliente.add(campoNombreCliente);
+        formularioCliente.add(new JLabel("Dirección:"));
+        formularioCliente.add(campoDireccionCliente);
+        formularioCliente.add(new JLabel("Teléfono:"));
+        formularioCliente.add(campoTelefonoCliente);
 
         int opcion = JOptionPane.showConfirmDialog(this, formularioCliente, "Datos del Cliente", JOptionPane.OK_CANCEL_OPTION);
         if (opcion != JOptionPane.OK_OPTION || campoNombreCliente.getText().trim().isEmpty()) {
@@ -95,50 +105,89 @@ public class GenerarPresupuesto extends JPanel {
         }
 
         String nombreCliente = campoNombreCliente.getText().trim();
+        String direccionCliente = campoDireccionCliente.getText().trim();
+        String telefonoCliente = campoTelefonoCliente.getText().trim();
 
         try {
-            // Ruta
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HHmmss");
             String timestamp = LocalDateTime.now().format(formatter);
             String nombreArchivo = "Presupuesto_" + timestamp + ".pdf";
             String destino = System.getProperty("user.home") + "/Downloads/" + nombreArchivo;
 
-            // Documento
-            Document doc = new Document(PageSize.A4, 50, 50, 60, 50);
+            Document doc = new Document(PageSize.A4, 50, 50, 70, 50);
             PdfWriter writer = PdfWriter.getInstance(doc, new FileOutputStream(destino));
-            writer.setPageEvent(new HeaderFooter(NOMBRE_EMPRESA, EMAIL_EMPRESA, TELEFONO_EMPRESA));
+            writer.setPageEvent(new HeaderFooter(NOMBRE_EMPRESA, EMAIL_EMPRESA, TELEFONO_EMPRESA)); // Pie de página
             doc.open();
 
-            // LOGO
+            // Cabecera con logo y datos
+            PdfPTable cabecera = new PdfPTable(2);
+            cabecera.setWidths(new float[]{2f, 1f});
+            cabecera.setWidthPercentage(100);
+
+            PdfPCell datosEmpresa = new PdfPCell();
+            datosEmpresa.setBorder(Rectangle.NO_BORDER);
+            datosEmpresa.addElement(new Paragraph(NOMBRE_EMPRESA, new Font(Font.FontFamily.HELVETICA, 14, Font.BOLD)));
+            datosEmpresa.addElement(new Paragraph(CALLE, new Font(Font.FontFamily.HELVETICA, 10)));
+            datosEmpresa.addElement(new Paragraph(CIUDAD, new Font(Font.FontFamily.HELVETICA, 10)));
+            datosEmpresa.addElement(new Paragraph(EMAIL_EMPRESA, new Font(Font.FontFamily.HELVETICA, 10)));
+            datosEmpresa.addElement(new Paragraph(TELEFONO_EMPRESA, new Font(Font.FontFamily.HELVETICA, 10)));
+
+            cabecera.addCell(datosEmpresa);
+
             try {
-                Image logo = Image.getInstance("src/resources/logo.png");
-                logo.scaleToFit(150, 90);
-                logo.setAlignment(Image.ALIGN_RIGHT);
-                doc.add(logo);
+                Image logo = Image.getInstance("src/resources/Logo.png");
+                logo.scaleToFit(120, 60);
+                PdfPCell logoCell = new PdfPCell(logo, false);
+                logoCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                logoCell.setVerticalAlignment(Element.ALIGN_TOP);
+                logoCell.setBorder(Rectangle.NO_BORDER);
+                cabecera.addCell(logoCell);
             } catch (Exception e) {
-                System.out.println("No se pudo cargar el logo.");
+                PdfPCell vacia = new PdfPCell(new Phrase(""));
+                vacia.setBorder(Rectangle.NO_BORDER);
+                cabecera.addCell(vacia);
             }
 
-            // CABECERA
-            Paragraph titulo = new Paragraph("Presupuesto Comercial", new Font(Font.FontFamily.HELVETICA, 22, Font.BOLD));
-            titulo.setAlignment(Element.ALIGN_LEFT);
-            doc.add(titulo);
-            doc.add(new Paragraph("Fecha: " + LocalDate.now()));
-            doc.add(new Paragraph("Cliente: " + nombreCliente));
-            doc.add(new Paragraph("Generado por: " + NOMBRE_EMPRESA));
+            doc.add(cabecera);
             doc.add(Chunk.NEWLINE);
 
-            // TABLA
+            // Título
+            Paragraph titulo = new Paragraph("Presupuesto", new Font(Font.FontFamily.HELVETICA, 16, Font.BOLD));
+            titulo.setAlignment(Element.ALIGN_CENTER);
+            doc.add(titulo);
+            doc.add(Chunk.NEWLINE);
+
+            // Datos cliente
+            PdfPTable datosCliente = new PdfPTable(2);
+            datosCliente.setWidths(new float[]{1f, 2f});
+            datosCliente.setWidthPercentage(80);
+            datosCliente.setHorizontalAlignment(Element.ALIGN_LEFT);
+
+            datosCliente.addCell(getCell("Para:", Font.BOLD));
+            datosCliente.addCell(getCell(nombreCliente, Font.NORMAL));
+            datosCliente.addCell(getCell("Dirección:", Font.BOLD));
+            datosCliente.addCell(getCell(direccionCliente, Font.NORMAL));
+            datosCliente.addCell(getCell("Teléfono:", Font.BOLD));
+            datosCliente.addCell(getCell(telefonoCliente, Font.NORMAL));
+            datosCliente.addCell(getCell("Fecha:", Font.BOLD));
+            datosCliente.addCell(getCell(LocalDate.now().toString(), Font.NORMAL));
+            datosCliente.addCell(getCell("Presupuesto ID:", Font.BOLD));
+            datosCliente.addCell(getCell(timestamp, Font.NORMAL));
+
+            doc.add(datosCliente);
+            doc.add(Chunk.NEWLINE);
+
+            // Tabla de productos
             PdfPTable tabla = new PdfPTable(5);
             tabla.setWidthPercentage(100);
-            tabla.setWidths(new float[]{1.2f, 3, 1.2f, 1.5f, 1.5f});
+            tabla.setWidths(new float[]{1.5f, 3f, 1f, 1.5f, 1.5f});
+            String[] columnas = {"ID", "Descripción", "Cantidad", "Precio Unitario", "Total"};
 
-            String[] columnas = {"ID", "Producto", "Cantidad", "Precio Unitario", "Subtotal"};
             for (String col : columnas) {
-                PdfPCell celda = new PdfPCell(new Phrase(col, new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD)));
+                PdfPCell celda = new PdfPCell(new Phrase(col, new Font(Font.FontFamily.HELVETICA, 11, Font.BOLD)));
                 celda.setBackgroundColor(BaseColor.LIGHT_GRAY);
                 celda.setHorizontalAlignment(Element.ALIGN_CENTER);
-                celda.setPadding(8);
+                celda.setPadding(5);
                 tabla.addCell(celda);
             }
 
@@ -147,32 +196,30 @@ public class GenerarPresupuesto extends JPanel {
                 double subtotal = p.cantidad * p.precio;
                 total += subtotal;
 
-                tabla.addCell(String.valueOf(p.id));
-                tabla.addCell(p.nombre);
-                tabla.addCell(String.valueOf(p.cantidad));
-                tabla.addCell(String.format("%.2f €", p.precio));
-                tabla.addCell(String.format("%.2f €", subtotal));
+                tabla.addCell(getCell(String.valueOf(p.id), Font.NORMAL));
+                tabla.addCell(getCell(p.nombre, Font.NORMAL));
+                tabla.addCell(getCell(String.valueOf(p.cantidad), Font.NORMAL));
+                tabla.addCell(getCell(String.format("%.2f €", p.precio), Font.NORMAL));
+                tabla.addCell(getCell(String.format("%.2f €", subtotal), Font.NORMAL));
             }
 
             doc.add(tabla);
+
+            // Total
             doc.add(Chunk.NEWLINE);
+            PdfPTable totalTabla = new PdfPTable(2);
+            totalTabla.setWidths(new float[]{6, 2});
+            totalTabla.setWidthPercentage(50);
+            totalTabla.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            totalTabla.addCell(getCell("TOTAL", Font.BOLD, Element.ALIGN_RIGHT));
+            totalTabla.addCell(getCell(String.format("%.2f €", total), Font.BOLD, Element.ALIGN_RIGHT));
+            doc.add(totalTabla);
 
-            // TOTALES
-            Paragraph totalParrafo = new Paragraph("Total sin IVA: " + String.format("%.2f", total) + " €", new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD));
-            Paragraph iva = new Paragraph("IVA (21%): " + String.format("%.2f", total * 0.21) + " €", new Font(Font.FontFamily.HELVETICA, 12));
-            Paragraph totalConIVA = new Paragraph("Total con IVA: " + String.format("%.2f", total * 1.21) + " €", new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD, BaseColor.BLUE));
-
-            doc.add(totalParrafo);
-            doc.add(iva);
-            doc.add(totalConIVA);
-
-            // PIE
             doc.add(Chunk.NEWLINE);
-            doc.add(new Paragraph("Este presupuesto es válido por 15 días.", new Font(Font.FontFamily.HELVETICA, 10, Font.ITALIC)));
-            doc.add(new Paragraph("Gracias por confiar en nosotros."));
+            doc.add(new Paragraph("Este presupuesto es válido durante 15 días.", new Font(Font.FontFamily.HELVETICA, 9, Font.ITALIC)));
+            doc.add(new Paragraph("Gracias por su confianza.", new Font(Font.FontFamily.HELVETICA, 10)));
 
             doc.close();
-
             JOptionPane.showMessageDialog(this, "Presupuesto generado en:\n" + destino);
 
         } catch (Exception ex) {
@@ -180,6 +227,20 @@ public class GenerarPresupuesto extends JPanel {
             JOptionPane.showMessageDialog(this, "Error al generar PDF: " + ex.getMessage());
         }
     }
+
+
+    private PdfPCell getCell(String texto, int estilo) {
+        return getCell(texto, estilo, Element.ALIGN_LEFT);
+    }
+
+    private PdfPCell getCell(String texto, int estilo, int alineacion) {
+        PdfPCell cell = new PdfPCell(new Phrase(texto, new Font(Font.FontFamily.HELVETICA, 10, estilo)));
+        cell.setBorder(Rectangle.NO_BORDER);
+        cell.setHorizontalAlignment(alineacion);
+        cell.setPadding(4);
+        return cell;
+    }
+
 }
 
 // Clase para encabezado/pie de página
