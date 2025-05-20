@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class GenerarPresupuesto extends JPanel {
 
     private static final String NOMBRE_EMPRESA = "DJSolutions S.A.";
-    private static final String EMAIL_EMPRESA = "contacto@tuempresa.com";
+    private static final String EMAIL_EMPRESA = "djsolutionssa@gmail.com";
     private static final String TELEFONO_EMPRESA = "123 456 789";
 
     private final ArrayList<Presupuesto> productos = new ArrayList<>();
@@ -82,6 +82,20 @@ public class GenerarPresupuesto extends JPanel {
             return;
         }
 
+        // Pedir nombre del cliente o empresa
+        JTextField campoNombreCliente = new JTextField();
+        JPanel formularioCliente = new JPanel(new GridLayout(0, 1));
+        formularioCliente.add(new JLabel("Nombre del cliente o empresa:"));
+        formularioCliente.add(campoNombreCliente);
+
+        int opcion = JOptionPane.showConfirmDialog(this, formularioCliente, "Datos del Cliente", JOptionPane.OK_CANCEL_OPTION);
+        if (opcion != JOptionPane.OK_OPTION || campoNombreCliente.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Debe introducir un nombre válido para el cliente.");
+            return;
+        }
+
+        String nombreCliente = campoNombreCliente.getText().trim();
+
         try {
             // Ruta
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HHmmss");
@@ -110,7 +124,7 @@ public class GenerarPresupuesto extends JPanel {
             titulo.setAlignment(Element.ALIGN_LEFT);
             doc.add(titulo);
             doc.add(new Paragraph("Fecha: " + LocalDate.now()));
-            doc.add(new Paragraph("Cliente: Empresa Cliente XYZ S.L."));
+            doc.add(new Paragraph("Cliente: " + nombreCliente));
             doc.add(new Paragraph("Generado por: " + NOMBRE_EMPRESA));
             doc.add(Chunk.NEWLINE);
 
@@ -166,11 +180,9 @@ public class GenerarPresupuesto extends JPanel {
             JOptionPane.showMessageDialog(this, "Error al generar PDF: " + ex.getMessage());
         }
     }
-
 }
 
-
-
+// Clase para encabezado/pie de página
 class HeaderFooter extends PdfPageEventHelper {
     private final String empresa;
     private final String email;
@@ -193,4 +205,3 @@ class HeaderFooter extends PdfPageEventHelper {
                 document.bottom() - 10, 0);
     }
 }
-
