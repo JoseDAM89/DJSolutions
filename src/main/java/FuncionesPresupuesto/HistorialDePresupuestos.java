@@ -86,26 +86,73 @@ public class HistorialDePresupuestos extends JPanel {
 
         item.add(texto, BorderLayout.CENTER);
 
-        item.addMouseListener(new MouseAdapter() {
+        // Panel botones ocultos
+        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 5));
+        panelBotones.setOpaque(false);
+        panelBotones.setVisible(false);  // Oculto por defecto
+
+        JButton btnVer = new JButton("Ver PDF");
+        btnVer.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        btnVer.setFocusable(false);
+        btnVer.addActionListener(e -> {
+            try {
+                Desktop.getDesktop().open(archivo);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(item, "No se pudo abrir el archivo.");
+            }
+        });
+
+        JButton btnEnviar = new JButton("Enviar PDF");
+        btnEnviar.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        btnEnviar.setFocusable(false);
+        btnEnviar.addActionListener(e -> {
+            String correo = JOptionPane.showInputDialog(item, "Introduce el correo destino:");
+            if (correo != null && !correo.trim().isEmpty()) {
+                try {
+                    Correo.EnviarCorreo.enviarPresupuestoPorCorreo(correo, archivo);
+                    JOptionPane.showMessageDialog(item, "Correo enviado correctamente.");
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(item, "Error enviando el correo: " + ex.getMessage());
+                }
+            } else {
+                JOptionPane.showMessageDialog(item, "Correo no válido.");
+            }
+        });
+
+        panelBotones.add(btnVer);
+        panelBotones.add(btnEnviar);
+
+        item.add(panelBotones, BorderLayout.EAST);
+
+        MouseAdapter mouseListener = new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
+                panelBotones.setVisible(true);
                 mostrarPreview(previewWindow, archivo, e.getLocationOnScreen());
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                previewWindow.setVisible(false);
-            }
+                // Comprobar si el mouse está dentro del item o del panelBotones
+                Point p = e.getLocationOnScreen();
+                Rectangle boundsItem = item.getBounds();
+                Point locItem = item.getLocationOnScreen();
+                Rectangle boundsPanelBotones = panelBotones.getBounds();
+                Point locPanelBotones = panelBotones.getLocationOnScreen();
 
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                try {
-                    Desktop.getDesktop().open(archivo);
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(item, "No se pudo abrir el archivo.");
+                boundsItem.setLocation(locItem);
+                boundsPanelBotones.setLocation(locPanelBotones);
+
+                if (!boundsItem.contains(p) && !boundsPanelBotones.contains(p)) {
+                    panelBotones.setVisible(false);
+                    previewWindow.setVisible(false);
                 }
             }
-        });
+        };
+
+        item.addMouseListener(mouseListener);
+        panelBotones.addMouseListener(mouseListener);
 
         return item;
     }
