@@ -74,4 +74,20 @@ public class ProductoDAO {
         }
     }
 
+    public static boolean eliminarPorID(int codproduct) {
+        String sql = "DELETE FROM productos WHERE codproduct = ?";
+
+        try (Connection conn = ConexionBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, codproduct);
+            return stmt.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
 }

@@ -1,93 +1,97 @@
 package FuncionesInventario;
 
-import Datos.ConexionBD;
+import Datos.ProductoDAO;
+import Modelos.Producto;
 import GUI.ListadosGenerico;
 import GUI.EditarGenerico;
+import GUI.EliminarGenerico;
 
 import javax.swing.*;
-import java.sql.*;
-import java.util.ArrayList;
+import java.util.List;
 
 public class ListarProductos {
 
     public void mostrarVentana() {
-        Connection conexion = null;
-        PreparedStatement sentencia = null;
-        ResultSet resultado = null;
+        // 1. Obtener todos los productos desde la base de datos usando DAO
+        List<Producto> productos = ProductoDAO.listarTodos();
 
-        try {
-            conexion = ConexionBD.conectar();
+        // 2. Definir nombres de columnas (coinciden con lo mostrado en la tabla)
+        String[] columnas = {
+                "ID", "Nombre", "Precio", "Descripción", "Stock", "Materia Prima", "ID Materia"
+        };
 
-            String sql = """
-                SELECT codproduct, nombreproduct, precioproduct, descripcionproduct,
-                       stockproduct, materiaprima, idmateriaprima
-                FROM productos
-            """;
-
-            sentencia = conexion.prepareStatement(sql);
-            resultado = sentencia.executeQuery();
-
-            ArrayList<Object[]> listaDatos = new ArrayList<>();
-            while (resultado.next()) {
-                Object[] fila = new Object[] {
-                        resultado.getInt("codproduct"),
-                        resultado.getString("nombreproduct"),
-                        resultado.getDouble("precioproduct"),
-                        resultado.getString("descripcionproduct"),
-                        resultado.getInt("stockproduct"),
-                        resultado.getBoolean("materiaprima") ? "Sí" : "No",
-                        resultado.getInt("idmateriaprima")
-                };
-                listaDatos.add(fila);
-            }
-
-            Object[][] datos = listaDatos.toArray(new Object[0][]);
-
-            // Aquí deben coincidir exactamente con el orden de los campos
-            String[] columnas = {
-                    "ID", "Nombre", "Precio", "Descripción", "Stock", "Materia Prima", "ID Materia"
-            };
-
-            final ListadosGenerico[] tablaProductos = new ListadosGenerico[1];
-
-            ListadosGenerico tabla = new ListadosGenerico(
-                    "Listado de Productos",
-                    columnas,
-                    datos,
-                    "Editar",
-                    e -> {
-                        Object[] fila = tablaProductos[0].getFilaSeleccionada();
-                        if (fila != null) {
-                            int filaSeleccionada = tablaProductos[0].getTabla().getSelectedRow();
-
-                            EditarGenerico.mostrarFormularioDeEdicion(
-                                    "productos",
-                                    columnas,
-                                    fila,
-                                    "codproduct",
-                                    fila[0],
-                                    "INTEGER",
-                                    tablaProductos[0].getTabla(),
-                                    filaSeleccionada
-                            );
-                        }
-
-                    }
-            );
-
-            tablaProductos[0] = tabla;
-            tabla.setVisible(true);
-
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(null, "Error al obtener productos: " + ex.getMessage());
-        } finally {
-            try {
-                if (resultado != null) resultado.close();
-                if (sentencia != null) sentencia.close();
-                if (conexion != null) conexion.close();
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
+        // 3. Convertir la lista de productos en una matriz para JTable
+        Object[][] datos = new Object[productos.size()][columnas.length];
+        for (int i = 0; i < productos.size(); i++) {
+            Producto p = productos.get(i);
+            datos[i][0] = p.getCodproduct();
+            datos[i][1] = p.getNombreproduct();
+            datos[i][2] = p.getPrecioproduct();
+            datos[i][3] = p.getDescripcionproduct();
+            datos[i][4] = p.getStockproduct();
+            datos[i][5] = p.isMateriaprima() ? "Sí" : "No";
+            datos[i][6] = p.getIdmateriaprima();
         }
+
+        // 4. Crear tabla reutilizable con botón "Editar"
+        final ListadosGenerico[] tablaProductos = new ListadosGenerico[1];
+
+        ListadosGenerico tabla = new ListadosGenerico(
+                "Listado de Productos",
+                columnas,
+                datos,
+                "Editar",
+                e -> {
+                    Object[] fila = tablaProductos[0].getFilaSeleccionada();
+                    int filaSeleccionada = tablaProductos[0].getTabla().getSelectedRow();
+
+                    if (fila != null && filaSeleccionada != -1) {
+                        int id = (int) fila[0];
+                        String nombre = (String) fila[1];
+                        System.out.println("Editar Producto con ID: " + id + ", Nombre: " + nombre);
+
+                        // Llamar al formulario genérico de edición
+                        EditarGenerico.mostrarFormularioDeEdicion(
+                                "productos",
+                                columnas,
+                                fila,
+                                "codproduct",
+                                fila[0],
+                                "INTEGER",
+                                tablaProductos[0].getTabla(),
+                                filaSeleccionada
+                        );
+                    }
+                }
+        );
+
+        // 5. Crear botón "Eliminar"
+        JButton botonEliminar = new JButton("Eliminar");
+        botonEliminar.addActionListener(e -> {
+            int filaSeleccionada = tabla.getTabla().getSelectedRow();
+            if (filaSeleccionada != -1) {
+                Object[] fila = tabla.getFilaSeleccionada();
+                EliminarGenerico.eliminarRegistro(
+                        "productos",
+                        "codproduct",
+                        fila[0],
+                        "INTEGER",
+                        tabla.getTabla(),
+                        filaSeleccionada
+                );
+            } else {
+                JOptionPane.showMessageDialog(tabla, "Selecciona un producto para eliminar.");
+            }
+        });
+
+        // 6. Añadir ambos botones en el panel inferior
+        JPanel panelBotones = new JPanel();
+        panelBotones.add(tabla.getBotonAccion());  // Botón Editar
+        panelBotones.add(botonEliminar);           // Botón Eliminar
+        tabla.add(panelBotones, java.awt.BorderLayout.SOUTH);
+
+        // 7. Mostrar tabla
+        tablaProductos[0] = tabla;
+        tabla.setVisible(true);
     }
 }

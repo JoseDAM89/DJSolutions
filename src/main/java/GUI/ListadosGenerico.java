@@ -93,5 +93,9 @@ public class ListadosGenerico extends JFrame {
     public JTable getTabla() {
         return tabla;
     }
+    public JButton getBotonAccion() {
+        return botonAccion;
+    }
+
 
 }

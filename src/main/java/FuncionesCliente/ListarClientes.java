@@ -1,113 +1,98 @@
 package FuncionesCliente;
 
-import Datos.ConexionBD;
+import Datos.ClienteDAO;
 import GUI.ListadosGenerico;
 import GUI.EditarGenerico;
+import GUI.EliminarGenerico;
+import Modelos.Cliente;
 
-import java.sql.*;
-import java.util.ArrayList;
 import javax.swing.*;
+import java.util.List;
 
-/**
- * Clase que se encarga de listar todos los clientes de la base de datos
- * y mostrarlos en una tabla reutilizable (ListadosTablas).
- */
 public class ListarClientes {
 
-    /**
-     * Este método se ejecuta cuando el usuario pulsa el botón "Listar Clientes".
-     */
     public void mostrarVentana() {
-        Connection conexion = null;
-        PreparedStatement sentencia = null;
-        ResultSet resultado = null;
+        // 1. Obtener todos los clientes usando el DAO (ya conectado a la base de datos)
+        List<Cliente> clientes = ClienteDAO.listarTodos();
 
-        try {
-            // Establecer la conexión con la base de datos
-            conexion = ConexionBD.conectar();
+        // 2. Definir nombres visibles de columnas (como se mostrarán en la tabla)
+        String[] columnas = {
+                "ID", "Nombre", "CIF", "Email", "Persona de Contacto", "Dirección", "Descripción"
+        };
 
-            // Consulta SQL para obtener los datos de los clientes
-            String sql = """
-                         SELECT IdCliente, campoNombre, campoCIF, campoEmail,
-                                campoPersonaDeContacto, campoDireccion, campoDescripcion
-                         FROM clientes
-                         """;
+        // 3. Convertir lista de objetos Cliente a una matriz de datos para JTable
+        Object[][] datos = new Object[clientes.size()][columnas.length];
 
-            sentencia = conexion.prepareStatement(sql);
-            resultado = sentencia.executeQuery();
-
-            // Guardar los resultados en una lista
-            ArrayList<Object[]> listaDatos = new ArrayList<>();
-            while (resultado.next()) {
-                Object[] fila = new Object[]{
-                        resultado.getInt("IdCliente"),
-                        resultado.getString("campoNombre"),
-                        resultado.getString("campoCIF"),
-                        resultado.getString("campoEmail"),
-                        resultado.getString("campoPersonaDeContacto"),
-                        resultado.getString("campoDireccion"),
-                        resultado.getString("campoDescripcion")
-                };
-                listaDatos.add(fila);
-            }
-
-            // Convertimos la lista en un array bidimensional
-            Object[][] datos = listaDatos.toArray(new Object[0][]);
-
-            // Nombres de las columnas que se mostrarán
-            String[] columnas = {
-                    "ID", "Nombre", "CIF", "Email",
-                    "Persona de Contacto", "Dirección", "Descripción"
-            };
-
-            // Creamos un array final para poder usar dentro del ActionListener
-            final ListadosGenerico[] tablaClientes = new ListadosGenerico[1];
-
-            // Creamos la tabla con botón Editar
-            ListadosGenerico tabla = new ListadosGenerico(
-                    "Listado de Clientes",
-                    columnas,
-                    datos,
-                    "Editar",
-                    e -> {
-                        Object[] fila = tablaClientes[0].getFilaSeleccionada();
-
-                        if (fila != null) {
-                            int id = (int) fila[0];
-                            String nombre = (String) fila[1];
-                            System.out.println("Editar Cliente con ID: " + id + ", Nombre: " + nombre);
-
-                            int filaSeleccionada = tablaClientes[0].getTabla().getSelectedRow(); // ✅ Añade esta línea
-
-                            // Llamamos a EditarGenerico para editar el cliente
-                            EditarGenerico.mostrarFormularioDeEdicion(
-                                    "clientes",
-                                    columnas,
-                                    fila,
-                                    "idcliente",
-                                    fila[0],
-                                    "INTEGER",
-                                    tablaClientes[0].getTabla(),
-                                    filaSeleccionada
-                            );
-                        }
-
-                    }
-            );
-
-            tablaClientes[0] = tabla;
-            tabla.setVisible(true);
-
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(null, "Error al obtener clientes: " + ex.getMessage());
-        } finally {
-            try {
-                if (resultado != null) resultado.close();
-                if (sentencia != null) sentencia.close();
-                if (conexion != null) conexion.close();
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
+        for (int i = 0; i < clientes.size(); i++) {
+            Cliente c = clientes.get(i);
+            datos[i][0] = c.getIdcliente();
+            datos[i][1] = c.getCampoNombre();
+            datos[i][2] = c.getCampoCIF();
+            datos[i][3] = c.getCampoEmail();
+            datos[i][4] = c.getCampoPersonaDeContacto();
+            datos[i][5] = c.getCampoDireccion();
+            datos[i][6] = c.getCampoDescripcion();
         }
+
+        // 4. Crear tabla reutilizable con botón "Editar"
+        final ListadosGenerico[] tablaClientes = new ListadosGenerico[1];
+
+        ListadosGenerico tabla = new ListadosGenerico(
+                "Listado de Clientes",
+                columnas,
+                datos,
+                "Editar",
+                e -> {
+                    Object[] fila = tablaClientes[0].getFilaSeleccionada();
+                    int filaSeleccionada = tablaClientes[0].getTabla().getSelectedRow();
+
+                    if (fila != null && filaSeleccionada >= 0) {
+                        int id = (int) fila[0];
+                        String nombre = (String) fila[1];
+                        System.out.println("Editar Cliente con ID: " + id + ", Nombre: " + nombre);
+
+                        EditarGenerico.mostrarFormularioDeEdicion(
+                                "clientes",
+                                columnas,
+                                fila,
+                                "idcliente",
+                                fila[0],
+                                "INTEGER",
+                                tablaClientes[0].getTabla(),
+                                filaSeleccionada
+                        );
+                    }
+                }
+        );
+
+        // 5. Botón adicional "Eliminar"
+        JButton botonEliminar = new JButton("Eliminar");
+        botonEliminar.addActionListener(e -> {
+            Object[] fila = tabla.getFilaSeleccionada();
+            int filaSeleccionada = tabla.getTabla().getSelectedRow();
+
+            if (fila != null && filaSeleccionada >= 0) {
+                EliminarGenerico.eliminarRegistro(
+                        "clientes",
+                        "idcliente",
+                        fila[0],
+                        "INTEGER",
+                        tabla.getTabla(),
+                        filaSeleccionada
+                );
+            } else {
+                JOptionPane.showMessageDialog(tabla, "Selecciona un cliente para eliminar.");
+            }
+        });
+
+        // 6. Panel inferior con los botones
+        JPanel panelBotones = new JPanel();
+        panelBotones.add(tabla.getBotonAccion());  // Botón Editar
+        panelBotones.add(botonEliminar);           // Botón Eliminar
+        tabla.add(panelBotones, java.awt.BorderLayout.SOUTH);
+
+        // 7. Mostrar la tabla
+        tablaClientes[0] = tabla;
+        tabla.setVisible(true);
     }
 }

@@ -98,6 +98,22 @@ public class ClienteDAO {
         }
     }
 
+    public static boolean eliminarPorID(int idcliente) {
+        String sql = "DELETE FROM clientes WHERE idcliente = ?";
+
+        try (Connection conn = ConexionBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, idcliente);
+            return stmt.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
 
     public static boolean actualizar(Cliente cliente) {
         String sql = """
