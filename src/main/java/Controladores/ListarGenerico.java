@@ -1,6 +1,6 @@
 package Controladores;
 
-import GUI.ListadosGenerico;
+import gui.ListadosGenerico;
 
 import javax.swing.*;
 import java.awt.*;

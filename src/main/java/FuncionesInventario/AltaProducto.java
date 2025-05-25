@@ -2,7 +2,7 @@ package FuncionesInventario;
 
 import Controladores.AltaGenerico;
 import Controladores.ValidadorGenerico;
-import GUI.FormularioGenericoAlta;
+import gui.FormularioGenericoAlta;
 
 import javax.swing.*;
 import java.awt.event.ActionListener;

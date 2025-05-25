@@ -1,8 +1,8 @@
 package FuncionesInventario;
 
 import Datos.ProductoDAO;
-import GUI.EditarGenerico;
-import GUI.EliminarGenerico;
+import gui.EditarGenerico;
+import gui.EliminarGenerico;
 import Modelos.Producto;
 
 import javax.swing.*;

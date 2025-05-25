@@ -10,17 +10,17 @@ import FuncionesPresupuesto.HistorialDePresupuestos;
 import FuncionesPresupuesto.SeleccionarMateriales;
 import GestionDeUsuarios.RegistrarUser;
 import GestionDeUsuarios.VerUsuarios;
-import JSWING.component.Header;
-import JSWING.component.Menu;
-import JSWING.event.EventMenuSelected;
-import JSWING.event.EventShowPopupMenu;
-import JSWING.form.Form1;
-import JSWING.form.Form_Home;
-import JSWING.form.MainForm;
-import JSWING.swing.MenuItem;
-import JSWING.swing.PopupMenu;
-import JSWING.swing.icon.GoogleMaterialDesignIcons;
-import JSWING.swing.icon.IconFontSwing;
+import gui.componentes.Header;
+import gui.componentes.Menu;
+import gui.eventos.EventMenuSelected;
+import gui.eventos.EventShowPopupMenu;
+import gui.formularios.Form1;
+import gui.formularios.Form_Home;
+import gui.formularios.MainForm;
+import gui.swing.MenuItem;
+import gui.swing.PopupMenu;
+import gui.swing.iconos.GoogleMaterialDesignIcons;
+import gui.swing.iconos.IconFontSwing;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,7 +31,7 @@ import org.jdesktop.animation.timing.TimingTargetAdapter;
 
 import javax.swing.*;
 
-import GUI.LoginDialog;
+import gui.LoginDialog;
 
 public class Main extends javax.swing.JFrame {
 
@@ -162,7 +162,7 @@ public class Main extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     private void initComponents() {
 
-        bg = new JSWING.swing.PanelTransparent();
+        bg = new gui.swing.PanelTransparent();
 
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(false);
@@ -219,5 +219,5 @@ public class Main extends javax.swing.JFrame {
         });
     }
 
-    private JSWING.swing.PanelTransparent bg;
+    private gui.swing.PanelTransparent bg;
 }

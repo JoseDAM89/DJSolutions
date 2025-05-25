@@ -1,7 +1,6 @@
 package GestionDeUsuarios;
 
 import Datos.ConexionBD;
-import GUI.EditarGenerico;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;

@@ -6,8 +6,7 @@ import FuncionesInventario.AltaProducto;
 import FuncionesInventario.ListarProductos;
 import GestionDeUsuarios.RegistrarUser;
 import GestionDeUsuarios.VerUsuarios;
-import GUI.Vprin;
-import GUI.FormularioGenericoAlta;
+import gui.Vprin;
 
 import javax.swing.*;
 

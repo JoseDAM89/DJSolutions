@@ -1,9 +1,8 @@
 package FuncionesCliente;
 
-import Controladores.ListarGenerico;
 import Datos.ClienteDAO;
-import GUI.EditarGenerico;
-import GUI.EliminarGenerico;
+import gui.EditarGenerico;
+import gui.EliminarGenerico;
 import Modelos.Cliente;
 
 import javax.swing.*;
