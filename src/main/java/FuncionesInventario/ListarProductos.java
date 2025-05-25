@@ -1,25 +1,27 @@
 package FuncionesInventario;
 
-import Controladores.ListarGenerico;
 import Datos.ProductoDAO;
 import GUI.EditarGenerico;
 import GUI.EliminarGenerico;
 import Modelos.Producto;
 
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.util.List;
 
 public class ListarProductos {
 
-    public void mostrarVentana() {
-        // 1. Obtener todos los productos desde el DAO
+    public JPanel mostrarVentana() {
+        // 1. Obtener productos
         List<Producto> productos = ProductoDAO.listarTodos();
 
-        // 2. Definir los nombres de columnas visibles en pantalla
+        // 2. Columnas
         String[] columnas = {
                 "ID", "Nombre", "Precio", "Descripción", "Stock", "Materia Prima", "ID Materia"
         };
 
-        // 3. Convertir la lista a una matriz para la JTable
+        // 3. Convertir datos
         Object[][] datos = new Object[productos.size()][columnas.length];
         for (int i = 0; i < productos.size(); i++) {
             Producto p = productos.get(i);
@@ -32,59 +34,94 @@ public class ListarProductos {
             datos[i][6] = p.getIdmateriaprima();
         }
 
-        // 4. Mostrar usando el controlador genérico
-        ListarGenerico.mostrarListado(
-                "productos",
-                datos,
-                columnas,
+        // 4. Modelo tabla
+        DefaultTableModel modelo = new DefaultTableModel(datos, columnas) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // evitar editar directamente
+            }
+        };
 
-                // Acción Editar
-                e -> {
-                    var tabla = (javax.swing.JTable) ((javax.swing.JButton) e.getSource())
-                            .getParent().getParent().getComponent(1).getComponentAt(1, 1);
-                    int fila = tabla.getSelectedRow();
-                    if (fila < 0) return;
+        JTable tabla = new JTable(modelo);
+        tabla.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-                    var modelo = (javax.swing.table.DefaultTableModel) tabla.getModel();
-                    Object[] filaSeleccionada = new Object[modelo.getColumnCount()];
-                    for (int i = 0; i < modelo.getColumnCount(); i++) {
-                        filaSeleccionada[i] = modelo.getValueAt(fila, i);
-                    }
+        // 5. Panel principal con BorderLayout
+        JPanel panel = new JPanel(new BorderLayout(10, 10));
+        panel.add(new JScrollPane(tabla), BorderLayout.CENTER);
 
-                    EditarGenerico.mostrarFormularioDeEdicion(
-                            "productos",
-                            columnas,
-                            filaSeleccionada,
-                            "codproduct",
-                            filaSeleccionada[0],
-                            "INTEGER",
-                            tabla,
-                            fila
-                    );
-                },
+        // 6. Panel botones abajo
+        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JButton btnEditar = new JButton("Editar");
+        JButton btnEliminar = new JButton("Eliminar");
+        panelBotones.add(btnEditar);
+        panelBotones.add(btnEliminar);
+        panel.add(panelBotones, BorderLayout.SOUTH);
 
-                // Acción Eliminar
-                e -> {
-                    var tabla = (javax.swing.JTable) ((javax.swing.JButton) e.getSource())
-                            .getParent().getParent().getComponent(1).getComponentAt(1, 1);
-                    int fila = tabla.getSelectedRow();
-                    if (fila < 0) return;
+        // 7. Acción botón editar
+        btnEditar.addActionListener(e -> {
+            int fila = tabla.getSelectedRow();
+            if (fila < 0) {
+                JOptionPane.showMessageDialog(panel, "Selecciona un producto para editar.");
+                return;
+            }
 
-                    var modelo = (javax.swing.table.DefaultTableModel) tabla.getModel();
-                    Object[] filaSeleccionada = new Object[modelo.getColumnCount()];
-                    for (int i = 0; i < modelo.getColumnCount(); i++) {
-                        filaSeleccionada[i] = modelo.getValueAt(fila, i);
-                    }
+            Object[] filaSeleccionada = new Object[modelo.getColumnCount()];
+            for (int i = 0; i < modelo.getColumnCount(); i++) {
+                filaSeleccionada[i] = modelo.getValueAt(fila, i);
+            }
 
-                    EliminarGenerico.eliminarRegistro(
-                            "productos",
-                            "codproduct",
-                            filaSeleccionada[0],
-                            "INTEGER",
-                            tabla,
-                            fila
-                    );
+            JPanel panelEdicion = EditarGenerico.crearFormularioEdicion(
+                    "productos",
+                    columnas,
+                    filaSeleccionada,
+                    "codproduct",
+                    filaSeleccionada[0],
+                    "INTEGER",
+                    tabla,
+                    fila,
+                    () -> JOptionPane.showMessageDialog(panel, "Producto editado con éxito.")
+            );
+
+            JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(panel), "Editar Producto", true);
+            dialog.getContentPane().add(panelEdicion);
+            dialog.pack();
+            dialog.setLocationRelativeTo(panel);
+            dialog.setVisible(true);
+        });
+
+        // 8. Acción botón eliminar
+        btnEliminar.addActionListener(e -> {
+            int fila = tabla.getSelectedRow();
+            if (fila < 0) {
+                JOptionPane.showMessageDialog(panel, "Selecciona un producto para eliminar.");
+                return;
+            }
+
+            int confirmacion = JOptionPane.showConfirmDialog(panel,
+                    "¿Estás seguro de que deseas eliminar este producto?",
+                    "Confirmar eliminación",
+                    JOptionPane.YES_NO_OPTION);
+
+            if (confirmacion != JOptionPane.YES_OPTION) {
+                return;
+            }
+
+            Object idValor = modelo.getValueAt(fila, 0);
+
+            try {
+                boolean eliminado = EliminarGenerico.eliminarRegistro("productos", idValor);
+                if (eliminado) {
+                    modelo.removeRow(fila);
+                    JOptionPane.showMessageDialog(panel, "Producto eliminado correctamente.");
+                } else {
+                    JOptionPane.showMessageDialog(panel, "No se pudo eliminar el producto.");
                 }
-        );
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(panel, "Error al eliminar: " + ex.getMessage());
+                ex.printStackTrace();
+            }
+        });
+
+        return panel;
     }
 }

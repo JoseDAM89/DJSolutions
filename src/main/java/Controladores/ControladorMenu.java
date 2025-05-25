@@ -47,7 +47,7 @@ public class ControladorMenu {
         // Gestión de Usuarios
         else if (menuIndex == 3) {
             switch (subMenuIndex) {
-                case 0 -> ventana.ponPanel(new RegistrarUser(ventana));
+                case 0 -> ventana.ponPanel(new RegistrarUser());
                 case 1 -> ventana.ponPanel(new VerUsuarios());
             }
         }

@@ -20,7 +20,7 @@ public class ConsultarStock extends JPanel {
                 "codproduct", "nombreproduct", "stockproduct"));
 
         // Panel de Materias Primas
-        add(crearPanelStock("Materia Prima", "materias_primas",
+        add(crearPanelStock("Materia Prima", "MateriasPrimas",
                 "idmateriaprima", "descripcionmaterial", "stockmetros"));
     }
 
@@ -57,7 +57,8 @@ public class ConsultarStock extends JPanel {
     private Object[][] obtenerDatos(String tabla, String idCol, String nombreCol, String stockCol) {
         ArrayList<Object[]> listaDatos = new ArrayList<>();
 
-        String sql = String.format("SELECT %s AS id, %s AS nombre, %s AS stock FROM %s", idCol, nombreCol, stockCol, tabla);
+        // Poner la tabla entre comillas dobles para respetar el case sensitive en PostgreSQL
+        String sql = String.format("SELECT %s AS id, %s AS nombre, %s AS stock FROM \"%s\"", idCol, nombreCol, stockCol, tabla);
 
         try (Connection conn = ConexionBD.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql);
@@ -77,4 +78,5 @@ public class ConsultarStock extends JPanel {
 
         return listaDatos.toArray(new Object[0][]);
     }
+
 }

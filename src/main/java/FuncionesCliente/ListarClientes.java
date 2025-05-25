@@ -6,11 +6,14 @@ import GUI.EditarGenerico;
 import GUI.EliminarGenerico;
 import Modelos.Cliente;
 
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.util.List;
 
 public class ListarClientes {
 
-    public void mostrarVentana() {
+    public JPanel mostrarVentana() {
         // 1. Obtener todos los clientes desde la base de datos
         List<Cliente> clientes = ClienteDAO.listarTodos();
 
@@ -32,55 +35,103 @@ public class ListarClientes {
             datos[i][6] = c.getCampoDescripcion();
         }
 
-        // 4. Usar el controlador genérico para mostrar el listado
-        ListarGenerico.mostrarListado(
-                "clientes",
-                datos,
-                columnas,
-                // Acción Editar
-                e -> {
-                    var tabla = (javax.swing.JTable) ((javax.swing.JButton) e.getSource()).getParent().getParent().getComponent(1).getComponentAt(1, 1);
-                    int fila = tabla.getSelectedRow();
-                    if (fila < 0) return;
+        // 4. Crear modelo para JTable
+        DefaultTableModel modelo = new DefaultTableModel(datos, columnas) {
+            // Para evitar edición directa de la tabla
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
 
-                    var modelo = (javax.swing.table.DefaultTableModel) tabla.getModel();
-                    Object[] filaSeleccionada = new Object[modelo.getColumnCount()];
-                    for (int i = 0; i < modelo.getColumnCount(); i++) {
-                        filaSeleccionada[i] = modelo.getValueAt(fila, i);
+        JTable tabla = new JTable(modelo);
+        tabla.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        // 5. Crear panel principal y agregar componentes
+        JPanel panel = new JPanel(new BorderLayout(10, 10));
+
+        // Añadimos la tabla con scroll
+        panel.add(new JScrollPane(tabla), BorderLayout.CENTER);
+
+        // Panel para botones
+        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+
+        JButton btnEditar = new JButton("Editar");
+        JButton btnEliminar = new JButton("Eliminar");
+
+        panelBotones.add(btnEditar);
+        panelBotones.add(btnEliminar);
+
+        panel.add(panelBotones, BorderLayout.SOUTH);
+
+        // 6. Agregar acciones a los botones
+
+        btnEditar.addActionListener(e -> {
+            int fila = tabla.getSelectedRow();
+            if (fila < 0) {
+                JOptionPane.showMessageDialog(panel, "Por favor, selecciona un cliente para editar.");
+                return;
+            }
+
+            Object[] filaSeleccionada = new Object[modelo.getColumnCount()];
+            for (int i = 0; i < modelo.getColumnCount(); i++) {
+                filaSeleccionada[i] = modelo.getValueAt(fila, i);
+            }
+
+            // Aquí asumimos que EditarGenerico.crearFormularioEdicion devuelve un JPanel con el formulario
+            JPanel formularioEdicion = EditarGenerico.crearFormularioEdicion(
+                    "clientes",
+                    columnas,
+                    filaSeleccionada,
+                    "idcliente",
+                    filaSeleccionada[0],
+                    "INTEGER",
+                    tabla,
+                    fila,
+                    () -> {
+                        // Opcional: algo a ejecutar tras actualizar (recargar tabla, etc)
                     }
+            );
 
-                    EditarGenerico.mostrarFormularioDeEdicion(
-                            "clientes",
-                            columnas,
-                            filaSeleccionada,
-                            "idcliente",
-                            filaSeleccionada[0],
-                            "INTEGER",
-                            tabla,
-                            fila
-                    );
-                },
-                // Acción Eliminar
-                e -> {
-                    var tabla = (javax.swing.JTable) ((javax.swing.JButton) e.getSource()).getParent().getParent().getComponent(1).getComponentAt(1, 1);
-                    int fila = tabla.getSelectedRow();
-                    if (fila < 0) return;
+            // Mostrar formulario en un diálogo modal
+            int opcion = JOptionPane.showConfirmDialog(panel, formularioEdicion,
+                    "Editar Cliente", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
-                    var modelo = (javax.swing.table.DefaultTableModel) tabla.getModel();
-                    Object[] filaSeleccionada = new Object[modelo.getColumnCount()];
-                    for (int i = 0; i < modelo.getColumnCount(); i++) {
-                        filaSeleccionada[i] = modelo.getValueAt(fila, i);
-                    }
+            if (opcion == JOptionPane.OK_OPTION) {
+                // Los cambios se manejan dentro del formulario
+            }
+        });
 
-                    EliminarGenerico.eliminarRegistro(
-                            "clientes",
-                            "idcliente",
-                            filaSeleccionada[0],
-                            "INTEGER",
-                            tabla,
-                            fila
-                    );
-                }
-        );
+        btnEliminar.addActionListener(e -> {
+            int fila = tabla.getSelectedRow();
+            if (fila < 0) {
+                JOptionPane.showMessageDialog(panel, "Por favor, selecciona un cliente para eliminar.");
+                return;
+            }
+
+            int confirmacion = JOptionPane.showConfirmDialog(panel,
+                    "¿Estás seguro que quieres eliminar este cliente?", "Confirmar eliminación",
+                    JOptionPane.YES_NO_OPTION);
+
+            if (confirmacion != JOptionPane.YES_OPTION) {
+                return;
+            }
+
+            Object idValor = modelo.getValueAt(fila, 0);
+
+            boolean eliminado = EliminarGenerico.eliminarRegistro(
+                    "clientes",
+                    idValor
+            );
+
+            if (eliminado) {
+                modelo.removeRow(fila);
+                JOptionPane.showMessageDialog(panel, "Cliente eliminado correctamente.");
+            } else {
+                JOptionPane.showMessageDialog(panel, "Error eliminando el cliente.");
+            }
+        });
+
+        return panel;
     }
 }

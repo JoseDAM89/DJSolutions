@@ -3,7 +3,13 @@ package org.example;
 import FuncionesCliente.AltaCliente;
 import FuncionesCliente.ListarClientes;
 import FuncionesInventario.AltaProducto;
+import FuncionesInventario.ConsultarStock;
 import FuncionesInventario.ListarProductos;
+import FuncionesPresupuesto.GenerarPresupuesto;
+import FuncionesPresupuesto.HistorialDePresupuestos;
+import FuncionesPresupuesto.SeleccionarMateriales;
+import GestionDeUsuarios.RegistrarUser;
+import GestionDeUsuarios.VerUsuarios;
 import JSWING.component.Header;
 import JSWING.component.Menu;
 import JSWING.event.EventMenuSelected;
@@ -57,20 +63,36 @@ public class Main extends javax.swing.JFrame {
                     } else if (subMenuIndex == 1) {
                         main.showForm(new Form1());
                     } else if (subMenuIndex == 2) {
-                        new ListarClientes().mostrarVentana();
-                    } else if (subMenuIndex == 3) {
-                        new ListarProductos().mostrarVentana();
+                        main.showForm(new ListarClientes().mostrarVentana());
                     }
                 }
                 if (menuIndex == 1) {
                     if (subMenuIndex == 0) {
                         main.showForm(new AltaProducto().construirFormulario());
                     } else if (subMenuIndex == 1) {
-                        main.showForm(new Form1());
+                        main.showForm(new ConsultarStock());
                     } else if (subMenuIndex == 2) {
-                        new ListarClientes().mostrarVentana();
+                        main.showForm(new ListarProductos().mostrarVentana());
                     } else if (subMenuIndex == 3) {
                         new ListarProductos().mostrarVentana();
+                    }
+                }
+                if (menuIndex == 2) {
+                    if (subMenuIndex == 0) {
+                        main.showForm(new GenerarPresupuesto());
+                    } else if (subMenuIndex == 1) {
+                        main.showForm(new HistorialDePresupuestos());
+                    } else if (subMenuIndex == 2) {
+                        main.showForm(new SeleccionarMateriales());
+                    }
+                }
+                if (menuIndex == 3) {
+                    if (subMenuIndex == 0) {
+                        main.showForm(new RegistrarUser());
+                    } else if (subMenuIndex == 1) {
+                        main.showForm(new VerUsuarios());
+                    } else if (subMenuIndex == 2) {
+                        main.showForm(new SeleccionarMateriales());
                     }
                 }
             }

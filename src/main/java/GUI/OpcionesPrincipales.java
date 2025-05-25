@@ -70,7 +70,7 @@ public class OpcionesPrincipales extends JPanel {
     private void agregarEventos() {
 
         btnRegistrarUsuarios.addActionListener(e -> {
-            ventana.ponPanel(new RegistrarUser(ventana));
+            ventana.ponPanel(new RegistrarUser());
         });
 
         btnVerUsuarios.addActionListener(e -> {

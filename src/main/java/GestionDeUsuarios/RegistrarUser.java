@@ -1,8 +1,6 @@
 package GestionDeUsuarios;
 
 import Datos.ConexionBD;
-import GUI.OpcionesPrincipales;
-import GUI.Vprin;
 import Modelos.Usuario;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -14,61 +12,42 @@ import java.sql.ResultSet;
 
 public class RegistrarUser extends JPanel {
 
-    public RegistrarUser(Vprin ventana) {
+    public RegistrarUser() {
         setLayout(new BorderLayout(10, 10));
-        setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30)); // padding
+        setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
 
-        // Título superior
         JLabel titulo = new JLabel("Registro de nuevo usuario", SwingConstants.CENTER);
         titulo.setFont(new Font("Arial", Font.BOLD, 18));
         add(titulo, BorderLayout.NORTH);
 
-        // Panel central con los campos
-        JPanel panelCampos = new JPanel();
-        panelCampos.setLayout(new GridLayout(5, 2, 10, 10)); // 5 filas
+        JPanel panelCampos = new JPanel(new GridLayout(5, 2, 10, 10));
         panelCampos.setBorder(BorderFactory.createTitledBorder("Datos del usuario"));
 
-        JLabel lblNombre = new JLabel("Nombre:");
         JTextField txtNombre = new JTextField();
-
-        JLabel lblApellido = new JLabel("Apellido:");
         JTextField txtApellido = new JTextField();
-
-        JLabel lblCorreo = new JLabel("Correo electrónico:");
         JTextField txtCorreo = new JTextField();
-
-        JLabel lblPassword = new JLabel("Contraseña:");
         JPasswordField txtPassword = new JPasswordField();
-
         JCheckBox chkAdmin = new JCheckBox("¿Es administrador?");
 
-        panelCampos.add(lblNombre);
+        panelCampos.add(new JLabel("Nombre:"));
         panelCampos.add(txtNombre);
-
-        panelCampos.add(lblApellido);
+        panelCampos.add(new JLabel("Apellido:"));
         panelCampos.add(txtApellido);
-
-        panelCampos.add(lblCorreo);
+        panelCampos.add(new JLabel("Correo electrónico:"));
         panelCampos.add(txtCorreo);
-
-        panelCampos.add(lblPassword);
+        panelCampos.add(new JLabel("Contraseña:"));
         panelCampos.add(txtPassword);
-
-        panelCampos.add(new JLabel()); // vacío
+        panelCampos.add(new JLabel());
         panelCampos.add(chkAdmin);
 
         add(panelCampos, BorderLayout.CENTER);
 
-        // Panel de botones
         JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
         JButton btnRegistrar = new JButton("Registrar");
-        JButton btnVolver = new JButton("Volver");
-        panelBotones.add(btnVolver);
         panelBotones.add(btnRegistrar);
-
         add(panelBotones, BorderLayout.SOUTH);
 
-        // Lógica de botones
+        // Acción del botón
         btnRegistrar.addActionListener(e -> {
             String nombre = txtNombre.getText().trim();
             String apellido = txtApellido.getText().trim();
@@ -87,23 +66,19 @@ public class RegistrarUser extends JPanel {
             }
 
             sincronizarSecuenciaId();
-
             Usuario nuevoUsuario = new Usuario(nombre, apellido, correo, password, esAdmin);
 
             if (registrar(nuevoUsuario)) {
                 JOptionPane.showMessageDialog(this, "Usuario registrado con éxito.");
-                ventana.ponPanel(new OpcionesPrincipales(ventana));
+                // Aquí podrías limpiar los campos si lo deseas
             } else {
                 JOptionPane.showMessageDialog(this, "Error al registrar usuario.");
             }
         });
-
-        btnVolver.addActionListener(e -> ventana.ponPanel(new OpcionesPrincipales(ventana)));
     }
 
     public static boolean registrar(Usuario usuario) {
         String hashed = BCrypt.hashpw(usuario.getContrasena(), BCrypt.gensalt());
-
         try (Connection conn = ConexionBD.conectar()) {
             String sql = "INSERT INTO usuarios (nombre, apellido, correo_electronico, contraseña, admin) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -128,7 +103,7 @@ public class RegistrarUser extends JPanel {
             return rs.next();
         } catch (Exception e) {
             e.printStackTrace();
-            return true; // asumimos que sí existe si hay error
+            return true;
         }
     }
 

@@ -1,7 +1,5 @@
 package Controladores;
 
-import GUI.EditarGenerico;
-import GUI.EliminarGenerico;
 import GUI.ListadosGenerico;
 
 import javax.swing.*;
@@ -11,16 +9,17 @@ import java.awt.event.ActionListener;
 public class ListarGenerico {
 
     /**
-     * Muestra un listado reutilizable en una tabla con acciones opcionales de editar/eliminar.
+     * Crea un JPanel que contiene un listado reutilizable en una tabla con acciones opcionales de editar/eliminar.
      *
-     * @param tablaNombre   Nombre de la tabla (ej: "clientes", "productos").
-     * @param datos         Datos a mostrar en formato bidimensional (incluyendo ID).
-     * @param columnas      Nombres de columnas visibles (incluyendo "ID" si aplica).
-     * @param accionEditar  Lógica del botón "Editar" (puede ser null si no se desea).
+     * @param tablaNombre    Nombre de la tabla (ej: "clientes", "productos").
+     * @param datos          Datos a mostrar en formato bidimensional (incluyendo ID).
+     * @param columnas       Nombres de columnas visibles (incluyendo "ID" si aplica).
+     * @param accionEditar   Lógica del botón "Editar" (puede ser null si no se desea).
      * @param accionEliminar Lógica del botón "Eliminar" (puede ser null si no se desea).
+     * @return JPanel con el listado y los botones necesarios.
      */
-    public static void mostrarListado(String tablaNombre, Object[][] datos, String[] columnas,
-                                      ActionListener accionEditar, ActionListener accionEliminar) {
+    public static JPanel crearListadoPanel(String tablaNombre, Object[][] datos, String[] columnas,
+                                           ActionListener accionEditar, ActionListener accionEliminar) {
 
         // Crear tabla genérica visual
         ListadosGenerico tabla = new ListadosGenerico(
@@ -30,6 +29,10 @@ public class ListarGenerico {
                 (accionEditar != null) ? "Editar" : null,
                 accionEditar
         );
+
+        // Panel principal para devolver
+        JPanel panelPrincipal = new JPanel(new BorderLayout());
+        panelPrincipal.add(tabla, BorderLayout.CENTER);
 
         // Panel de botones adicional si se quiere añadir "Eliminar"
         if (accionEliminar != null) {
@@ -42,9 +45,9 @@ public class ListarGenerico {
             botonEliminar.addActionListener(accionEliminar);
             panelInferior.add(botonEliminar);
 
-            tabla.add(panelInferior, BorderLayout.SOUTH);
+            panelPrincipal.add(panelInferior, BorderLayout.SOUTH);
         }
 
-        tabla.setVisible(true);
+        return panelPrincipal;
     }
 }

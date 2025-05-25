@@ -6,7 +6,7 @@ import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.*;
 
-public class ListadosGenerico extends JFrame {
+public class ListadosGenerico extends JPanel{
 
     private JTable tabla;                         // Tabla para mostrar los datos
     private DefaultTableModel modelo;             // Modelo de la tabla
@@ -18,10 +18,7 @@ public class ListadosGenerico extends JFrame {
      * Constructor de la tabla reutilizable con filtro.
      */
     public ListadosGenerico(String titulo, String[] columnas, Object[][] datos, String textoBoton, ActionListener accionBoton) {
-        setTitle(titulo);
-        setSize(900, 550);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setLocationRelativeTo(null);
+
         setLayout(new BorderLayout());
 
         // Modelo de la tabla
