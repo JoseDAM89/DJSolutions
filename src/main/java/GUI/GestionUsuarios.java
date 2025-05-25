@@ -55,8 +55,8 @@ public class GestionUsuarios extends JPanel {
     }
 
     private void iniciarSesion() {
-        InicioSesion panelInicio = new InicioSesion(ventana);
-        ventana.ponPanel(panelInicio);
+        LoginDialog loginDialog = new LoginDialog(ventana);
+        loginDialog.setVisible(true);
     }
 
 }

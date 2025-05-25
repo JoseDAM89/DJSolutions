@@ -14,6 +14,27 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>*/.png</include>
+                    <include>*/.jpg</include>
+                    <include>*/.jpeg</include>
+                    <include>*/.gif</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>*/</include>
+                </includes>
+            </resource>
+        </resources>
+        <plugins>
+        </plugins>
+    </build>
 
     <dependencies>
         <dependency>
@@ -36,9 +57,20 @@
             <artifactId>jakarta.mail</artifactId>
             <version>2.0.1</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.formdev</groupId>
+            <artifactId>flatlaf</artifactId>
+            <version>3.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.miglayout</groupId>
+            <artifactId>miglayout-swing</artifactId>
+            <version>11.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jdesktop</groupId>
+            <artifactId>timingframework</artifactId>
+            <version>0.55</version>
+        </dependency>
     </dependencies>
-
-
-
 </project>

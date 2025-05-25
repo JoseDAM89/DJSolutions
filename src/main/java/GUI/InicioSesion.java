@@ -8,16 +8,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 import Datos.ConexionBD;
+import GUI.LoginDialog;
 import Modelos.Sesion;
 
 public class InicioSesion extends JPanel {
     private JTextField txtCorreo;
     private JPasswordField txtPassword;
     private JButton btnEntrar;
-    private Vprin ventana;
+    private LoginDialog loginDialog;
 
-    public InicioSesion(Vprin ventana) {
-        this.ventana = ventana;
+    public InicioSesion(LoginDialog loginDialog) {
+        this.loginDialog = loginDialog;
         configurarPanel();
     }
 
@@ -41,20 +42,21 @@ public class InicioSesion extends JPanel {
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        gbc.gridx = 0; gbc.gridy = 0;
+        gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
         add(lblTitulo, gbc);
 
+        gbc.gridwidth = 1;
         gbc.gridy++;
         add(lblCorreo, gbc);
-        gbc.gridy++;
+        gbc.gridx = 1;
         add(txtCorreo, gbc);
 
-        gbc.gridy++;
+        gbc.gridx = 0; gbc.gridy++;
         add(lblPassword, gbc);
-        gbc.gridy++;
+        gbc.gridx = 1;
         add(txtPassword, gbc);
 
-        gbc.gridy++;
+        gbc.gridx = 0; gbc.gridy++; gbc.gridwidth = 2;
         add(btnEntrar, gbc);
     }
 
@@ -71,16 +73,16 @@ public class InicioSesion extends JPanel {
             String sql = "SELECT * FROM usuarios WHERE correo_electronico = ? AND contraseña = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, correo);
-            stmt.setString(2, pass); // En producción deberías usar hashes de contraseña
+            stmt.setString(2, pass); // Nota: en producción deberías usar hashes
 
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
                 boolean esAdmin = rs.getBoolean("admin");
-                Sesion.iniciarSesion(correo, esAdmin);  // <--- Aquí guardas la sesión actual
+                Sesion.iniciarSesion(correo, esAdmin);
                 JOptionPane.showMessageDialog(this, "Inicio de sesión exitoso.");
-                ventana.ponPanel(new OpcionesPrincipales(ventana));
-            }else {
+                loginDialog.onLoginSuccess(correo, esAdmin);
+            } else {
                 JOptionPane.showMessageDialog(this, "Credenciales incorrectas.");
             }
         } catch (Exception ex) {

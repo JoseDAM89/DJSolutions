@@ -1,7 +1,6 @@
 package GUI;
 
 import Modelos.Sesion;
-
 import javax.swing.*;
 import java.awt.event.*;
 
@@ -11,7 +10,7 @@ public class Vprin extends JFrame {
         setTitle("DJSolutions");
         setSize(800, 700);
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE); // Para capturar la X
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -20,7 +19,12 @@ public class Vprin extends JFrame {
             }
         });
 
-        ponPanel(new InicioSesion(this));
+        mostrarLogin();
+    }
+
+    private void mostrarLogin() {
+        LoginDialog loginDialog = new LoginDialog(this);
+        loginDialog.setVisible(true);
     }
 
     public void ponPanel(JPanel panel) {
@@ -43,13 +47,11 @@ public class Vprin extends JFrame {
         );
 
         if (opcion == 0) {
-            // Cerrar sesión y volver a inicio de sesión
             Sesion.cerrarSesion();
-            ponPanel(new InicioSesion(this));
+            mostrarLogin();
         } else if (opcion == 1) {
             System.exit(0);
         }
-        // Cancelar no hace nada
     }
 
     public static void main(String[] args) {
