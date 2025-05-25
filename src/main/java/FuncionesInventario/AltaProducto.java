@@ -1,4 +1,4 @@
-package FuncionesCliente;
+package FuncionesInventario;
 
 import Controladores.AltaGenerico;
 import Controladores.ValidadorGenerico;
@@ -10,22 +10,23 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class AltaCliente {
+public class AltaProducto {
 
     /**
-     * Construye el formulario de alta para clientes usando componentes genéricos.
+     * Construye el formulario de alta para productos.
      *
-     * @return JPanel listo para insertar en una ventana
+     * @return JPanel con los campos y botón para guardar.
      */
     public JPanel construirFormulario() {
-        // 1. Definir los campos con su tipo (todos tipo texto en este caso)
+        // 1. Mapa de campos con sus tipos
         Map<String, String> camposConTipos = new LinkedHashMap<>();
+        camposConTipos.put("COD", "int");
         camposConTipos.put("Nombre", "String");
-        camposConTipos.put("CIF", "String");
-        camposConTipos.put("Email", "String");
-        camposConTipos.put("Persona de Contacto", "String");
-        camposConTipos.put("Dirección", "String");
+        camposConTipos.put("Precio", "double");
         camposConTipos.put("Descripción", "String");
+        camposConTipos.put("Stock", "int");
+        camposConTipos.put("Materia Prima", "boolean");
+        camposConTipos.put("ID Materia", "int");
 
         final FormularioGenericoAlta[] formulario = new FormularioGenericoAlta[1];
 
@@ -33,15 +34,17 @@ public class AltaCliente {
         ActionListener accionGuardar = e -> {
             HashMap<String, String> valores = formulario[0].getValores();
 
-            // 3. Validación básica por tipo
+            // 3. Validación de tipos
             if (!ValidadorGenerico.validar(valores, camposConTipos)) return;
 
-            // 4. Insertar si todo es válido
-            AltaGenerico.procesarAlta("clientes", valores);
-            formulario[0].limpiarCampos();
+            // 4. Alta solo si los datos son correctos
+            boolean exito = AltaGenerico.procesarAlta("productos", valores);
+            if (exito) {
+                formulario[0].limpiarCampos(); // ✅ solo limpiamos si fue exitoso
+            }
         };
 
-        // 5. Crear formulario con tipos y acción
+        // 5. Crear el formulario con tipos y acción
         formulario[0] = new FormularioGenericoAlta(camposConTipos, accionGuardar);
         return formulario[0];
     }

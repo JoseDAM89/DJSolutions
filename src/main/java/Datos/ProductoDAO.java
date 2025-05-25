@@ -2,6 +2,7 @@ package Datos;
 
 import Modelos.Producto;
 
+import javax.swing.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -42,6 +43,50 @@ public class ProductoDAO {
 
         return lista;
     }
+
+    public static boolean insertar(Producto producto) {
+        String sql = """
+        INSERT INTO productos
+        (codproduct, nombreproduct, precioproduct, descripcionproduct,
+         stockproduct, materiaprima, idmateriaprima)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    """;
+
+        try (Connection conn = ConexionBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, producto.getCodproduct());
+            stmt.setString(2, producto.getNombreproduct());
+            stmt.setDouble(3, producto.getPrecioproduct());
+            stmt.setString(4, producto.getDescripcionproduct());
+            stmt.setInt(5, producto.getStockproduct());
+            stmt.setBoolean(6, producto.isMateriaprima());
+
+            if (producto.getIdmateriaprima() == 0) {
+                stmt.setNull(7, java.sql.Types.INTEGER);
+            } else {
+                stmt.setInt(7, producto.getIdmateriaprima());
+            }
+
+            stmt.executeUpdate();
+            return true;
+
+        } catch (org.postgresql.util.PSQLException e) {
+            // Detectar clave duplicada
+            if (e.getMessage().contains("duplicate key") || e.getSQLState().equals("23505")) {
+                JOptionPane.showMessageDialog(null, "❌ Ya existe un producto con ese COD. Por favor elige otro.");
+                return false; // no re-lanzamos
+            } else {
+                JOptionPane.showMessageDialog(null, "❌ Error al insertar producto: " + e.getMessage());
+                return false;
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "❌ Error inesperado al insertar: " + e.getMessage());
+            return false;
+        }
+    }
+
+
 
     public static boolean actualizarPorID(Producto producto) {
         String sql = """

@@ -1,28 +1,26 @@
 package FuncionesCliente;
 
+import Controladores.ListarGenerico;
 import Datos.ClienteDAO;
-import GUI.ListadosGenerico;
 import GUI.EditarGenerico;
 import GUI.EliminarGenerico;
 import Modelos.Cliente;
 
-import javax.swing.*;
 import java.util.List;
 
 public class ListarClientes {
 
     public void mostrarVentana() {
-        // 1. Obtener todos los clientes usando el DAO (ya conectado a la base de datos)
+        // 1. Obtener todos los clientes desde la base de datos
         List<Cliente> clientes = ClienteDAO.listarTodos();
 
-        // 2. Definir nombres visibles de columnas (como se mostrarán en la tabla)
+        // 2. Definir columnas visibles
         String[] columnas = {
                 "ID", "Nombre", "CIF", "Email", "Persona de Contacto", "Dirección", "Descripción"
         };
 
-        // 3. Convertir lista de objetos Cliente a una matriz de datos para JTable
+        // 3. Convertir la lista a una matriz de datos
         Object[][] datos = new Object[clientes.size()][columnas.length];
-
         for (int i = 0; i < clientes.size(); i++) {
             Cliente c = clientes.get(i);
             datos[i][0] = c.getIdcliente();
@@ -34,65 +32,55 @@ public class ListarClientes {
             datos[i][6] = c.getCampoDescripcion();
         }
 
-        // 4. Crear tabla reutilizable con botón "Editar"
-        final ListadosGenerico[] tablaClientes = new ListadosGenerico[1];
-
-        ListadosGenerico tabla = new ListadosGenerico(
-                "Listado de Clientes",
-                columnas,
+        // 4. Usar el controlador genérico para mostrar el listado
+        ListarGenerico.mostrarListado(
+                "clientes",
                 datos,
-                "Editar",
+                columnas,
+                // Acción Editar
                 e -> {
-                    Object[] fila = tablaClientes[0].getFilaSeleccionada();
-                    int filaSeleccionada = tablaClientes[0].getTabla().getSelectedRow();
+                    var tabla = (javax.swing.JTable) ((javax.swing.JButton) e.getSource()).getParent().getParent().getComponent(1).getComponentAt(1, 1);
+                    int fila = tabla.getSelectedRow();
+                    if (fila < 0) return;
 
-                    if (fila != null && filaSeleccionada >= 0) {
-                        int id = (int) fila[0];
-                        String nombre = (String) fila[1];
-                        System.out.println("Editar Cliente con ID: " + id + ", Nombre: " + nombre);
-
-                        EditarGenerico.mostrarFormularioDeEdicion(
-                                "clientes",
-                                columnas,
-                                fila,
-                                "idcliente",
-                                fila[0],
-                                "INTEGER",
-                                tablaClientes[0].getTabla(),
-                                filaSeleccionada
-                        );
+                    var modelo = (javax.swing.table.DefaultTableModel) tabla.getModel();
+                    Object[] filaSeleccionada = new Object[modelo.getColumnCount()];
+                    for (int i = 0; i < modelo.getColumnCount(); i++) {
+                        filaSeleccionada[i] = modelo.getValueAt(fila, i);
                     }
+
+                    EditarGenerico.mostrarFormularioDeEdicion(
+                            "clientes",
+                            columnas,
+                            filaSeleccionada,
+                            "idcliente",
+                            filaSeleccionada[0],
+                            "INTEGER",
+                            tabla,
+                            fila
+                    );
+                },
+                // Acción Eliminar
+                e -> {
+                    var tabla = (javax.swing.JTable) ((javax.swing.JButton) e.getSource()).getParent().getParent().getComponent(1).getComponentAt(1, 1);
+                    int fila = tabla.getSelectedRow();
+                    if (fila < 0) return;
+
+                    var modelo = (javax.swing.table.DefaultTableModel) tabla.getModel();
+                    Object[] filaSeleccionada = new Object[modelo.getColumnCount()];
+                    for (int i = 0; i < modelo.getColumnCount(); i++) {
+                        filaSeleccionada[i] = modelo.getValueAt(fila, i);
+                    }
+
+                    EliminarGenerico.eliminarRegistro(
+                            "clientes",
+                            "idcliente",
+                            filaSeleccionada[0],
+                            "INTEGER",
+                            tabla,
+                            fila
+                    );
                 }
         );
-
-        // 5. Botón adicional "Eliminar"
-        JButton botonEliminar = new JButton("Eliminar");
-        botonEliminar.addActionListener(e -> {
-            Object[] fila = tabla.getFilaSeleccionada();
-            int filaSeleccionada = tabla.getTabla().getSelectedRow();
-
-            if (fila != null && filaSeleccionada >= 0) {
-                EliminarGenerico.eliminarRegistro(
-                        "clientes",
-                        "idcliente",
-                        fila[0],
-                        "INTEGER",
-                        tabla.getTabla(),
-                        filaSeleccionada
-                );
-            } else {
-                JOptionPane.showMessageDialog(tabla, "Selecciona un cliente para eliminar.");
-            }
-        });
-
-        // 6. Panel inferior con los botones
-        JPanel panelBotones = new JPanel();
-        panelBotones.add(tabla.getBotonAccion());  // Botón Editar
-        panelBotones.add(botonEliminar);           // Botón Eliminar
-        tabla.add(panelBotones, java.awt.BorderLayout.SOUTH);
-
-        // 7. Mostrar la tabla
-        tablaClientes[0] = tabla;
-        tabla.setVisible(true);
     }
 }

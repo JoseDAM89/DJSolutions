@@ -59,7 +59,7 @@ public class GestionInventario extends JPanel {
                 ventanaAlta.setLocationRelativeTo(null);
 
                 // Creamos la instancia lógica de AgregarProductos
-                AgregarProductos altaProducto = new AgregarProductos();
+                AltaProducto altaProducto = new AltaProducto();
 
                 // Obtenemos el formulario (que es un JPanel)
                 JPanel formulario = altaProducto.construirFormulario();

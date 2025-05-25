@@ -1,26 +1,25 @@
 package FuncionesInventario;
 
+import Controladores.ListarGenerico;
 import Datos.ProductoDAO;
-import Modelos.Producto;
-import GUI.ListadosGenerico;
 import GUI.EditarGenerico;
 import GUI.EliminarGenerico;
+import Modelos.Producto;
 
-import javax.swing.*;
 import java.util.List;
 
 public class ListarProductos {
 
     public void mostrarVentana() {
-        // 1. Obtener todos los productos desde la base de datos usando DAO
+        // 1. Obtener todos los productos desde el DAO
         List<Producto> productos = ProductoDAO.listarTodos();
 
-        // 2. Definir nombres de columnas (coinciden con lo mostrado en la tabla)
+        // 2. Definir los nombres de columnas visibles en pantalla
         String[] columnas = {
                 "ID", "Nombre", "Precio", "Descripción", "Stock", "Materia Prima", "ID Materia"
         };
 
-        // 3. Convertir la lista de productos en una matriz para JTable
+        // 3. Convertir la lista a una matriz para la JTable
         Object[][] datos = new Object[productos.size()][columnas.length];
         for (int i = 0; i < productos.size(); i++) {
             Producto p = productos.get(i);
@@ -33,65 +32,59 @@ public class ListarProductos {
             datos[i][6] = p.getIdmateriaprima();
         }
 
-        // 4. Crear tabla reutilizable con botón "Editar"
-        final ListadosGenerico[] tablaProductos = new ListadosGenerico[1];
-
-        ListadosGenerico tabla = new ListadosGenerico(
-                "Listado de Productos",
-                columnas,
+        // 4. Mostrar usando el controlador genérico
+        ListarGenerico.mostrarListado(
+                "productos",
                 datos,
-                "Editar",
+                columnas,
+
+                // Acción Editar
                 e -> {
-                    Object[] fila = tablaProductos[0].getFilaSeleccionada();
-                    int filaSeleccionada = tablaProductos[0].getTabla().getSelectedRow();
+                    var tabla = (javax.swing.JTable) ((javax.swing.JButton) e.getSource())
+                            .getParent().getParent().getComponent(1).getComponentAt(1, 1);
+                    int fila = tabla.getSelectedRow();
+                    if (fila < 0) return;
 
-                    if (fila != null && filaSeleccionada != -1) {
-                        int id = (int) fila[0];
-                        String nombre = (String) fila[1];
-                        System.out.println("Editar Producto con ID: " + id + ", Nombre: " + nombre);
-
-                        // Llamar al formulario genérico de edición
-                        EditarGenerico.mostrarFormularioDeEdicion(
-                                "productos",
-                                columnas,
-                                fila,
-                                "codproduct",
-                                fila[0],
-                                "INTEGER",
-                                tablaProductos[0].getTabla(),
-                                filaSeleccionada
-                        );
+                    var modelo = (javax.swing.table.DefaultTableModel) tabla.getModel();
+                    Object[] filaSeleccionada = new Object[modelo.getColumnCount()];
+                    for (int i = 0; i < modelo.getColumnCount(); i++) {
+                        filaSeleccionada[i] = modelo.getValueAt(fila, i);
                     }
+
+                    EditarGenerico.mostrarFormularioDeEdicion(
+                            "productos",
+                            columnas,
+                            filaSeleccionada,
+                            "codproduct",
+                            filaSeleccionada[0],
+                            "INTEGER",
+                            tabla,
+                            fila
+                    );
+                },
+
+                // Acción Eliminar
+                e -> {
+                    var tabla = (javax.swing.JTable) ((javax.swing.JButton) e.getSource())
+                            .getParent().getParent().getComponent(1).getComponentAt(1, 1);
+                    int fila = tabla.getSelectedRow();
+                    if (fila < 0) return;
+
+                    var modelo = (javax.swing.table.DefaultTableModel) tabla.getModel();
+                    Object[] filaSeleccionada = new Object[modelo.getColumnCount()];
+                    for (int i = 0; i < modelo.getColumnCount(); i++) {
+                        filaSeleccionada[i] = modelo.getValueAt(fila, i);
+                    }
+
+                    EliminarGenerico.eliminarRegistro(
+                            "productos",
+                            "codproduct",
+                            filaSeleccionada[0],
+                            "INTEGER",
+                            tabla,
+                            fila
+                    );
                 }
         );
-
-        // 5. Crear botón "Eliminar"
-        JButton botonEliminar = new JButton("Eliminar");
-        botonEliminar.addActionListener(e -> {
-            int filaSeleccionada = tabla.getTabla().getSelectedRow();
-            if (filaSeleccionada != -1) {
-                Object[] fila = tabla.getFilaSeleccionada();
-                EliminarGenerico.eliminarRegistro(
-                        "productos",
-                        "codproduct",
-                        fila[0],
-                        "INTEGER",
-                        tabla.getTabla(),
-                        filaSeleccionada
-                );
-            } else {
-                JOptionPane.showMessageDialog(tabla, "Selecciona un producto para eliminar.");
-            }
-        });
-
-        // 6. Añadir ambos botones en el panel inferior
-        JPanel panelBotones = new JPanel();
-        panelBotones.add(tabla.getBotonAccion());  // Botón Editar
-        panelBotones.add(botonEliminar);           // Botón Eliminar
-        tabla.add(panelBotones, java.awt.BorderLayout.SOUTH);
-
-        // 7. Mostrar tabla
-        tablaProductos[0] = tabla;
-        tabla.setVisible(true);
     }
 }
