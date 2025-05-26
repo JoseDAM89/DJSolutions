@@ -1,7 +1,7 @@
 package gui;
 
-import Datos.ClienteDAO;
-import Datos.ProductoDAO;
+import datos.ClienteDAO;
+import datos.ProductoDAO;
 
 public class EliminarGenerico {
 

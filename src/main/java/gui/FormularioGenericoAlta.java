@@ -1,6 +1,6 @@
 package gui;
 
-import Datos.MateriaPrimaDAO;
+import datos.MateriaPrimaDAO;
 
 import javax.swing.*;
 import java.awt.*;

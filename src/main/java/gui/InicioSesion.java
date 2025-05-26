@@ -7,7 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-import Datos.ConexionBD;
+import datos.ConexionBD;
 import Modelos.Sesion;
 
 public class InicioSesion extends JPanel {

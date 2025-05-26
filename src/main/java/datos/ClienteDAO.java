@@ -1,4 +1,4 @@
-package Datos;
+package datos;
 
 import Modelos.Cliente;
 import java.sql.Connection;
@@ -112,46 +112,5 @@ public class ClienteDAO {
             return false;
         }
     }
-
-
-
-    public static boolean actualizar(Cliente cliente) {
-        String sql = """
-        UPDATE clientes SET
-        campoNombre = ?, campoEmail = ?, campoPersonaDeContacto = ?, campoDireccion = ?, campoDescripcion = ?
-        WHERE campoCIF = ?
-    """;
-        try (Connection conn = ConexionBD.conectar();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setString(1, cliente.getCampoNombre());
-            stmt.setString(2, cliente.getCampoEmail());
-            stmt.setString(3, cliente.getCampoPersonaDeContacto());
-            stmt.setString(4, cliente.getCampoDireccion());
-            stmt.setString(5, cliente.getCampoDescripcion());
-            stmt.setString(6, cliente.getCampoCIF()); // CIF como identificador único
-
-            return stmt.executeUpdate() > 0;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    public static boolean eliminar(String cif) {
-        String sql = "DELETE FROM clientes WHERE campoCIF = ?";
-        try (Connection conn = ConexionBD.conectar();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setString(1, cif);
-            return stmt.executeUpdate() > 0;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
 
 }

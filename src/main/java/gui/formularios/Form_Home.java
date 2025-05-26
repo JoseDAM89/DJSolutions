@@ -9,8 +9,7 @@ import gui.swing.iconos.IconFontSwing;
 import gui.swing.aviso.ModelNoticeBoard;
 import gui.swing.tablero.EventAction;
 import java.awt.Color;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
+import javax.swing.*;
 
 public class Form_Home extends javax.swing.JPanel {
 
@@ -78,7 +77,7 @@ public class Form_Home extends javax.swing.JPanel {
     }
 
     private void showMessage(String message) {
-        Message obj = new Message(Main.getFrames()[0], true);
+        Message obj = new Message(JFrame.getFrames()[0], true);
         obj.showMessage(message);
     }
 

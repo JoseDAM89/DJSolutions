@@ -1,4 +1,4 @@
-package Datos;
+package datos;
 
 import java.sql.*;
 import java.util.LinkedHashMap;

@@ -3,52 +3,58 @@ package Controladores;
 import FuncionesCliente.AltaCliente;
 import FuncionesCliente.ListarClientes;
 import FuncionesInventario.AltaProducto;
+import FuncionesInventario.ConsultarStock;
 import FuncionesInventario.ListarProductos;
+import FuncionesPresupuesto.GenerarPresupuesto;
+import FuncionesPresupuesto.HistorialDePresupuestos;
+import FuncionesPresupuesto.SeleccionarMateriales;
 import GestionDeUsuarios.RegistrarUser;
 import GestionDeUsuarios.VerUsuarios;
-import gui.Vprin;
+import gui.formularios.Form1;
+import gui.formularios.Form_Home;
 
 import javax.swing.*;
 
 public class ControladorMenu {
 
-    private final Vprin ventana;
-
-    public ControladorMenu(Vprin ventana) {
-        this.ventana = ventana;
+    public static JPanel obtenerFormulario(int menuIndex, int subMenuIndex) {
+        switch (menuIndex) {
+            case 0: // Funciones Cliente
+                return switch (subMenuIndex) {
+                    case 0 -> new AltaCliente().construirFormulario();
+                    case 1 -> new Form1(); // Placeholder para "Editar Clientes"
+                    case 2 -> new ListarClientes().mostrarVentana();
+                    default -> panelVacio();
+                };
+            case 1: // Funciones Inventario
+                return switch (subMenuIndex) {
+                    case 0 -> new AltaProducto().construirFormulario();
+                    case 1 -> new ConsultarStock();
+                    case 2 -> new ListarProductos().mostrarVentana();
+                    case 3 -> new ListarProductos().mostrarVentana(); // Ver Alerta Stock (reutilizado por ahora)
+                    default -> panelVacio();
+                };
+            case 2: // Funciones Presupuesto
+                return switch (subMenuIndex) {
+                    case 0 -> new GenerarPresupuesto();
+                    case 1 -> new HistorialDePresupuestos();
+                    case 2 -> new SeleccionarMateriales();
+                    default -> panelVacio();
+                };
+            case 3: // Gestión de Usuarios (solo visible si es Admin)
+                return switch (subMenuIndex) {
+                    case 0 -> new RegistrarUser();
+                    case 1 -> new VerUsuarios();
+                    default -> panelVacio();
+                };
+            default:
+                return new Form_Home();
+        }
     }
 
-    public void menuSeleccionado(int menuIndex, int subMenuIndex) {
-        // Funciones Cliente
-        if (menuIndex == 0) {
-            switch (subMenuIndex) {
-                case 0 -> ventana.ponPanel(new AltaCliente().construirFormulario());
-                case 1 -> JOptionPane.showMessageDialog(ventana, "Editar Clientes aún no implementado.");
-                case 2 -> new ListarClientes().mostrarVentana();
-            }
-        }
-
-        // Funciones Inventario
-        else if (menuIndex == 1) {
-            switch (subMenuIndex) {
-                case 0 -> ventana.ponPanel(new AltaProducto().construirFormulario());
-                case 1 -> JOptionPane.showMessageDialog(ventana, "Consultar Stock aún no implementado.");
-                case 2 -> new ListarProductos().mostrarVentana();
-                case 3 -> JOptionPane.showMessageDialog(ventana, "Ver Alerta Stock aún no implementado.");
-            }
-        }
-
-        // Funciones Presupuesto
-        else if (menuIndex == 2) {
-            JOptionPane.showMessageDialog(ventana, "⚠️ Funciones de presupuesto aún no integradas.");
-        }
-
-        // Gestión de Usuarios
-        else if (menuIndex == 3) {
-            switch (subMenuIndex) {
-                case 0 -> ventana.ponPanel(new RegistrarUser());
-                case 1 -> ventana.ponPanel(new VerUsuarios());
-            }
-        }
+    private static JPanel panelVacio() {
+        JPanel panel = new JPanel();
+        panel.add(new JLabel("Funcionalidad no implementada"));
+        return panel;
     }
 }

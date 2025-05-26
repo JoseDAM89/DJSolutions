@@ -1,6 +1,6 @@
 package FuncionesInventario;
 
-import Datos.ConexionBD;
+import datos.ConexionBD;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;

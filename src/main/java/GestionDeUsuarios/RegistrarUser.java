@@ -1,6 +1,6 @@
 package GestionDeUsuarios;
 
-import Datos.ConexionBD;
+import datos.ConexionBD;
 import Modelos.Usuario;
 import org.mindrot.jbcrypt.BCrypt;
 

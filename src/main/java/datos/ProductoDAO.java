@@ -1,4 +1,4 @@
-package Datos;
+package datos;
 
 import Modelos.Producto;
 
@@ -33,7 +33,6 @@ public class ProductoDAO {
                         rs.getBoolean("materiaprima"),
                         rs.getInt("idmateriaprima")
                 );
-
                 lista.add(producto);
             }
 
@@ -46,11 +45,11 @@ public class ProductoDAO {
 
     public static boolean insertar(Producto producto) {
         String sql = """
-        INSERT INTO productos
-        (codproduct, nombreproduct, precioproduct, descripcionproduct,
-         stockproduct, materiaprima, idmateriaprima)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-    """;
+            INSERT INTO productos
+            (codproduct, nombreproduct, precioproduct, descripcionproduct,
+             stockproduct, materiaprima, idmateriaprima)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """;
 
         try (Connection conn = ConexionBD.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -62,7 +61,7 @@ public class ProductoDAO {
             stmt.setInt(5, producto.getStockproduct());
             stmt.setBoolean(6, producto.isMateriaprima());
 
-            if (producto.getIdmateriaprima() == 0) {
+            if (!producto.isMateriaprima() || producto.getIdmateriaprima() <= 0) {
                 stmt.setNull(7, java.sql.Types.INTEGER);
             } else {
                 stmt.setInt(7, producto.getIdmateriaprima());
@@ -72,10 +71,9 @@ public class ProductoDAO {
             return true;
 
         } catch (org.postgresql.util.PSQLException e) {
-            // Detectar clave duplicada
-            if (e.getMessage().contains("duplicate key") || e.getSQLState().equals("23505")) {
+            if (e.getSQLState().equals("23505")) {
                 JOptionPane.showMessageDialog(null, "❌ Ya existe un producto con ese COD. Por favor elige otro.");
-                return false; // no re-lanzamos
+                return false;
             } else {
                 JOptionPane.showMessageDialog(null, "❌ Error al insertar producto: " + e.getMessage());
                 return false;
@@ -86,19 +84,17 @@ public class ProductoDAO {
         }
     }
 
-
-
     public static boolean actualizarPorID(Producto producto) {
         String sql = """
-        UPDATE productos SET
-            nombreproduct = ?,
-            precioproduct = ?,
-            descripcionproduct = ?,
-            stockproduct = ?,
-            materiaprima = ?,
-            idmateriaprima = ?
-        WHERE codproduct = ?
-    """;
+            UPDATE productos SET
+                nombreproduct = ?,
+                precioproduct = ?,
+                descripcionproduct = ?,
+                stockproduct = ?,
+                materiaprima = ?,
+                idmateriaprima = ?
+            WHERE codproduct = ?
+        """;
 
         try (Connection conn = ConexionBD.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -108,12 +104,19 @@ public class ProductoDAO {
             stmt.setString(3, producto.getDescripcionproduct());
             stmt.setInt(4, producto.getStockproduct());
             stmt.setBoolean(5, producto.isMateriaprima());
-            stmt.setInt(6, producto.getIdmateriaprima());
+
+            if (!producto.isMateriaprima() || producto.getIdmateriaprima() <= 0) {
+                stmt.setNull(6, java.sql.Types.INTEGER);
+            } else {
+                stmt.setInt(6, producto.getIdmateriaprima());
+            }
+
             stmt.setInt(7, producto.getCodproduct());
 
             return stmt.executeUpdate() > 0;
 
         } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "❌ Error al actualizar producto: " + e.getMessage());
             e.printStackTrace();
             return false;
         }
@@ -133,6 +136,4 @@ public class ProductoDAO {
             return false;
         }
     }
-
-
 }

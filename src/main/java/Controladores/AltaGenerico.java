@@ -1,7 +1,7 @@
 package Controladores;
 
-import Datos.ClienteDAO;
-import Datos.ProductoDAO;
+import datos.ClienteDAO;
+import datos.ProductoDAO;
 import Modelos.Cliente;
 import Modelos.Producto;
 
