@@ -12,7 +12,7 @@ public class FormularioGenericoAlta extends JPanel {
 
     private final HashMap<String, JComponent> campos = new HashMap<>();
     private final JButton btnGuardar;
-    private final Map<Integer, String> materiasDisponibles; // Para mapear nombres con IDs
+    private final Map<Integer, String> materiasDisponibles;
 
     public FormularioGenericoAlta(Map<String, String> camposDefinicion, ActionListener accionGuardar) {
         setLayout(new GridBagLayout());
@@ -33,22 +33,18 @@ public class FormularioGenericoAlta extends JPanel {
             add(new JLabel(etiqueta + ":"), gbc);
 
             gbc.gridx = 1;
-
             JComponent campo;
 
-            // Booleano → Combo "Sí/No"
             if ("boolean".equalsIgnoreCase(tipo)) {
                 JComboBox<String> combo = new JComboBox<>(new String[]{"Sí", "No"});
                 combo.setName("comboBoolean");
                 campo = combo;
 
             } else if (etiqueta.equalsIgnoreCase("ID Materia")) {
-                // Combo con materias primas disponibles
                 JComboBox<String> comboMateria = new JComboBox<>();
-                comboMateria.setName("comboMateria"); // Marcador para el getValores
+                comboMateria.setName("comboMateria");
 
-                comboMateria.addItem("0 - Ninguna"); // opción por defecto
-
+                comboMateria.addItem("0 - Ninguna"); // Por defecto
                 for (Map.Entry<Integer, String> entry : materiasDisponibles.entrySet()) {
                     comboMateria.addItem(entry.getKey() + " - " + entry.getValue());
                 }
@@ -64,7 +60,7 @@ public class FormularioGenericoAlta extends JPanel {
             fila++;
         }
 
-        // Botón Guardar
+        // Botón guardar
         btnGuardar = new JButton("Guardar");
         btnGuardar.addActionListener(accionGuardar);
 
@@ -74,30 +70,47 @@ public class FormularioGenericoAlta extends JPanel {
         gbc.anchor = GridBagConstraints.CENTER;
         add(btnGuardar, gbc);
 
-        // 🔄 Activar/desactivar selector de materia según combo de "Materia Prima"
+        // Lógica de vinculación entre "Materia Prima" y "ID Materia"
         JComponent comboMateriaPrima = campos.get("Materia Prima");
         JComponent campoIDMateria = campos.get("ID Materia");
 
         if (comboMateriaPrima instanceof JComboBox<?> combo && campoIDMateria instanceof JComboBox<?> comboMateria) {
+            DefaultComboBoxModel<String> model = (DefaultComboBoxModel<String>) comboMateria.getModel();
+
             combo.addActionListener(e -> {
                 boolean esSi = combo.getSelectedItem().toString().equalsIgnoreCase("Sí");
-                comboMateria.setEnabled(esSi);
-                if (!esSi) {
-                    comboMateria.setSelectedIndex(0); // "0 - Ninguna"
+
+                if (esSi) {
+                    int idx = model.getIndexOf("0 - Ninguna");
+                    if (idx != -1) model.removeElementAt(idx);
+
+                    comboMateria.setEnabled(true);
+                    if (comboMateria.getSelectedIndex() == -1 && model.getSize() > 0)
+                        comboMateria.setSelectedIndex(0);
+                } else {
+                    if (model.getIndexOf("0 - Ninguna") == -1)
+                        model.insertElementAt("0 - Ninguna", 0);
+
+                    comboMateria.setSelectedItem("0 - Ninguna");
+                    comboMateria.setEnabled(false);
                 }
             });
 
             // Estado inicial
-            if (!combo.getSelectedItem().toString().equalsIgnoreCase("Sí")) {
-                comboMateria.setEnabled(false);
-                ((JComboBox<?>) campoIDMateria).setSelectedIndex(0);
+            boolean esSi = combo.getSelectedItem().toString().equalsIgnoreCase("Sí");
+            comboMateria.setEnabled(esSi);
+
+            if (!esSi) {
+                if (model.getIndexOf("0 - Ninguna") == -1)
+                    model.insertElementAt("0 - Ninguna", 0);
+                comboMateria.setSelectedItem("0 - Ninguna");
+            } else {
+                int idx = model.getIndexOf("0 - Ninguna");
+                if (idx != -1) model.removeElementAt(idx);
             }
         }
     }
 
-    /**
-     * Obtiene los valores del formulario en forma de HashMap.
-     */
     public HashMap<String, String> getValores() {
         HashMap<String, String> valores = new HashMap<>();
 
@@ -110,13 +123,10 @@ public class FormularioGenericoAlta extends JPanel {
             } else if (campo instanceof JComboBox<?> combo) {
                 String seleccion = combo.getSelectedItem().toString();
 
-                // Si es combo de materia prima → devolver solo el ID
-                if (combo.getName() != null && combo.getName().equals("comboMateria")) {
-                    // Formato esperado: "ID - Nombre"
+                if ("comboMateria".equals(combo.getName())) {
                     String id = seleccion.split(" - ")[0].trim();
                     valores.put(etiqueta, id);
                 } else {
-                    // Si es combo booleano ("Sí"/"No")
                     valores.put(etiqueta, seleccion);
                 }
             }
@@ -125,21 +135,16 @@ public class FormularioGenericoAlta extends JPanel {
         return valores;
     }
 
-    /**
-     * Limpia todos los campos del formulario.
-     */
     public void limpiarCampos() {
         for (Map.Entry<String, JComponent> entry : campos.entrySet()) {
             JComponent campo = entry.getValue();
 
             if (campo instanceof JTextField textField) {
                 textField.setText("");
-
             } else if (campo instanceof JComboBox<?> combo) {
                 combo.setSelectedIndex(0);
             }
 
-            // Desactiva "ID Materia" si corresponde
             if (entry.getKey().equalsIgnoreCase("ID Materia")) {
                 JComponent comboMateria = campos.get("Materia Prima");
                 if (comboMateria instanceof JComboBox<?> cm) {
