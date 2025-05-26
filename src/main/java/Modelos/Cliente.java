@@ -91,4 +91,6 @@ public class Cliente {
     public void setCampoDescripcion(String campoDescripcion) {
         this.campoDescripcion = campoDescripcion;
     }
+
+
 }

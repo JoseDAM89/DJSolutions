@@ -1,7 +1,9 @@
 package gui;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.*;
@@ -23,6 +25,7 @@ public class ListadosGenerico extends JPanel {
                             Consumer<Object[]> accionEliminar) {
 
         setLayout(new BorderLayout());
+        setBackground(Color.decode("#f2f4f7")); // Fondo general claro
 
         // Modelo y tabla
         modelo = new DefaultTableModel(datos, columnas);
@@ -31,9 +34,31 @@ public class ListadosGenerico extends JPanel {
         sorter = new TableRowSorter<>(modelo);
         tabla.setRowSorter(sorter);
 
+        // Estilizar tabla
+        tabla.setRowHeight(28);
+        tabla.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        tabla.setGridColor(Color.LIGHT_GRAY);
+        tabla.setShowVerticalLines(false);
+        tabla.setSelectionBackground(new Color(100, 149, 237));
+        tabla.setSelectionForeground(Color.WHITE);
+
+        JTableHeader header = tabla.getTableHeader();
+        header.setFont(new Font("Segoe UI", Font.BOLD, 15));
+        header.setBackground(new Color(230, 230, 230));
+        header.setForeground(Color.DARK_GRAY);
+
+        JScrollPane scrollPane = new JScrollPane(tabla);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
         // Campo de búsqueda
         campoBuscar = new JTextField();
         campoBuscar.setToolTipText("Escribe para buscar...");
+        campoBuscar.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        campoBuscar.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(180, 180, 180)),
+                BorderFactory.createEmptyBorder(8, 10, 8, 10)
+        ));
+
         campoBuscar.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
                 String texto = campoBuscar.getText().trim();
@@ -42,11 +67,15 @@ public class ListadosGenerico extends JPanel {
         });
 
         JPanel panelBuscar = new JPanel(new BorderLayout());
-        panelBuscar.setBorder(BorderFactory.createTitledBorder("Buscar"));
+        panelBuscar.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.GRAY), "Buscar"));
+        panelBuscar.setBackground(getBackground());
+        panelBuscar.setBorder(new EmptyBorder(10, 15, 10, 15));
         panelBuscar.add(campoBuscar, BorderLayout.CENTER);
 
         // Botones
-        btnEditar = new JButton("Editar");
+        btnEditar = crearBoton("✏ Editar", new Color(70, 130, 180));
+        btnEliminar = crearBoton("🗑 Eliminar", new Color(220, 53, 69));
+
         btnEditar.addActionListener(e -> {
             Object[] fila = getFilaSeleccionada();
             if (fila == null) {
@@ -62,7 +91,6 @@ public class ListadosGenerico extends JPanel {
             dialog.setVisible(true);
         });
 
-        btnEliminar = new JButton("Eliminar");
         btnEliminar.addActionListener(e -> {
             Object[] fila = getFilaSeleccionada();
             if (fila == null) {
@@ -81,13 +109,26 @@ public class ListadosGenerico extends JPanel {
         });
 
         JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        panelBotones.setBackground(getBackground());
+        panelBotones.setBorder(new EmptyBorder(10, 15, 10, 15));
         panelBotones.add(btnEditar);
         panelBotones.add(btnEliminar);
 
         // Armado del panel principal
         add(panelBuscar, BorderLayout.NORTH);
-        add(new JScrollPane(tabla), BorderLayout.CENTER);
+        add(scrollPane, BorderLayout.CENTER);
         add(panelBotones, BorderLayout.SOUTH);
+    }
+
+    private JButton crearBoton(String texto, Color color) {
+        JButton boton = new JButton(texto);
+        boton.setFocusPainted(false);
+        boton.setForeground(Color.WHITE);
+        boton.setBackground(color);
+        boton.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        boton.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        return boton;
     }
 
     public Object[] getFilaSeleccionada() {
@@ -111,7 +152,6 @@ public class ListadosGenerico extends JPanel {
             modelo.setValueAt(nuevaFila[i], filaModelo, i);
         }
     }
-
 
     public void eliminarFilaSeleccionada() {
         int filaVisual = tabla.getSelectedRow();

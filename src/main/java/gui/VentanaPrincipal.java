@@ -151,4 +151,9 @@ public class VentanaPrincipal extends JFrame {
             System.exit(0);
         }
     }
+
+    public void volverAHome() {
+        ponPanel(new Form_Home());
+    }
+
 }

@@ -135,7 +135,7 @@ public class GenerarPresupuesto extends JPanel {
             cabecera.addCell(datosEmpresa);
 
             try {
-                Image logo = Image.getInstance("src/resources/Logo-removebg-preview.png");
+                Image logo = Image.getInstance("src/main/resources/JSWINGICONS/icon/Logo.png");
                 logo.scaleToFit(120, 60);
                 PdfPCell logoCell = new PdfPCell(logo, false);
                 logoCell.setHorizontalAlignment(Element.ALIGN_RIGHT);

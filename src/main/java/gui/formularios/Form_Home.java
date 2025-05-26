@@ -1,5 +1,7 @@
 package gui.formularios;
 
+import Modelos.Cliente;
+import datos.ConexionBD;
 import gui.dialogos.Message;
 import org.example.Main;
 import gui.modelos.ModelCard;
@@ -9,6 +11,10 @@ import gui.swing.iconos.IconFontSwing;
 import gui.swing.aviso.ModelNoticeBoard;
 import gui.swing.tablero.EventAction;
 import java.awt.Color;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import javax.swing.*;
 
 public class Form_Home extends javax.swing.JPanel {
@@ -30,38 +36,67 @@ public class Form_Home extends javax.swing.JPanel {
         EventAction eventAction = new EventAction() {
             @Override
             public void delete(ModelStudent student) {
-                showMessage("Delete Student : " + student.getName());
+                showMessage("Eliminar cliente: " + student.getName());
             }
 
             @Override
             public void update(ModelStudent student) {
-                showMessage("Update Student : " + student.getName());
+                showMessage("Actualizar cliente: " + student.getName());
             }
         };
-        table1.addRow(new ModelStudent(new ImageIcon(getClass().getResource("/JSWINGICONS/icon/profile.jpg")), "Jonh", "Male", "Java", 300).toRowTable(eventAction));
-        table1.addRow(new ModelStudent(new ImageIcon(getClass().getResource("/JSWINGICONS/icon/profile1.jpg")), "Dara", "Male", "C++", 300).toRowTable(eventAction));
-        table1.addRow(new ModelStudent(new ImageIcon(getClass().getResource("/JSWINGICONS/icon/profile2.jpg")), "Bora", "Male", "C#", 300).toRowTable(eventAction));
-        table1.addRow(new ModelStudent(new ImageIcon(getClass().getResource("/JSWINGICONS/icon/profile2.jpg")), "Bora", "Male", "C#", 300).toRowTable(eventAction));
-        table1.addRow(new ModelStudent(new ImageIcon(getClass().getResource("/JSWINGICONS/icon/profile2.jpg")), "Bora", "Male", "C#", 300).toRowTable(eventAction));
-        table1.addRow(new ModelStudent(new ImageIcon(getClass().getResource("/JSWINGICONS/icon/profile2.jpg")), "Bora", "Male", "C#", 300).toRowTable(eventAction));
-        table1.addRow(new ModelStudent(new ImageIcon(getClass().getResource("/JSWINGICONS/icon/profile2.jpg")), "Bora", "Male", "C#", 300).toRowTable(eventAction));
-        table1.addRow(new ModelStudent(new ImageIcon(getClass().getResource("/JSWINGICONS/icon/profile2.jpg")), "Bora", "Male", "C#", 300).toRowTable(eventAction));
-        table1.addRow(new ModelStudent(new ImageIcon(getClass().getResource("/JSWINGICONS/icon/profile2.jpg")), "Bora", "Male", "C#", 300).toRowTable(eventAction));
-        table1.addRow(new ModelStudent(new ImageIcon(getClass().getResource("/JSWINGICONS/icon/profile2.jpg")), "Bora", "Male", "C#", 300).toRowTable(eventAction));
-        table1.addRow(new ModelStudent(new ImageIcon(getClass().getResource("/JSWINGICONS/icon/profile2.jpg")), "Bora", "Male", "C#", 300).toRowTable(eventAction));
-        table1.addRow(new ModelStudent(new ImageIcon(getClass().getResource("/JSWINGICONS/icon/profile2.jpg")), "Bora", "Male", "C#", 300).toRowTable(eventAction));
-        table1.addRow(new ModelStudent(new ImageIcon(getClass().getResource("/JSWINGICONS/icon/profile2.jpg")), "Bora", "Male", "C#", 300).toRowTable(eventAction));
+
+        // Limpia la tabla antes de cargar nuevos datos
+        // table1.clearRows(); // Descomenta si tienes este método
+
+        String sql = "SELECT idcliente, campoNombre, campoCIF, campoEmail, campoPersonaDeContacto, campoDireccion, campoDescripcion FROM clientes";
+
+        try (Connection conn = ConexionBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                // Crea un objeto Cliente desde la base de datos
+                Cliente cliente = new Cliente(
+                        rs.getInt("idcliente"),
+                        rs.getString("campoNombre"),
+                        rs.getString("campoCIF"),
+                        rs.getString("campoEmail"),
+                        rs.getString("campoPersonaDeContacto"),
+                        rs.getString("campoDireccion"),
+                        rs.getString("campoDescripcion")
+                );
+
+                // Usamos nombre, email y descripción como los datos a mostrar
+                String nombre = cliente.getCampoNombre();
+                String email = cliente.getCampoEmail();
+                String descripcion = cliente.getCampoDescripcion();
+
+                // Icono por defecto (puedes usar otro si tienes imágenes por cliente)
+                ImageIcon icono = new ImageIcon(getClass().getResource("/JSWINGICONS/icon/profile.jpg"));
+
+                // Puedes usar los datos como desees; aquí los adapto a ModelStudent
+                ModelStudent student = new ModelStudent(icono, nombre, "Cliente", email + " - " + descripcion, 0);
+                table1.addRow(student.toRowTable(eventAction));
+            }
+
+        } catch (SQLException e) {
+            showMessage("❌ Error al cargar clientes: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
+
+
+
 
     private void initCardData() {
         Icon icon1 = IconFontSwing.buildIcon(GoogleMaterialDesignIcons.PEOPLE, 60, new Color(255, 255, 255, 100), new Color(255, 255, 255, 15));
-        card1.setData(new ModelCard("New Student", 5100, 20, icon1));
+        card1.setData(new ModelCard("Productos", 5100, 20, icon1));
         Icon icon2 = IconFontSwing.buildIcon(GoogleMaterialDesignIcons.MONETIZATION_ON, 60, new Color(255, 255, 255, 100), new Color(255, 255, 255, 15));
-        card2.setData(new ModelCard("Income", 2000, 60, icon2));
+        card2.setData(new ModelCard("Clientes", 2000, 60, icon2));
         Icon icon3 = IconFontSwing.buildIcon(GoogleMaterialDesignIcons.SHOPPING_BASKET, 60, new Color(255, 255, 255, 100), new Color(255, 255, 255, 15));
-        card3.setData(new ModelCard("Expense", 3000, 80, icon3));
+        card3.setData(new ModelCard("Usuarios", 3000, 80, icon3));
         Icon icon4 = IconFontSwing.buildIcon(GoogleMaterialDesignIcons.BUSINESS_CENTER, 60, new Color(255, 255, 255, 100), new Color(255, 255, 255, 15));
-        card4.setData(new ModelCard("Other Income", 550, 95, icon4));
+        card4.setData(new ModelCard("Presupuestos", 550, 95, icon4));
     }
 
     private void initNoticeBoard() {
@@ -122,7 +157,7 @@ public class Form_Home extends javax.swing.JPanel {
 
             },
             new String [] {
-                "Name", "Gender", "Course", "Fees", "Action"
+                "Nombre", "Tipo", "Correo",
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -140,7 +175,7 @@ public class Form_Home extends javax.swing.JPanel {
 
         jLabel5.setFont(new java.awt.Font("sansserif", 1, 15)); // NOI18N
         jLabel5.setForeground(new Color(76, 76, 76));
-        jLabel5.setText("Data Student");
+        jLabel5.setText("Clientes Registrados");
         jLabel5.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 1));
 
         javax.swing.GroupLayout panelTransparent1Layout = new javax.swing.GroupLayout(panelTransparent1);
