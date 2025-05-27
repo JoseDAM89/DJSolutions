@@ -118,12 +118,12 @@ public class Form_Home extends javax.swing.JPanel {
         int totalProductos = obtenerCantidad("productos");
         int totalClientes = obtenerCantidad("clientes");
         int totalUsuarios = obtenerCantidad("usuarios");
-        int totalPresupuestos = obtenerCantidad("presupuestos");
+        int totalPresupuestos = obtenerCantidad("presupuesto");
 
         int porcentajeProductos = calcularPorcentaje(totalProductos);
         int porcentajeClientes = calcularPorcentaje(totalClientes);
         int porcentajeUsuarios = calcularPorcentaje(totalUsuarios);
-        int porcentajePresupuestos = calcularPorcentaje(totalPresupuestos);
+        int porcentajePresupuesto = calcularPorcentaje(totalPresupuestos);
 
         Icon icon1 = IconFontSwing.buildIcon(GoogleMaterialDesignIcons.PEOPLE, 60, new Color(255, 255, 255, 100), new Color(255, 255, 255, 15));
         card1.setData(new ModelCard("Productos", totalProductos, porcentajeProductos, icon1));
@@ -135,7 +135,7 @@ public class Form_Home extends javax.swing.JPanel {
         card3.setData(new ModelCard("Usuarios", totalUsuarios, porcentajeUsuarios, icon3));
 
         Icon icon4 = IconFontSwing.buildIcon(GoogleMaterialDesignIcons.BUSINESS_CENTER, 60, new Color(255, 255, 255, 100), new Color(255, 255, 255, 15));
-        card4.setData(new ModelCard("Presupuestos", totalPresupuestos, porcentajePresupuestos, icon4));
+        card4.setData(new ModelCard("Presupuesto", totalPresupuestos, porcentajePresupuesto, icon4));
     }
 
     private void initNoticeBoard() {

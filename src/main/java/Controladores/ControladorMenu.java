@@ -10,6 +10,7 @@ import FuncionesPresupuesto.HistorialDePresupuestos;
 import FuncionesPresupuesto.SeleccionarMateriales;
 import GestionDeUsuarios.RegistrarUser;
 import GestionDeUsuarios.VerUsuarios;
+import gui.GenerarPresupuestoPanel;
 import gui.formularios.Form1;
 import gui.formularios.Form_Home;
 
@@ -39,7 +40,8 @@ public class ControladorMenu {
                 };
             case 2: // Funciones Presupuesto
                 return switch (subMenuIndex) {
-                    case 0 -> new GenerarPresupuesto();
+                    case 0 -> FabricaPresupuesto.crearPanel();
+
                     case 1 -> new HistorialDePresupuestos();
                     case 2 -> new SeleccionarMateriales();
                     default -> new GenerarPresupuesto();
@@ -64,4 +66,14 @@ public class ControladorMenu {
         panel.add(new JLabel("Funcionalidad no implementada"));
         return panel;
     }
+
+    public class FabricaPresupuesto {
+        public static GenerarPresupuestoPanel crearPanel() {
+            GenerarPresupuestoPanel panel = new GenerarPresupuestoPanel();
+            GenerarPresupuestoControlador controlador = new GenerarPresupuestoControlador(panel);
+            panel.setControlador(controlador);
+            return panel;
+        }
+    }
+
 }
