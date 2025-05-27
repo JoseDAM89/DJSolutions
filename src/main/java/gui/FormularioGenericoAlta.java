@@ -7,7 +7,6 @@ import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class FormularioGenericoAlta extends JPanel {
@@ -16,7 +15,24 @@ public class FormularioGenericoAlta extends JPanel {
     private final JButton btnGuardar;
     private final Map<Integer, String> materiasDisponibles;
 
+    // Etiqueta visual para distinguir el formulario
+    private final JLabel etiquetaTipoFormulario;
+
+    /**
+     * Constructor base, sin distintivo visual.
+     */
     public FormularioGenericoAlta(Map<String, String> camposDefinicion, ActionListener accionGuardar) {
+        this(camposDefinicion, accionGuardar, null);
+    }
+
+    /**
+     * Constructor con distintivo visual que indica el tipo de formulario.
+     *
+     * @param camposDefinicion Definición de campos a mostrar.
+     * @param accionGuardar    Acción para el botón Guardar.
+     * @param tipoFormulario   Texto que identifica el formulario (puede ser null para no mostrar).
+     */
+    public FormularioGenericoAlta(Map<String, String> camposDefinicion, ActionListener accionGuardar, String tipoFormulario) {
         setLayout(new GridBagLayout());
         setBackground(new Color(250, 250, 255));  // Fondo suave
 
@@ -28,6 +44,27 @@ public class FormularioGenericoAlta extends JPanel {
         gbc.weightx = 1.0;
 
         int fila = 0;
+
+        // Si se pasó un tipo de formulario, añadimos un distintivo visual arriba
+        if (tipoFormulario != null && !tipoFormulario.isBlank()) {
+            etiquetaTipoFormulario = new JLabel(tipoFormulario);
+            etiquetaTipoFormulario.setFont(new Font("Segoe UI", Font.BOLD, 18));
+            etiquetaTipoFormulario.setForeground(new Color(30, 80, 160));
+            etiquetaTipoFormulario.setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createMatteBorder(0, 0, 2, 0, new Color(30, 80, 160)),
+                    BorderFactory.createEmptyBorder(10, 10, 10, 10)
+            ));
+            gbc.gridx = 0;
+            gbc.gridy = fila;
+            gbc.gridwidth = 2;
+            gbc.anchor = GridBagConstraints.CENTER;
+            add(etiquetaTipoFormulario, gbc);
+            fila++;
+        } else {
+            etiquetaTipoFormulario = null;
+        }
+
+        // Agregar los campos del formulario
         for (String etiqueta : camposDefinicion.keySet()) {
             String tipo = camposDefinicion.get(etiqueta);
 

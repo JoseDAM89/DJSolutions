@@ -24,7 +24,9 @@ public class ControladorMenu {
                     case 0 -> new AltaCliente().construirFormulario();
                     case 1 -> new Form1(); // Placeholder para "Editar Clientes"
                     case 2 -> new ListarClientes().mostrarVentana();
-                    default -> panelVacio();
+                    default -> new AltaCliente().construirFormulario();
+//                  default -> panelVacio();
+
                 };
             case 1: // Funciones Inventario
                 return switch (subMenuIndex) {
@@ -32,20 +34,24 @@ public class ControladorMenu {
                     case 1 -> new ConsultarStock();
                     case 2 -> new ListarProductos().mostrarVentana();
                     case 3 -> new ListarProductos().mostrarVentana(); // Ver Alerta Stock (reutilizado por ahora)
-                    default -> panelVacio();
+                    default -> new AltaProducto().construirFormulario();
+//                  default -> panelVacio();
                 };
             case 2: // Funciones Presupuesto
                 return switch (subMenuIndex) {
                     case 0 -> new GenerarPresupuesto();
                     case 1 -> new HistorialDePresupuestos();
                     case 2 -> new SeleccionarMateriales();
-                    default -> panelVacio();
+                    default -> new GenerarPresupuesto();
+//                  default -> panelVacio();
                 };
             case 3: // Gestión de Usuarios (solo visible si es Admin)
                 return switch (subMenuIndex) {
                     case 0 -> new RegistrarUser();
                     case 1 -> new VerUsuarios();
-                    default -> panelVacio();
+                    default -> new RegistrarUser();
+
+//                  default -> panelVacio();
                 };
             default:
                 return new Form_Home();
@@ -54,6 +60,7 @@ public class ControladorMenu {
 
     private static JPanel panelVacio() {
         JPanel panel = new JPanel();
+
         panel.add(new JLabel("Funcionalidad no implementada"));
         return panel;
     }

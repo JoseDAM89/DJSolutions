@@ -41,8 +41,9 @@ public class AltaCliente {
             formulario[0].limpiarCampos();
         };
 
+
         // 5. Crear formulario con tipos y acción
-        formulario[0] = new FormularioGenericoAlta(camposConTipos, accionGuardar);
+        formulario[0] = new FormularioGenericoAlta(camposConTipos, accionGuardar,"Alta Cliente");
         return formulario[0];
     }
 }

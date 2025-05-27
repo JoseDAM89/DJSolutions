@@ -3,70 +3,78 @@ package gui.modelos;
 import gui.swing.tablero.EventAction;
 import gui.swing.tablero.ModelAction;
 import gui.swing.tablero.ModelProfile;
-import java.text.DecimalFormat;
+
 import javax.swing.Icon;
 
 public class ModelStudent {
 
-    public Icon getIcon() {
-        return icon;
+    private Icon icon;
+    private String name;
+    private String tipo;
+    private String correo;
+    private String descripcion;
+
+    public ModelStudent() {
     }
 
-    public void setIcon(Icon icon) {
+    public ModelStudent(Icon icon, String name, String tipo, String correo, String descripcion) {
         this.icon = icon;
+        this.name = name;
+        this.tipo = tipo;
+        this.correo = correo;
+        this.descripcion = descripcion;
+    }
+
+    // Getters
+    public Icon getIcon() {
+        return icon;
     }
 
     public String getName() {
         return name;
     }
 
+    public String getTipo() {
+        return tipo;
+    }
+
+    public String getCorreo() {
+        return correo;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    // Setters
+    public void setIcon(Icon icon) {
+        this.icon = icon;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
 
-    public String getGender() {
-        return gender;
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
     }
 
-    public void setGender(String gender) {
-        this.gender = gender;
+    public void setCorreo(String correo) {
+        this.correo = correo;
     }
 
-    public String getCourse() {
-        return course;
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
-    public void setCourse(String course) {
-        this.course = course;
-    }
-
-    public double getFees() {
-        return fees;
-    }
-
-    public void setFees(double fees) {
-        this.fees = fees;
-    }
-
-    public ModelStudent(Icon icon, String name, String gender, String course, double fees) {
-        this.icon = icon;
-        this.name = name;
-        this.gender = gender;
-        this.course = course;
-        this.fees = fees;
-    }
-
-    public ModelStudent() {
-    }
-
-    private Icon icon;
-    private String name;
-    private String gender;
-    private String course;
-    private double fees;
-
+    // Conversión a fila de tabla
     public Object[] toRowTable(EventAction event) {
-        DecimalFormat df = new DecimalFormat("$#,##0.00");
-        return new Object[]{new ModelProfile(icon, name), gender, course, df.format(fees), new ModelAction(this, event)};
+        return new Object[]{
+                new ModelProfile(icon, name),
+                tipo,
+                correo,
+                descripcion,
+                new ModelAction(this, event)
+        };
     }
 }

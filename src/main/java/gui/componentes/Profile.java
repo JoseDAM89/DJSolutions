@@ -1,21 +1,20 @@
 package gui.componentes;
 
 import gui.VentanaPrincipal;  // IMPORTANTE: para reconocer la clase padre
-import gui.formularios.Form_Home;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class Profile extends javax.swing.JPanel {
+public class Profile extends JPanel {
 
     public Profile() {
         initComponents();
         setOpaque(false);
 
         // Listener para que si haces clic en el logo, llame a volverAHome de VentanaPrincipal
-        jLabel1.addMouseListener(new MouseAdapter() {
+        jLabelLogo.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 llamarVolverAHome();
@@ -24,7 +23,6 @@ public class Profile extends javax.swing.JPanel {
     }
 
     private void llamarVolverAHome() {
-        // Buscar el JFrame contenedor
         JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
         if (topFrame instanceof VentanaPrincipal) {
             ((VentanaPrincipal) topFrame).volverAHome();
@@ -34,34 +32,36 @@ public class Profile extends javax.swing.JPanel {
     }
 
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
+        // Usamos BoxLayout vertical para apilar logo y texto
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-        jLabel1 = new JLabel();
+        // Label para el logo
+        jLabelLogo = new JLabel();
 
-        // Fuente y color del texto
-        jLabel1.setFont(new Font("SansSerif", Font.BOLD, 20));
-        jLabel1.setForeground(new Color(30, 30, 30));
-
-        // Cargar el logo original
         ImageIcon iconoOriginal = new ImageIcon(getClass().getResource("/JSWINGICONS/icon/Logo-removebg-preview.png"));
-
-        // Escalar con buena calidad manteniendo la relación de aspecto
-        Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(80, -1, Image.SCALE_SMOOTH);
+        Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(100, -1, Image.SCALE_SMOOTH);
         ImageIcon iconoEscalado = new ImageIcon(imagenEscalada);
+        jLabelLogo.setIcon(iconoEscalado);
 
-        // Asignar icono y texto
-        jLabel1.setIcon(iconoEscalado);
-        jLabel1.setText(" DJSolutions");
-        jLabel1.setHorizontalTextPosition(SwingConstants.RIGHT);
-        jLabel1.setIconTextGap(10);
+        // Centrar logo horizontalmente
+        jLabelLogo.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Añadir etiqueta al panel
-        add(jLabel1);
-    }// </editor-fold>//GEN-END:initComponents
+        // Label para el texto de la empresa
+        jLabelTexto = new JLabel("DJSOLUTIONS");
+        jLabelTexto.setFont(new Font("SansSerif", Font.BOLD, 20));
+        jLabelTexto.setForeground(new Color(30, 30, 30));
+        jLabelTexto.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
-    // End of variables declaration//GEN-END:variables
+        // Añadir un pequeño espacio entre logo y texto
+        add(Box.createVerticalStrut(10));
+        add(jLabelLogo);
+        add(Box.createVerticalStrut(5));
+        add(jLabelTexto);
+        add(Box.createVerticalGlue()); // para que se quede arriba y empuje hacia abajo
+    }
+
+    // Variables declaration
+    private JLabel jLabelLogo;
+    private JLabel jLabelTexto;
 }

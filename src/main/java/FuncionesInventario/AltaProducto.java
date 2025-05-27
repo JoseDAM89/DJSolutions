@@ -45,7 +45,7 @@ public class AltaProducto {
         };
 
         // 5. Crear el formulario con tipos y acción
-        formulario[0] = new FormularioGenericoAlta(camposConTipos, accionGuardar);
+        formulario[0] = new FormularioGenericoAlta(camposConTipos, accionGuardar, "Alta Productos");
         return formulario[0];
     }
 }
