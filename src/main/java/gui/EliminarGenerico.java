@@ -2,6 +2,7 @@ package gui;
 
 import datos.ClienteDAO;
 import datos.ProductoDAO;
+import datos.UsuarioDAO;
 
 public class EliminarGenerico {
 
@@ -21,6 +22,7 @@ public class EliminarGenerico {
             switch (tabla.toLowerCase()) {
                 case "clientes" -> eliminado = ClienteDAO.eliminarPorID(id);
                 case "productos" -> eliminado = ProductoDAO.eliminarPorID(id);
+                case "usuarios" -> eliminado = UsuarioDAO.eliminarPorID(id);
                 default -> throw new IllegalArgumentException("No hay DAO definido para la tabla: " + tabla);
             }
 

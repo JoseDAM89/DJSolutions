@@ -5,13 +5,11 @@ import FuncionesCliente.ListarClientes;
 import FuncionesInventario.AltaProducto;
 import FuncionesInventario.ConsultarStock;
 import FuncionesInventario.ListarProductos;
-import FuncionesPresupuesto.GenerarPresupuesto;
 import FuncionesPresupuesto.HistorialDePresupuestos;
 import FuncionesPresupuesto.SeleccionarMateriales;
-import GestionDeUsuarios.RegistrarUser;
-import GestionDeUsuarios.VerUsuarios;
+import FuncionesDeUsuarios.AltaUser;
+import FuncionesDeUsuarios.ListarUsuarios;
 import gui.GenerarPresupuestoPanel;
-import gui.formularios.Form1;
 import gui.formularios.Form_Home;
 
 import javax.swing.*;
@@ -47,9 +45,9 @@ public class ControladorMenu {
                 };
             case 3: // Gestión de Usuarios (solo visible si es Admin)
                 return switch (subMenuIndex) {
-                    case 0 -> new RegistrarUser();
-                    case 1 -> new VerUsuarios();
-                    default -> new RegistrarUser();
+                    case 0 -> new AltaUser().construirFormulario();
+                    case 1 -> new ListarUsuarios().mostrarVentana();
+                    default -> new AltaUser().construirFormulario();
 
 //                  default -> panelVacio();
                 };

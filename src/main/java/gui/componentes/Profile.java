@@ -56,7 +56,7 @@ public class Profile extends JPanel {
         // Añadir un pequeño espacio entre logo y texto
         add(Box.createVerticalStrut(10));
         add(jLabelLogo);
-        add(Box.createVerticalStrut(5));
+        add(Box.createVerticalStrut(1));
         add(jLabelTexto);
         add(Box.createVerticalGlue()); // para que se quede arriba y empuje hacia abajo
     }
