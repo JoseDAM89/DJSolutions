@@ -23,8 +23,7 @@ public class ControladorMenu {
             case 0: // Funciones Cliente
                 return switch (subMenuIndex) {
                     case 0 -> new AltaCliente().construirFormulario();
-                    case 1 -> new Form1(); // Placeholder para "Editar Clientes"
-                    case 2 -> new ListarClientes().mostrarVentana();
+                    case 1 -> new ListarClientes().mostrarVentana();
                     default -> new AltaCliente().construirFormulario();
 //                  default -> panelVacio();
 
@@ -41,10 +40,9 @@ public class ControladorMenu {
             case 2: // Funciones Presupuesto
                 return switch (subMenuIndex) {
                     case 0 -> FabricaPresupuesto.crearPanel();
-
                     case 1 -> new HistorialDePresupuestos();
                     case 2 -> new SeleccionarMateriales();
-                    default -> new GenerarPresupuesto();
+                    default -> FabricaPresupuesto.crearPanel();
 //                  default -> panelVacio();
                 };
             case 3: // Gestión de Usuarios (solo visible si es Admin)

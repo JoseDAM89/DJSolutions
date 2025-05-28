@@ -125,13 +125,13 @@ public class Form_Home extends javax.swing.JPanel {
         int porcentajeUsuarios = calcularPorcentaje(totalUsuarios);
         int porcentajePresupuesto = calcularPorcentaje(totalPresupuestos);
 
-        Icon icon1 = IconFontSwing.buildIcon(GoogleMaterialDesignIcons.PEOPLE, 60, new Color(255, 255, 255, 100), new Color(255, 255, 255, 15));
+        Icon icon1 = IconFontSwing.buildIcon(GoogleMaterialDesignIcons.SHOPPING_BASKET, 60, new Color(255, 255, 255, 100), new Color(255, 255, 255, 15));
         card1.setData(new ModelCard("Productos", totalProductos, porcentajeProductos, icon1));
 
-        Icon icon2 = IconFontSwing.buildIcon(GoogleMaterialDesignIcons.MONETIZATION_ON, 60, new Color(255, 255, 255, 100), new Color(255, 255, 255, 15));
+        Icon icon2 = IconFontSwing.buildIcon(GoogleMaterialDesignIcons.PEOPLE, 60, new Color(255, 255, 255, 100), new Color(255, 255, 255, 15));
         card2.setData(new ModelCard("Clientes", totalClientes, porcentajeClientes, icon2));
 
-        Icon icon3 = IconFontSwing.buildIcon(GoogleMaterialDesignIcons.SHOPPING_BASKET, 60, new Color(255, 255, 255, 100), new Color(255, 255, 255, 15));
+        Icon icon3 = IconFontSwing.buildIcon(GoogleMaterialDesignIcons.PERSON, 60, new Color(255, 255, 255, 100), new Color(255, 255, 255, 15));
         card3.setData(new ModelCard("Usuarios", totalUsuarios, porcentajeUsuarios, icon3));
 
         Icon icon4 = IconFontSwing.buildIcon(GoogleMaterialDesignIcons.BUSINESS_CENTER, 60, new Color(255, 255, 255, 100), new Color(255, 255, 255, 15));
@@ -161,7 +161,7 @@ public class Form_Home extends javax.swing.JPanel {
                 new Color(32, 171, 43),
                 "Reportes",
                 "14:30",
-                "Agregamos nuevos reportes de ventas. Puedes descargarlos en PDF o Excel."
+                "Agregamos nuevos reportes de ventas. Puedes descargarlos en PDF."
         ));
 
         noticeBoard.addNoticeBoard(new ModelNoticeBoard(

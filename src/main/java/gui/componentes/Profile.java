@@ -40,7 +40,7 @@ public class Profile extends JPanel {
         jLabelLogo = new JLabel();
 
         ImageIcon iconoOriginal = new ImageIcon(getClass().getResource("/JSWINGICONS/icon/Logo-removebg-preview.png"));
-        Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(100, -1, Image.SCALE_SMOOTH);
+        Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(120, -1, Image.SCALE_SMOOTH);
         ImageIcon iconoEscalado = new ImageIcon(imagenEscalada);
         jLabelLogo.setIcon(iconoEscalado);
 
