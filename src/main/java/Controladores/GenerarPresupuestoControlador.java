@@ -4,7 +4,7 @@ import Modelos.Cliente;
 import Modelos.Presupuesto;
 import datos.PresupuestoDAO;
 import gui.GenerarPresupuestoPanel;
-import servicios.PresupuestoServicio;
+import FuncionesPresupuesto.PresupuestoServicio;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
