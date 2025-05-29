@@ -40,7 +40,7 @@ public class Profile extends JPanel {
         jLabelLogo = new JLabel();
 
         ImageIcon iconoOriginal = new ImageIcon(getClass().getResource("/JSWINGICONS/icon/Logo-removebg-preview.png"));
-        Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(100, -1, Image.SCALE_SMOOTH);
+        Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(120, -1, Image.SCALE_SMOOTH);
         ImageIcon iconoEscalado = new ImageIcon(imagenEscalada);
         jLabelLogo.setIcon(iconoEscalado);
 
@@ -56,7 +56,7 @@ public class Profile extends JPanel {
         // Añadir un pequeño espacio entre logo y texto
         add(Box.createVerticalStrut(10));
         add(jLabelLogo);
-        add(Box.createVerticalStrut(5));
+        add(Box.createVerticalStrut(1));
         add(jLabelTexto);
         add(Box.createVerticalGlue()); // para que se quede arriba y empuje hacia abajo
     }

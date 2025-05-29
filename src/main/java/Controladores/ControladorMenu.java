@@ -5,13 +5,11 @@ import FuncionesCliente.ListarClientes;
 import FuncionesInventario.AltaProducto;
 import FuncionesInventario.ConsultarStock;
 import FuncionesInventario.ListarProductos;
-import FuncionesPresupuesto.GenerarPresupuesto;
 import FuncionesPresupuesto.HistorialDePresupuestos;
 import FuncionesPresupuesto.SeleccionarMateriales;
-import GestionDeUsuarios.RegistrarUser;
-import GestionDeUsuarios.VerUsuarios;
+import FuncionesDeUsuarios.AltaUser;
+import FuncionesDeUsuarios.ListarUsuarios;
 import gui.GenerarPresupuestoPanel;
-import gui.formularios.Form1;
 import gui.formularios.Form_Home;
 
 import javax.swing.*;
@@ -23,8 +21,7 @@ public class ControladorMenu {
             case 0: // Funciones Cliente
                 return switch (subMenuIndex) {
                     case 0 -> new AltaCliente().construirFormulario();
-                    case 1 -> new Form1(); // Placeholder para "Editar Clientes"
-                    case 2 -> new ListarClientes().mostrarVentana();
+                    case 1 -> new ListarClientes().mostrarVentana();
                     default -> new AltaCliente().construirFormulario();
 //                  default -> panelVacio();
 
@@ -41,17 +38,16 @@ public class ControladorMenu {
             case 2: // Funciones Presupuesto
                 return switch (subMenuIndex) {
                     case 0 -> FabricaPresupuesto.crearPanel();
-
                     case 1 -> new HistorialDePresupuestos();
                     case 2 -> new SeleccionarMateriales();
-                    default -> new GenerarPresupuesto();
+                    default -> FabricaPresupuesto.crearPanel();
 //                  default -> panelVacio();
                 };
             case 3: // Gestión de Usuarios (solo visible si es Admin)
                 return switch (subMenuIndex) {
-                    case 0 -> new RegistrarUser();
-                    case 1 -> new VerUsuarios();
-                    default -> new RegistrarUser();
+                    case 0 -> new AltaUser().construirFormulario();
+                    case 1 -> new ListarUsuarios().mostrarVentana();
+                    default -> new AltaUser().construirFormulario();
 
 //                  default -> panelVacio();
                 };
