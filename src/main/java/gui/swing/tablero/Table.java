@@ -20,7 +20,8 @@ public class Table extends JTable {
         setBackground(new Color(0, 0, 0, 0));
         setShowHorizontalLines(true);
         setGridColor(new Color(30, 30, 30, 50));
-        setRowHeight(40);
+        setForeground(new Color(0,0,0));
+        setRowHeight(60);
         getTableHeader().setReorderingAllowed(false);
         getTableHeader().setDefaultRenderer(new DefaultTableCellRenderer() {
             @Override

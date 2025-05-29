@@ -12,11 +12,14 @@ public class LoginDialog extends JDialog {
 
     public LoginDialog(Frame parent) {
         super(parent, "Iniciar Sesión", true);
+        setUndecorated(true);
         inicioSesionPanel = new InicioSesion(this);
         setContentPane(inicioSesionPanel);
         pack();
         setLocationRelativeTo(parent);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+
+
     }
 
     public void onLoginSuccess(String correo, boolean esAdmin) {

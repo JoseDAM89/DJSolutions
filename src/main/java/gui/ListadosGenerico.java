@@ -161,6 +161,13 @@ public class ListadosGenerico extends JPanel {
         modelo.removeRow(filaModelo);
     }
 
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        setBackground(new Color(211, 221, 233)); // Color sólido directamente
+    }
+
+
     public JTable getTabla() {
         return tabla;
     }
