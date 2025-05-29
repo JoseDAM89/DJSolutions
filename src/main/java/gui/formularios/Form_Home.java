@@ -3,14 +3,14 @@ package gui.formularios;
 import Modelos.Cliente;
 import datos.ConexionBD;
 import gui.dialogos.Message;
-import org.example.Main;
 import gui.modelos.ModelCard;
 import gui.modelos.ModelStudent;
 import gui.swing.iconos.GoogleMaterialDesignIcons;
 import gui.swing.iconos.IconFontSwing;
 import gui.swing.aviso.ModelNoticeBoard;
 import gui.swing.tablero.EventAction;
-import java.awt.Color;
+
+import java.awt.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -217,8 +217,8 @@ public class Form_Home extends javax.swing.JPanel {
         card1.setColorGradient(new Color(211, 28, 215));
 
         jLabel1.setFont(new java.awt.Font("sansserif", 1, 12)); // NOI18N
-        jLabel1.setForeground(new Color(4, 72, 210));
-        jLabel1.setText("Dashboard / Home");
+        jLabel1.setForeground(new Color(0, 0, 0));
+        jLabel1.setText("Pagina Principal");
 
         card2.setBackground(new Color(10, 30, 214));
         card2.setColorGradient(new Color(72, 111, 252));
@@ -229,7 +229,7 @@ public class Form_Home extends javax.swing.JPanel {
         card4.setBackground(new Color(60, 195, 0));
         card4.setColorGradient(new Color(208, 255, 90));
 
-        panelTransparent1.setTransparent(0.5F);
+        panelTransparent1.setTransparent(0.0F);
 
         table1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -253,7 +253,7 @@ public class Form_Home extends javax.swing.JPanel {
         }
 
         jLabel5.setFont(new java.awt.Font("sansserif", 1, 15)); // NOI18N
-        jLabel5.setForeground(new Color(76, 76, 76));
+        jLabel5.setForeground(new Color(0, 0, 0));
         jLabel5.setText("Clientes Registrados");
         jLabel5.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 1));
 
@@ -280,15 +280,15 @@ public class Form_Home extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        panelTransparent2.setTransparent(0.5F);
+        panelTransparent2.setTransparent(0.0F);
 
         jLabel3.setFont(new java.awt.Font("sansserif", 1, 12)); // NOI18N
-        jLabel3.setForeground(new Color(105, 105, 105));
+        jLabel3.setForeground(new Color(0, 0, 0));
         jLabel3.setText("Simple Miglayout API Doc");
         jLabel3.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 1));
 
         jLabel2.setFont(new java.awt.Font("sansserif", 1, 15)); // NOI18N
-        jLabel2.setForeground(new Color(76, 76, 76));
+        jLabel2.setForeground(new Color(0, 0, 0));
         jLabel2.setText("Notice Board");
         jLabel2.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 1));
 
@@ -366,6 +366,21 @@ public class Form_Home extends javax.swing.JPanel {
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        Graphics2D g2 = (Graphics2D) g;
+        super.paintComponent(g);
+
+        // Nuevo degradado azul sobrio
+        GradientPaint gp = new GradientPaint(
+                0, 0, new Color(45, 80, 115),
+                0, getHeight(), new Color(100, 145, 185)
+        );
+
+        g2.setPaint(gp);
+        g2.fillRect(0, 0, getWidth(), getHeight());
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private gui.componentes.Card card1;

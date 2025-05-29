@@ -1,6 +1,8 @@
 package gui.componentes;
 
 import gui.swing.PanelTransparent;
+
+import java.awt.*;
 import java.awt.event.ActionListener;
 
 public class Header extends PanelTransparent {
@@ -37,10 +39,10 @@ public class Header extends PanelTransparent {
         pic.setIcon(new javax.swing.ImageIcon(getClass().getResource("/JSWINGICONS/icon/profile.jpg"))); // NOI18N
 
         lbUserName.setFont(new java.awt.Font("sansserif", 1, 12)); // NOI18N
-        lbUserName.setForeground(new java.awt.Color(127, 127, 127));
+        lbUserName.setForeground(new java.awt.Color(0, 0, 0));
         lbUserName.setText("User Name");
 
-        lbRole.setForeground(new java.awt.Color(127, 127, 127));
+        lbRole.setForeground(new java.awt.Color(0, 0, 0));
         lbRole.setText("Admin");
 
         jSeparator1.setOrientation(javax.swing.SwingConstants.VERTICAL);
@@ -88,6 +90,21 @@ public class Header extends PanelTransparent {
                                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        Graphics2D g2 = (Graphics2D) g;
+        super.paintComponent(g);
+
+        // Nuevo degradado azul sobrio
+        GradientPaint gp = new GradientPaint(
+                0, 0, new Color(45, 80, 115),
+                0, getHeight(), new Color(100, 145, 185)
+        );
+
+        g2.setPaint(gp);
+        g2.fillRect(0, 0, getWidth(), getHeight());
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private gui.swing.ButtonBadges buttonBadges1;

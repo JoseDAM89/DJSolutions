@@ -111,7 +111,7 @@ public class FormularioGenericoAlta extends JPanel {
         }
 
         // Botón guardar estilizado
-        btnGuardar = new JButton("💾 Guardar");
+        btnGuardar = new JButton("Guardar");
         estilizarBoton(btnGuardar);
         btnGuardar.addActionListener(accionGuardar);
 
@@ -237,4 +237,12 @@ public class FormularioGenericoAlta extends JPanel {
                 new EmptyBorder(10, 25, 10, 25)
         ));
     }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        setBackground(new Color(211, 221, 233)); // Color sólido directamente
+    }
+
+
 }

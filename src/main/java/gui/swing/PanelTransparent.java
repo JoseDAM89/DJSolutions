@@ -17,11 +17,11 @@ public class PanelTransparent extends JPanel {
         repaint();
     }
 
-    private float transparent = 0.2f;
+    private float transparent = 0.1f;
 
     public PanelTransparent() {
         setOpaque(false);
-        setBackground(new Color(255, 255, 255));
+        setBackground(new Color(120, 120, 120));
     }
 
     @Override

@@ -1,67 +1,85 @@
 package gui;
 
+import Modelos.Sesion;
+import datos.ConexionBD;
+import net.miginfocom.swing.MigLayout;
+import org.jdesktop.animation.timing.Animator;
+import org.jdesktop.animation.timing.TimingTarget;
+import org.jdesktop.animation.timing.TimingTargetAdapter;
+
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
+import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-import datos.ConexionBD;
-import Modelos.Sesion;
+public class InicioSesion extends JLayeredPane {
 
-public class InicioSesion extends JPanel {
-    private JTextField txtCorreo;
-    private JPasswordField txtPassword;
-    private JButton btnEntrar;
-    private LoginDialog loginDialog;
+    private final LoginDialog loginDialog;
+    private MyTextField txtEmailLogin;
+    private MyPasswordField txtPassLogin;
 
     public InicioSesion(LoginDialog loginDialog) {
         this.loginDialog = loginDialog;
-        configurarPanel();
+        setLayout(new BorderLayout());
+        add(createMainPanel(), BorderLayout.CENTER);
     }
 
-    private void configurarPanel() {
-        setLayout(new GridBagLayout());
-        setBackground(Color.WHITE);
+    private JPanel createMainPanel() {
+        JPanel mainPanel = new JPanel(new GridLayout(1, 2));
+        mainPanel.setPreferredSize(new Dimension(800, 400));
+        mainPanel.add(createLoginPanel());
+        mainPanel.add(createLogoPanel());
+        return mainPanel;
+    }
 
-        JLabel lblTitulo = new JLabel("Iniciar Sesión");
-        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 22));
+    private JPanel createLoginPanel() {
+        JPanel panel = new JPanel(new MigLayout("wrap", "push[center]push", "push[]25[]10[]10[]25[]push"));
+        panel.setBackground(new Color(0xF4F6F9)); // Fondo claro
 
-        JLabel lblCorreo = new JLabel("Correo electrónico:");
-        txtCorreo = new JTextField(20);
+        JLabel title = new JLabel("Iniciar Sesión");
+        title.setFont(new Font("sansserif", Font.BOLD, 30));
+        title.setForeground(new Color(0x4A90E2)); // Azul pastel
+        panel.add(title);
 
-        JLabel lblPassword = new JLabel("Contraseña:");
-        txtPassword = new JPasswordField(20);
+        txtEmailLogin = new MyTextField();
+        txtEmailLogin.setHint("Correo Electrónico");
+        txtEmailLogin.setPrefixIcon(new ImageIcon(getClass().getResource("/JSWINGICONS/icon/iconosInicioSesion/mail.png")));
+        panel.add(txtEmailLogin, "w 60%");
 
-        btnEntrar = new JButton("Entrar");
-        btnEntrar.addActionListener(this::verificarCredenciales);
+        txtPassLogin = new MyPasswordField();
+        txtPassLogin.setHint("Contraseña");
+        txtPassLogin.setPrefixIcon(new ImageIcon(getClass().getResource("/JSWINGICONS/icon/iconosInicioSesion/pass.png")));
+        panel.add(txtPassLogin, "w 60%");
 
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        BotonAnimado loginBtn = new BotonAnimado("INICIAR SESIÓN", new Color(0x4A90E2), Color.WHITE);
+        loginBtn.addActionListener(this::verificarCredenciales);
+        panel.add(loginBtn, "w 40%, h 40");
 
-        gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
-        add(lblTitulo, gbc);
+        return panel;
+    }
 
-        gbc.gridwidth = 1;
-        gbc.gridy++;
-        add(lblCorreo, gbc);
-        gbc.gridx = 1;
-        add(txtCorreo, gbc);
+    private JPanel createLogoPanel() {
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBackground(new Color(0x2C3E50)); // Fondo oscuro elegante
+        panel.setPreferredSize(new Dimension(350, 400));
 
-        gbc.gridx = 0; gbc.gridy++;
-        add(lblPassword, gbc);
-        gbc.gridx = 1;
-        add(txtPassword, gbc);
+        ImageIcon originalIcon = new ImageIcon(getClass().getResource("/JSWINGICONS/icon/Logo-removebg-preview.png"));
+        Image scaledImage = originalIcon.getImage().getScaledInstance(400, 300, Image.SCALE_SMOOTH);
+        ImageIcon scaledIcon = new ImageIcon(scaledImage);
 
-        gbc.gridx = 0; gbc.gridy++; gbc.gridwidth = 2;
-        add(btnEntrar, gbc);
+        JLabel logo = new JLabel(scaledIcon);
+        panel.add(logo);
+
+        return panel;
     }
 
     private void verificarCredenciales(ActionEvent e) {
-        String correo = txtCorreo.getText().trim();
-        String pass = new String(txtPassword.getPassword());
+        String correo = txtEmailLogin.getText().trim();
+        String pass = String.valueOf(txtPassLogin.getPassword());
 
         if (correo.isEmpty() || pass.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Debes llenar todos los campos.");
@@ -72,15 +90,15 @@ public class InicioSesion extends JPanel {
             String sql = "SELECT * FROM usuarios WHERE correo_electronico = ? AND contraseña = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, correo);
-            stmt.setString(2, pass); // Nota: en producción deberías usar hashes
-
+            stmt.setString(2, pass);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
                 boolean esAdmin = rs.getBoolean("admin");
                 Sesion.iniciarSesion(correo, esAdmin);
-                JOptionPane.showMessageDialog(this, "Inicio de sesión exitoso.");
-                loginDialog.onLoginSuccess(correo, esAdmin);
+                if (loginDialog != null) {
+                    loginDialog.onLoginSuccess(correo, esAdmin);
+                }
             } else {
                 JOptionPane.showMessageDialog(this, "Credenciales incorrectas.");
             }
@@ -88,5 +106,76 @@ public class InicioSesion extends JPanel {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(this, "Error al conectar con la base de datos.");
         }
+    }
+
+    // -------------------------
+    // BOTÓN CON EFECTO ONCLICK
+    // -------------------------
+    private class BotonAnimado extends JButton {
+        private Animator animator;
+        private int targetSize;
+        private float animatSize;
+        private Point pressedPoint;
+        private float alpha;
+        private Color effectColor = new Color(0x90CAF9); // Azul claro suave
+
+        public BotonAnimado(String text, Color bg, Color fg) {
+            setText(text);
+            setBackground(bg);
+            setForeground(fg);
+            setFocusPainted(false);
+            setContentAreaFilled(false);
+            setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            setFont(getFont().deriveFont(Font.BOLD, 14f));
+            setBorder(new EmptyBorder(10, 20, 10, 20));
+
+            TimingTarget target = new TimingTargetAdapter() {
+                public void timingEvent(float fraction) {
+                    if (fraction > 0.5f) alpha = 1 - fraction;
+                    animatSize = fraction * targetSize;
+                    repaint();
+                }
+            };
+
+            animator = new Animator(400, target);
+            animator.setAcceleration(0.5f);
+            animator.setDeceleration(0.5f);
+
+            addMouseListener(new MouseAdapter() {
+                public void mousePressed(MouseEvent e) {
+                    pressedPoint = e.getPoint();
+                    animatSize = 0;
+                    targetSize = Math.max(getWidth(), getHeight()) * 2;
+                    alpha = 0.5f;
+                    if (animator.isRunning()) animator.stop();
+                    animator.start();
+                }
+            });
+        }
+
+        protected void paintComponent(Graphics g) {
+            int w = getWidth(), h = getHeight();
+            BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2 = img.createGraphics();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(getBackground());
+            g2.fillRoundRect(0, 0, w, h, h, h);
+            if (pressedPoint != null) {
+                g2.setColor(effectColor);
+                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, alpha));
+                g2.fillOval((int) (pressedPoint.x - animatSize / 2), (int) (pressedPoint.y - animatSize / 2), (int) animatSize, (int) animatSize);
+            }
+            g2.dispose();
+            g.drawImage(img, 0, 0, null);
+            super.paintComponent(g);
+        }
+    }
+
+    public String getLoginEmail() {
+        return txtEmailLogin.getText().trim();
+    }
+
+    public String getLoginPassword() {
+        return String.valueOf(txtPassLogin.getPassword());
     }
 }
