@@ -118,7 +118,7 @@ public class Form_Home extends javax.swing.JPanel {
         int totalProductos = obtenerCantidad("productos");
         int totalClientes = obtenerCantidad("clientes");
         int totalUsuarios = obtenerCantidad("usuarios");
-        int totalPresupuestos = obtenerCantidad("presupuesto");
+        int totalPresupuestos = obtenerCantidad("presupuestos");
 
         int porcentajeProductos = calcularPorcentaje(totalProductos);
         int porcentajeClientes = calcularPorcentaje(totalClientes);

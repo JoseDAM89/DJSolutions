@@ -78,7 +78,7 @@ public class GenerarPresupuestoPanel extends JPanel {
         btnDatosCliente = new JButton("Datos Cliente");
         btnAgregar = new JButton("Agregar Producto");
         btnEliminar = new JButton("Eliminar Seleccionado");
-        btnGenerarPDF = new JButton("Generar PDF");
+        btnGenerarPDF = new JButton("Generar Presupuesto");
 
         panelBotones.add(btnDatosCliente);
         panelBotones.add(btnAgregar);
