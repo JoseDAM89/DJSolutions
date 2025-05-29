@@ -1,10 +1,10 @@
 package Modelos;
 
 public class Presupuesto {
-    public int id;
-    public String nombre;
-    public int cantidad;
-    public double precio;
+    private int id;
+    private String nombre;
+    private int cantidad;
+    private double precio;
 
     public Presupuesto(int id, String nombre, int cantidad, double precio) {
         this.id = id;
@@ -13,20 +13,16 @@ public class Presupuesto {
         this.precio = precio;
     }
 
+    public Presupuesto(String nombre, int cantidad, double precio) {
+        this(0, nombre, cantidad, precio); // Constructor sin ID
+    }
+
     public int getId() {
         return id;
     }
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public double getPrecio() {
-        return precio;
-    }
-
-    public void setPrecio(double precio) {
-        this.precio = precio;
     }
 
     public String getNombre() {
@@ -43,5 +39,13 @@ public class Presupuesto {
 
     public void setCantidad(int cantidad) {
         this.cantidad = cantidad;
+    }
+
+    public double getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(double precio) {
+        this.precio = precio;
     }
 }

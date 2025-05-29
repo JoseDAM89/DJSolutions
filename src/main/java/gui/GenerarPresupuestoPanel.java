@@ -2,180 +2,209 @@ package gui;
 
 import Controladores.GenerarPresupuestoControlador;
 import Modelos.Cliente;
+import Modelos.Producto;
 import Modelos.Presupuesto;
+import datos.ProductoDAO;
+import gui.dialogos.SelectorClienteDialog;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.util.ArrayList;
 import java.util.List;
 
 public class GenerarPresupuestoPanel extends JPanel {
 
-    private JButton btnAgregarProducto;
-    private JButton btnGenerarPDF;
-    private JButton btnDatosCliente;
-    private JPanel panelListaProductos;
+    private JTable tablaProductos;
+    private JTable tablaPresupuesto;
+    private DefaultTableModel modeloProductos;
+    private DefaultTableModel modeloPresupuesto;
+    private JTextField campoBuscar;
+    private JButton btnAgregar, btnEliminar, btnGenerarPDF, btnDatosCliente;
+    private JLabel labelClienteSeleccionado;
 
-    private GenerarPresupuestoControlador controller;
-    private List<Presupuesto> listaProductos;
+    private GenerarPresupuestoControlador controlador;
     private Cliente cliente;
 
     public GenerarPresupuestoPanel() {
-        this.listaProductos = new ArrayList<>();
-
         setLayout(new BorderLayout());
 
-        // Panel botones arriba
-        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        btnAgregarProducto = new JButton("Agregar Producto");
-        btnGenerarPDF = new JButton("Generar PDF");
+        // ---------------- PANEL SUPERIOR ----------------
+        JPanel panelSuperior = new JPanel(new BorderLayout());
+
+        campoBuscar = new JTextField();
+        panelSuperior.add(new JLabel("Buscar producto:"), BorderLayout.WEST);
+        panelSuperior.add(campoBuscar, BorderLayout.CENTER);
+
+        String[] columnasProductos = {"ID", "Nombre", "Precio"};
+        modeloProductos = new DefaultTableModel(columnasProductos, 0) {
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        tablaProductos = new JTable(modeloProductos);
+        JScrollPane scrollProductos = new JScrollPane(tablaProductos);
+        scrollProductos.setPreferredSize(new Dimension(0, 250));
+
+        JPanel contenedorSuperior = new JPanel(new BorderLayout());
+        contenedorSuperior.add(panelSuperior, BorderLayout.NORTH);
+        contenedorSuperior.add(scrollProductos, BorderLayout.CENTER);
+
+        add(contenedorSuperior, BorderLayout.NORTH);
+
+        // ---------------- PANEL INFERIOR ----------------
+        String[] columnasPresupuesto = {"ID", "Nombre", "Cantidad", "Precio/u", "Total"};
+        modeloPresupuesto = new DefaultTableModel(columnasPresupuesto, 0) {
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        tablaPresupuesto = new JTable(modeloPresupuesto);
+        JScrollPane scrollPresupuesto = new JScrollPane(tablaPresupuesto);
+        scrollPresupuesto.setPreferredSize(new Dimension(0, 250));
+
+        // ---------- Label del cliente (ANTES de la tabla inferior) ----------
+        labelClienteSeleccionado = new JLabel("Cliente seleccionado: (ninguno)");
+        labelClienteSeleccionado.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        JPanel panelInferior = new JPanel();
+        panelInferior.setLayout(new BorderLayout());
+        panelInferior.add(labelClienteSeleccionado, BorderLayout.NORTH);
+        panelInferior.add(scrollPresupuesto, BorderLayout.CENTER);
+
+        add(panelInferior, BorderLayout.SOUTH);
+
+        // ---------------- PANEL DE BOTONES ----------------
+        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER));
         btnDatosCliente = new JButton("Datos Cliente");
+        btnAgregar = new JButton("Agregar Producto");
+        btnEliminar = new JButton("Eliminar Seleccionado");
+        btnGenerarPDF = new JButton("Generar PDF");
 
-        panelBotones.add(btnAgregarProducto);
-        panelBotones.add(btnGenerarPDF);
         panelBotones.add(btnDatosCliente);
+        panelBotones.add(btnAgregar);
+        panelBotones.add(btnEliminar);
+        panelBotones.add(btnGenerarPDF);
 
-        add(panelBotones, BorderLayout.NORTH);
+        JPanel panelCentro = new JPanel();
+        panelCentro.setLayout(new BoxLayout(panelCentro, BoxLayout.Y_AXIS));
+        panelCentro.add(Box.createVerticalStrut(10));
+        panelCentro.add(panelBotones);
+        panelCentro.add(Box.createVerticalStrut(10));
 
-        // Panel lista de productos
-        panelListaProductos = new JPanel();
-        panelListaProductos.setLayout(new BoxLayout(panelListaProductos, BoxLayout.Y_AXIS));
+        add(panelCentro, BorderLayout.CENTER);
 
-        JScrollPane scrollPane = new JScrollPane(panelListaProductos);
-        add(scrollPane, BorderLayout.CENTER);
+        // ---------------- EVENTOS Y FUNCIONALIDAD ----------------
+        campoBuscar.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                filtrar();
+            }
 
-        // Listeners botones
-        btnAgregarProducto.addActionListener((ActionEvent e) -> {
-            Presupuesto nuevoProducto = pedirProducto();
-            if (nuevoProducto != null) {
-                if (controller == null) {
-                    mostrarErrorControlador();
-                    return;
-                }
-                controller.agregarProducto(nuevoProducto);
-                agregarProductoVisual(nuevoProducto);
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                filtrar();
+            }
+
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                filtrar();
             }
         });
 
-        btnGenerarPDF.addActionListener((ActionEvent e) -> {
-            if (cliente == null) {
-                JOptionPane.showMessageDialog(this, "Por favor, introduce los datos del cliente antes de generar el PDF.");
+        cargarProductos("");
+
+        btnAgregar.addActionListener(e -> {
+            int fila = tablaProductos.getSelectedRow();
+            if (fila == -1) {
+                JOptionPane.showMessageDialog(this, "Selecciona un producto para añadir.");
                 return;
             }
-            if (controller == null) {
-                mostrarErrorControlador();
-                return;
-            }
-            List<Presupuesto> productos = controller.getProductos();
-            if (productos.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "No hay productos para generar el PDF.");
-                return;
-            }
-            controller.generarPDF(productos, cliente);
-            JOptionPane.showMessageDialog(this, "PDF creado con éxito.");
-        });
 
+            int id = (int) modeloProductos.getValueAt(fila, 0);
+            String nombre = (String) modeloProductos.getValueAt(fila, 1);
+            double precio = (double) modeloProductos.getValueAt(fila, 2);
 
-
-        btnDatosCliente.addActionListener((ActionEvent e) -> {
-            Cliente c = pedirDatosCliente();
-            if (c != null) {
-                cliente = c;
-                JOptionPane.showMessageDialog(this, "Datos del cliente guardados:\n" + cliente.getCampoNombre());
-            }
-        });
-    }
-
-    public void setControlador(GenerarPresupuestoControlador controlador) {
-        this.controller = controlador;
-    }
-
-    public void agregarProductoVisual(Presupuesto p) {
-        listaProductos.add(p);
-
-        JLabel label = new JLabel(p.getNombre() + " x" + p.getCantidad() + " (" + p.getPrecio() + " €/u)");
-        label.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-        panelListaProductos.add(label);
-        panelListaProductos.revalidate();
-        panelListaProductos.repaint();
-    }
-
-    public List<Presupuesto> getListaProductos() {
-        return new ArrayList<>(listaProductos);
-    }
-
-    public Cliente getCliente() {
-        return cliente;
-    }
-
-    private Cliente pedirDatosCliente() {
-        JTextField nombreField = new JTextField();
-        JTextField cifField = new JTextField();
-        JTextField emailField = new JTextField();
-        JTextField personaContactoField = new JTextField();
-        JTextField direccionField = new JTextField();
-        JTextField descripcionField = new JTextField();
-
-        Object[] message = {
-                "Nombre:", nombreField,
-                "CIF:", cifField,
-                "Email:", emailField,
-                "Persona de Contacto:", personaContactoField,
-                "Dirección:", direccionField,
-                "Descripción:", descripcionField,
-        };
-
-        int option = JOptionPane.showConfirmDialog(this, message, "Datos del Cliente", JOptionPane.OK_CANCEL_OPTION);
-        if (option == JOptionPane.OK_OPTION) {
-            if (nombreField.getText().trim().isEmpty() || emailField.getText().trim().isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Nombre y Email son obligatorios.");
-                return null;
-            }
-            return new Cliente(
-                    nombreField.getText().trim(),
-                    cifField.getText().trim(),
-                    emailField.getText().trim(),
-                    personaContactoField.getText().trim(),
-                    direccionField.getText().trim(),
-                    descripcionField.getText().trim()
-            );
-        }
-        return null;
-    }
-
-    private Presupuesto pedirProducto() {
-        JTextField nombreField = new JTextField();
-        JTextField cantidadField = new JTextField();
-        JTextField precioField = new JTextField();
-
-        Object[] message = {
-                "Nombre del producto:", nombreField,
-                "Cantidad:", cantidadField,
-                "Precio unitario (€):", precioField,
-        };
-
-        int option = JOptionPane.showConfirmDialog(this, message, "Agregar Producto", JOptionPane.OK_CANCEL_OPTION);
-        if (option == JOptionPane.OK_OPTION) {
+            String input = JOptionPane.showInputDialog(this, "Cantidad:");
             try {
-                String nombre = nombreField.getText().trim();
-                int cantidad = Integer.parseInt(cantidadField.getText().trim());
-                double precio = Double.parseDouble(precioField.getText().trim());
+                int cantidad = Integer.parseInt(input);
+                if (cantidad <= 0) throw new NumberFormatException();
+                double total = cantidad * precio;
 
-                if (nombre.isEmpty() || cantidad <= 0 || precio <= 0) {
-                    JOptionPane.showMessageDialog(this, "Datos inválidos. Revisa nombre, cantidad y precio.");
-                    return null;
+                modeloPresupuesto.addRow(new Object[]{
+                        id,
+                        nombre,
+                        cantidad,
+                        String.format("%.3f", precio),
+                        String.format("%.3f", total)
+                });
+
+                if (controlador != null) {
+                    Presupuesto p = new Presupuesto(id, nombre, cantidad, precio);
+                    controlador.agregarProducto(p);
                 }
-                return new Presupuesto(0, nombre, cantidad, precio);
+
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(this, "Cantidad y Precio deben ser números válidos.");
-                return null;
+                JOptionPane.showMessageDialog(this, "Cantidad inválida.");
             }
-        }
-        return null;
+        });
+
+        btnEliminar.addActionListener(e -> {
+            int fila = tablaPresupuesto.getSelectedRow();
+            if (fila != -1) {
+                modeloPresupuesto.removeRow(fila);
+                if (controlador != null) {
+                    controlador.getProductos().remove(fila);
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Selecciona un producto del presupuesto para eliminar.");
+            }
+        });
+
+        btnDatosCliente.addActionListener(e -> {
+            SelectorClienteDialog selector = new SelectorClienteDialog(SwingUtilities.getWindowAncestor(this));
+            Cliente seleccionado = selector.mostrarYObtenerSeleccion();
+            if (seleccionado != null) {
+                this.cliente = seleccionado;
+                labelClienteSeleccionado.setText("Cliente seleccionado: " + cliente.getCampoNombre());
+            }
+        });
+
+        btnGenerarPDF.addActionListener(e -> {
+            if (cliente == null) {
+                JOptionPane.showMessageDialog(this, "Primero introduce datos del cliente.");
+                return;
+            }
+            if (controlador != null) {
+                try {
+                    controlador.generarPDF(controlador.getProductos(), cliente);
+                    JOptionPane.showMessageDialog(this, "Presupuesto generado correctamente.");
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(this, "Error al generar el presupuesto:\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Controlador no inicializado.");
+            }
+        });
+
     }
 
-    private void mostrarErrorControlador() {
-        JOptionPane.showMessageDialog(this, "Controlador no inicializado. Usa setControlador() antes de usar este panel.");
+    private void cargarProductos(String filtro) {
+        modeloProductos.setRowCount(0);
+        List<Producto> productos = ProductoDAO.listarTodos();
+
+        productos.stream()
+                .filter(p -> p.getNombreproduct().toLowerCase().contains(filtro.toLowerCase()))
+                .forEach(p -> modeloProductos.addRow(new Object[]{
+                        p.getCodproduct(),
+                        p.getNombreproduct(),
+                        p.getPrecioproduct()
+                }));
+    }
+
+    private void filtrar() {
+        String texto = campoBuscar.getText();
+        cargarProductos(texto);
+    }
+
+    public void setControlador(GenerarPresupuestoControlador c) {
+        this.controlador = c;
     }
 }

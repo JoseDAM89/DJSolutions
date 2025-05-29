@@ -80,4 +80,10 @@ public class Producto {
     public void setIdmateriaprima(int idmateriaprima) {
         this.idmateriaprima = idmateriaprima;
     }
+
+    @Override
+    public String toString() {
+        return codproduct + " - " + nombreproduct;
+    }
+
 }

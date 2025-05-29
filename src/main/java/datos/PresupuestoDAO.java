@@ -8,31 +8,32 @@ import java.util.List;
 
 public class PresupuestoDAO {
 
-    private Connection conexion;
-
-    public PresupuestoDAO() {
-        this.conexion = ConexionBD.conectar();
-        if (this.conexion == null) {
-            throw new RuntimeException("No se pudo establecer la conexión a la base de datos");
-        }
-    }
-
-    public void guardarPresupuesto(Presupuesto p) throws SQLException {
+    public static boolean insertar(Presupuesto p) {
         String sql = "INSERT INTO presupuesto (nombre, cantidad, precio) VALUES (?, ?, ?)";
-        try (PreparedStatement ps = conexion.prepareStatement(sql)) {
-            // Ojo que no incluyo ID, asumo auto-increment en la base de datos
-            ps.setString(1, p.nombre);
-            ps.setInt(2, p.cantidad);
-            ps.setDouble(3, p.precio);
+
+        try (Connection conexion = ConexionBD.conectar();
+             PreparedStatement ps = conexion.prepareStatement(sql)) {
+
+            ps.setString(1, p.getNombre());
+            ps.setInt(2, p.getCantidad());
+            ps.setDouble(3, p.getPrecio());
             ps.executeUpdate();
+            return true;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
-    public List<Presupuesto> obtenerTodos() throws SQLException {
+    public static List<Presupuesto> listarTodos() {
         List<Presupuesto> lista = new ArrayList<>();
         String sql = "SELECT id, nombre, cantidad, precio FROM presupuesto";
-        try (Statement stmt = conexion.createStatement();
+
+        try (Connection conexion = ConexionBD.conectar();
+             Statement stmt = conexion.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
+
             while (rs.next()) {
                 Presupuesto p = new Presupuesto(
                         rs.getInt("id"),
@@ -42,9 +43,44 @@ public class PresupuestoDAO {
                 );
                 lista.add(p);
             }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+
         return lista;
     }
 
-    // Aquí podrías agregar métodos para actualizar o eliminar si los necesitas
+    public static boolean actualizarPorID(Presupuesto p) {
+        String sql = "UPDATE presupuesto SET nombre=?, cantidad=?, precio=? WHERE id=?";
+
+        try (Connection conexion = ConexionBD.conectar();
+             PreparedStatement ps = conexion.prepareStatement(sql)) {
+
+            ps.setString(1, p.getNombre());
+            ps.setInt(2, p.getCantidad());
+            ps.setDouble(3, p.getPrecio());
+            ps.setInt(4, p.getId());
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean eliminarPorID(int id) {
+        String sql = "DELETE FROM presupuesto WHERE id = ?";
+
+        try (Connection conexion = ConexionBD.conectar();
+             PreparedStatement ps = conexion.prepareStatement(sql)) {
+
+            ps.setInt(1, id);
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

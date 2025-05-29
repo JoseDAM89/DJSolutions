@@ -70,7 +70,7 @@ public class GenerarPresupuesto extends JPanel {
                         Double.parseDouble(campoPrecio.getText())
                 );
                 productos.add(p);
-                panelLista.add(new JLabel(p.nombre + " x" + p.cantidad + " (" + p.precio + " €/u)"));
+                panelLista.add(new JLabel(p.getNombre() + " x" + p.getCantidad() + " (" + p.getPrecio()+ " €/u)"));
                 panelLista.revalidate();
                 panelLista.repaint();
             } catch (NumberFormatException ex) {
@@ -193,13 +193,13 @@ public class GenerarPresupuesto extends JPanel {
 
             double total = 0;
             for (Presupuesto p : productos) {
-                double subtotal = p.cantidad * p.precio;
+                double subtotal = p.getCantidad() * p.getPrecio();
                 total += subtotal;
 
-                tabla.addCell(getCell(String.valueOf(p.id), Font.NORMAL));
-                tabla.addCell(getCell(p.nombre, Font.NORMAL));
-                tabla.addCell(getCell(String.valueOf(p.cantidad), Font.NORMAL));
-                tabla.addCell(getCell(String.format("%.2f €", p.precio), Font.NORMAL));
+                tabla.addCell(getCell(String.valueOf(p.getId()), Font.NORMAL));
+                tabla.addCell(getCell(p.getNombre(), Font.NORMAL));
+                tabla.addCell(getCell(String.valueOf(p.getCantidad()), Font.NORMAL));
+                tabla.addCell(getCell(String.format("%.2f €", p.getPrecio()), Font.NORMAL));
                 tabla.addCell(getCell(String.format("%.2f €", subtotal), Font.NORMAL));
             }
 

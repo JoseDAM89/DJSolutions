@@ -13,7 +13,6 @@ import java.util.List;
 public class GenerarPresupuestoControlador {
 
     private List<Presupuesto> productos = new ArrayList<>();
-    private PresupuestoDAO presupuestoDAO = new PresupuestoDAO();
     private GenerarPresupuestoPanel panel;  // Referencia al panel, si necesitas notificarle
 
     // Constructor que recibe el panel
@@ -36,15 +35,8 @@ public class GenerarPresupuestoControlador {
     }
 
     public void guardarPresupuestoEnBD() {
-        try {
-            for (Presupuesto p : productos) {
-                presupuestoDAO.guardarPresupuesto(p);
-            }
-            // Aquí podrías mostrar una notificación en la UI si lo deseas
-        } catch (SQLException e) {
-            e.printStackTrace();
-            // Mostrar mensaje más amigable si tienes panel
-            // if (panel != null) panel.mostrarError("Error al guardar el presupuesto");
+        for (Presupuesto p : productos) {
+            PresupuestoDAO.insertar(p);
         }
     }
 
