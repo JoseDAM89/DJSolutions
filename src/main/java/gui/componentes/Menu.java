@@ -1,15 +1,15 @@
-package gui.componentes; // Asegúrate de que el paquete sea el correcto
+package gui.componentes;
 
 import gui.eventos.EventMenu;
 import gui.eventos.EventMenuSelected;
 import gui.eventos.EventShowPopupMenu;
-import gui.modelosvista.ModelMenu; // Revisa si tu clase se llama 'ModelMenu' o 'com.raven.model.ModelMenu'
+import gui.modelosvista.ModelMenu;
 import gui.swing.MenuAnimation;
 import gui.swing.MenuItem;
 import gui.swing.PanelTransparent;
 import gui.swing.scrollbar.ScrollBarCustom;
 
-import java.awt.*; // Importar Graphics, Graphics2D, GradientPaint, Color, Component
+import java.awt.*;
 import javax.swing.ImageIcon;
 import net.miginfocom.swing.MigLayout;
 
@@ -52,7 +52,7 @@ public class Menu extends PanelTransparent {
     }
 
     public void initMenuItem() {
-        boolean esAdmin = modelos.Sesion.esAdmin(); // Asegúrate de que 'modelos.Sesion' sea accesible
+        boolean esAdmin = modelos.Sesion.esAdmin();
 
         addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/JSWINGICONS/icon/1.png")), "Funciones Cliente", "Alta Cliente", "Listar Clientes"));
         addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/JSWINGICONS/icon/2.png")), "Funciones Inventario", "Alta Productos", "Consultar Stock", "Listar Productos"));
@@ -81,8 +81,6 @@ public class Menu extends PanelTransparent {
                         }
                         return true;
                     } else {
-                        // Aquí es donde el menú colapsado podría mostrar algo como el botón de hamburguesa
-                        // si el layout principal lo permite.
                         eventShowPopup.showPopup(com);
                     }
                 }
@@ -103,16 +101,16 @@ public class Menu extends PanelTransparent {
 
     @SuppressWarnings("unchecked")
     private void initComponents() {
-
         sp = new javax.swing.JScrollPane();
         panel = new javax.swing.JPanel();
-        profile1 = new gui.componentes.Profile(); // Tu clase Profile
+        profile1 = new gui.componentes.Profile();
 
         sp.setBorder(null);
         sp.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         sp.setViewportBorder(null);
 
         panel.setOpaque(false);
+
         javax.swing.GroupLayout panelLayout = new javax.swing.GroupLayout(panel);
         panel.setLayout(panelLayout);
         panelLayout.setHorizontalGroup(
@@ -130,14 +128,9 @@ public class Menu extends PanelTransparent {
         this.setLayout(layout);
         layout.setHorizontalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                                .addComponent(profile1, javax.swing.GroupLayout.PREFERRED_SIZE, profile1.getPreferredSize().width, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE)) // Para que no crezca y quede a la izquierda
-                        .addGroup(layout.createSequentialGroup()
-                                .addComponent(sp, javax.swing.GroupLayout.PREFERRED_SIZE, sp.getPreferredSize().width, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE)) // Igual para el scrollpane
+                        .addComponent(sp, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
+                        .addComponent(profile1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
-
         layout.setVerticalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
@@ -152,6 +145,7 @@ public class Menu extends PanelTransparent {
         Graphics2D g2 = (Graphics2D) g;
         super.paintComponent(g);
 
+        // Nuevo degradado azul sobrio
         GradientPaint gp = new GradientPaint(
                 0, 0, new Color(45, 80, 115),
                 0, getHeight(), new Color(100, 145, 185)

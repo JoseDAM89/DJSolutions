@@ -71,12 +71,9 @@ public class VentanaPrincipal extends JFrame {
         menu.addEvent(new EventMenuSelected() {
             public void menuSelected(int menuIndex, int subMenuIndex) {
                 JPanel panel = ControladorMenu.obtenerFormulario(menuIndex, subMenuIndex);
-                if (panel != null) {
-                    ponPanel(panel);
-                }
+                ponPanel(panel);
             }
         });
-
 
         menu.addEventShowPopup(new EventShowPopupMenu() {
             public void showPopup(Component com) {
