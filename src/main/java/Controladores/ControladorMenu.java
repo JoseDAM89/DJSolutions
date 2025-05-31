@@ -25,8 +25,7 @@ public class ControladorMenu {
                 return switch (subMenuIndex) {
                     case 0 -> new AltaCliente().construirFormulario();
                     case 1 -> new ListarClientes().mostrarVentana();
-                    default -> new AltaCliente().construirFormulario();
-//                  default -> panelVacio();
+                    default -> null;
 
                 };
             case 1: // Funciones Inventario
@@ -34,23 +33,21 @@ public class ControladorMenu {
                     case 0 -> new AltaProducto().construirFormulario();
                     case 1 -> new ConsultarStock();
                     case 2 -> new ListarProductos().mostrarVentana();
-                    case 3 -> new ListarProductos().mostrarVentana(); // Ver Alerta Stock (reutilizado por ahora)
-                    default -> new AltaProducto().construirFormulario();
-//                  default -> panelVacio();
+                    case 3 -> new ListarProductos().mostrarVentana();
+                    default -> null;
                 };
             case 2: // Funciones Presupuesto
                 return switch (subMenuIndex) {
                     case 0 -> FabricaPresupuesto.crearPanel();
                     case 1 -> new HistorialDePresupuestos();
                     case 2 -> new SeleccionarMateriales();
-                    default -> FabricaPresupuesto.crearPanel();
-//                  default -> panelVacio();
+                    default -> null;
                 };
             case 3: // Funciones Factura
             return switch (subMenuIndex) {
                 case 0 -> new GenerarFacturaPanel();
                 case 1 -> new HistorialFacturasPanel(); // ← AÑADIR ESTA LÍNEA
-                default -> panelVacio();
+                default -> null;
             };
 
 
@@ -58,9 +55,7 @@ public class ControladorMenu {
                 return switch (subMenuIndex) {
                     case 0 -> new AltaUser().construirFormulario();
                     case 1 -> new ListarUsuarios().mostrarVentana();
-                    default -> new AltaUser().construirFormulario();
-
-//                  default -> panelVacio();
+                    default -> null;
                 };
             default:
                 return new Form_Home();
