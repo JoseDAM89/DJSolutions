@@ -13,7 +13,7 @@ public class FacturaDAO {
 
     // Método para insertar una factura con sus líneas
     public int insertarFactura(Factura factura) {
-        String sqlFactura = "INSERT INTO facturas (idcliente, fecha) VALUES (?, ?) RETURNING idfactura";
+        String sqlFactura = "INSERT INTO facturas (idcliente, fecha, pagada) VALUES (?, ?, ?) RETURNING idfactura";
         String sqlLinea = "INSERT INTO factura_productos (idfactura, idproducto, cantidad, precio_unitario) VALUES (?, ?, ?, ?)";
         int idGenerado = -1;
         Connection conn = null;
@@ -26,6 +26,7 @@ public class FacturaDAO {
             try (PreparedStatement psFactura = conn.prepareStatement(sqlFactura)) {
                 psFactura.setInt(1, factura.getIdCliente());
                 psFactura.setTimestamp(2, Timestamp.valueOf(factura.getFecha()));
+                psFactura.setBoolean(3, factura.isPagada()); // ✅ campo booleano
                 ResultSet rs = psFactura.executeQuery();
                 if (rs.next()) {
                     idGenerado = rs.getInt(1);
@@ -87,7 +88,7 @@ public class FacturaDAO {
 
         Factura factura = null;
         Connection conn = ConexionBD.getConexion();
-        try ( PreparedStatement psFactura = conn.prepareStatement(sqlFactura);
+        try (PreparedStatement psFactura = conn.prepareStatement(sqlFactura);
              PreparedStatement psLineas = conn.prepareStatement(sqlLineas)) {
 
             psFactura.setInt(1, idFactura);
@@ -96,6 +97,7 @@ public class FacturaDAO {
             if (rsFactura.next()) {
                 int idCliente = rsFactura.getInt("idcliente");
                 Timestamp fecha = rsFactura.getTimestamp("fecha");
+                boolean pagada = rsFactura.getBoolean("pagada");
 
                 List<LineaFactura> lineas = new ArrayList<>();
                 psLineas.setInt(1, idFactura);
@@ -109,7 +111,7 @@ public class FacturaDAO {
                     lineas.add(new LineaFactura(idProducto, desc, cantidad, precio));
                 }
 
-                factura = new Factura(idFactura, idCliente, fecha.toLocalDateTime(), lineas);
+                factura = new Factura(idFactura, idCliente, fecha.toLocalDateTime(), lineas, pagada);
             }
 
         } catch (SQLException e) {
@@ -131,12 +133,10 @@ public class FacturaDAO {
 
         List<Factura> lista = new ArrayList<>();
 
-        try (Connection conn = ConexionBD.getConexion(); // ✅ Correcto
+        try (Connection conn = ConexionBD.getConexion();
              PreparedStatement psFacturas = conn.prepareStatement(sqlFacturas);
              PreparedStatement psLineas = conn.prepareStatement(sqlLineas)) {
 
-
-            // Paso 1: cargar todas las facturas
             ResultSet rsFacturas = psFacturas.executeQuery();
             Map<Integer, Factura> mapaFacturas = new HashMap<>();
 
@@ -144,12 +144,12 @@ public class FacturaDAO {
                 int id = rsFacturas.getInt("idfactura");
                 int idCliente = rsFacturas.getInt("idcliente");
                 Timestamp fecha = rsFacturas.getTimestamp("fecha");
+                boolean pagada = rsFacturas.getBoolean("pagada");
 
-                Factura f = new Factura(id, idCliente, fecha.toLocalDateTime(), new ArrayList<>());
+                Factura f = new Factura(id, idCliente, fecha.toLocalDateTime(), new ArrayList<>(), pagada);
                 mapaFacturas.put(id, f);
             }
 
-            // Paso 2: cargar todas las líneas
             ResultSet rsLineas = psLineas.executeQuery();
             while (rsLineas.next()) {
                 int idFactura = rsLineas.getInt("idfactura");
@@ -159,7 +159,6 @@ public class FacturaDAO {
                 double precio = rsLineas.getDouble("precio_unitario");
 
                 LineaFactura linea = new LineaFactura(idProducto, desc, cantidad, precio);
-
                 Factura factura = mapaFacturas.get(idFactura);
                 if (factura != null) {
                     factura.getLineas().add(linea);
@@ -174,5 +173,19 @@ public class FacturaDAO {
         }
 
         return lista;
+    }
+
+    // Método para actualizar el campo "pagada"
+    public void actualizarEstadoPagada(int idFactura, boolean pagada) {
+        String sql = "UPDATE facturas SET pagada = ? WHERE idfactura = ?";
+        try (Connection conn = ConexionBD.getConexion();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setBoolean(1, pagada);
+            ps.setInt(2, idFactura);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("❌ Error al actualizar el estado de la factura: " + e.getMessage());
+        }
     }
 }
