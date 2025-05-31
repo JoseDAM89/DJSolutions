@@ -1,7 +1,6 @@
 package gui.formularios;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
+import java.awt.*;
 import javax.swing.border.EmptyBorder;
 
 public class MainForm extends javax.swing.JPanel {

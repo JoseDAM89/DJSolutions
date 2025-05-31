@@ -15,28 +15,25 @@ public class FormularioGenericoAlta extends JPanel {
     private final JButton btnGuardar;
     private final Map<Integer, String> materiasDisponibles;
 
-    // Etiqueta visual para distinguir el formulario
     private final JLabel etiquetaTipoFormulario;
 
-    /**
-     * Constructor base, sin distintivo visual.
-     */
     public FormularioGenericoAlta(Map<String, String> camposDefinicion, ActionListener accionGuardar) {
         this(camposDefinicion, accionGuardar, null);
     }
 
-    /**
-     * Constructor con distintivo visual que indica el tipo de formulario.
-     *
-     * @param camposDefinicion Definición de campos a mostrar.
-     * @param accionGuardar    Acción para el botón Guardar.
-     * @param tipoFormulario   Texto que identifica el formulario (puede ser null para no mostrar).
-     */
     public FormularioGenericoAlta(Map<String, String> camposDefinicion, ActionListener accionGuardar, String tipoFormulario) {
         setLayout(new GridBagLayout());
-        setBackground(new Color(250, 250, 255));  // Fondo suave
+        setBackground(new Color(53, 107, 140,100));
 
         materiasDisponibles = MateriaPrimaDAO.obtenerTodas();
+
+        // Panel contenedor (card)
+        JPanel card = new JPanel(new GridBagLayout());
+        card.setBackground(Color.WHITE);
+        card.setBorder(BorderFactory.createCompoundBorder(
+                new LineBorder(new Color(180, 180, 200), 1, true),
+                new EmptyBorder(20, 25, 20, 25)
+        ));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(12, 20, 12, 20);
@@ -45,7 +42,6 @@ public class FormularioGenericoAlta extends JPanel {
 
         int fila = 0;
 
-        // Si se pasó un tipo de formulario, añadimos un distintivo visual arriba
         if (tipoFormulario != null && !tipoFormulario.isBlank()) {
             etiquetaTipoFormulario = new JLabel(tipoFormulario);
             etiquetaTipoFormulario.setFont(new Font("Segoe UI", Font.BOLD, 18));
@@ -55,20 +51,18 @@ public class FormularioGenericoAlta extends JPanel {
                     BorderFactory.createEmptyBorder(10, 10, 10, 10)
             ));
             gbc.gridx = 0;
-            gbc.gridy = fila;
+            gbc.gridy = fila++;
             gbc.gridwidth = 2;
             gbc.anchor = GridBagConstraints.CENTER;
-            add(etiquetaTipoFormulario, gbc);
-            fila++;
+            card.add(etiquetaTipoFormulario, gbc);
         } else {
             etiquetaTipoFormulario = null;
         }
 
-        // Agregar los campos del formulario
+        // Agregar campos
         for (String etiqueta : camposDefinicion.keySet()) {
             String tipo = camposDefinicion.get(etiqueta);
 
-            // Etiqueta estilizada
             JLabel label = new JLabel(etiqueta + ":");
             label.setFont(new Font("Segoe UI", Font.PLAIN, 16));
             label.setForeground(new Color(50, 50, 50));
@@ -76,7 +70,7 @@ public class FormularioGenericoAlta extends JPanel {
             gbc.gridx = 0;
             gbc.gridy = fila;
             gbc.gridwidth = 1;
-            add(label, gbc);
+            card.add(label, gbc);
 
             gbc.gridx = 1;
             JComponent campo;
@@ -91,11 +85,9 @@ public class FormularioGenericoAlta extends JPanel {
                 JComboBox<String> comboMateria = new JComboBox<>();
                 comboMateria.setName("comboMateria");
                 comboMateria.addItem("0 - Ninguna");
-
                 for (Map.Entry<Integer, String> entry : materiasDisponibles.entrySet()) {
                     comboMateria.addItem(entry.getKey() + " - " + entry.getValue());
                 }
-
                 estilizarCombo(comboMateria);
                 campo = comboMateria;
 
@@ -106,11 +98,10 @@ public class FormularioGenericoAlta extends JPanel {
             }
 
             campos.put(etiqueta, campo);
-            add(campo, gbc);
+            card.add(campo, gbc);
             fila++;
         }
 
-        // Botón guardar estilizado
         btnGuardar = new JButton("Guardar");
         estilizarBoton(btnGuardar);
         btnGuardar.addActionListener(accionGuardar);
@@ -119,9 +110,19 @@ public class FormularioGenericoAlta extends JPanel {
         gbc.gridy = fila;
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
-        add(btnGuardar, gbc);
+        card.add(btnGuardar, gbc);
 
-        // Vinculación Materia Prima ↔ ID Materia
+        // Añadir el panel "card" al principal
+        GridBagConstraints wrap = new GridBagConstraints();
+        wrap.gridx = 0;
+        wrap.gridy = 0;
+        wrap.weightx = 1.0;
+        wrap.weighty = 1.0;
+        wrap.fill = GridBagConstraints.BOTH;
+        wrap.insets = new Insets(30, 60, 30, 60);
+        add(card, wrap);
+
+        // Vinculación de campos
         JComponent comboMateriaPrima = campos.get("Materia Prima");
         JComponent campoIDMateria = campos.get("ID Materia");
 
@@ -130,7 +131,6 @@ public class FormularioGenericoAlta extends JPanel {
 
             combo.addActionListener(e -> {
                 boolean esSi = combo.getSelectedItem().toString().equalsIgnoreCase("Sí");
-
                 if (esSi) {
                     int idx = model.getIndexOf("0 - Ninguna");
                     if (idx != -1) model.removeElementAt(idx);
@@ -161,16 +161,12 @@ public class FormularioGenericoAlta extends JPanel {
 
     public HashMap<String, String> getValores() {
         HashMap<String, String> valores = new HashMap<>();
-
         for (String etiqueta : campos.keySet()) {
             JComponent campo = campos.get(etiqueta);
-
             if (campo instanceof JTextField textField) {
                 valores.put(etiqueta, textField.getText().trim());
-
             } else if (campo instanceof JComboBox<?> combo) {
                 String seleccion = combo.getSelectedItem().toString();
-
                 if ("comboMateria".equals(combo.getName())) {
                     String id = seleccion.split(" - ")[0].trim();
                     valores.put(etiqueta, id);
@@ -179,14 +175,12 @@ public class FormularioGenericoAlta extends JPanel {
                 }
             }
         }
-
         return valores;
     }
 
     public void limpiarCampos() {
         for (Map.Entry<String, JComponent> entry : campos.entrySet()) {
             JComponent campo = entry.getValue();
-
             if (campo instanceof JTextField textField) {
                 textField.setText("");
             } else if (campo instanceof JComboBox<?> combo) {
@@ -207,42 +201,47 @@ public class FormularioGenericoAlta extends JPanel {
         return btnGuardar;
     }
 
-    // ==== Métodos de estilizado ====
-
+    // === Estilos ===
     private void estilizarTextField(JTextField textField) {
         textField.setFont(new Font("Segoe UI", Font.PLAIN, 15));
         textField.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(new Color(180, 180, 200), 1, true),
-                BorderFactory.createEmptyBorder(6, 8, 6, 8)
+                new LineBorder(new Color(200, 200, 220), 1, true),
+                new EmptyBorder(8, 10, 8, 10)
         ));
         textField.setBackground(Color.WHITE);
-        textField.setForeground(Color.DARK_GRAY);
+        textField.setForeground(new Color(50, 50, 50));
     }
 
     private void estilizarCombo(JComboBox<String> comboBox) {
         comboBox.setFont(new Font("Segoe UI", Font.PLAIN, 15));
         comboBox.setBackground(Color.WHITE);
-        comboBox.setBorder(new LineBorder(new Color(180, 180, 200), 1, true));
+        comboBox.setForeground(new Color(50, 50, 50));
+        comboBox.setBorder(BorderFactory.createCompoundBorder(
+                new LineBorder(new Color(200, 200, 220), 1, true),
+                new EmptyBorder(2, 5, 2, 5)
+        ));
         comboBox.setPreferredSize(new Dimension(200, 30));
     }
 
     private void estilizarBoton(JButton boton) {
         boton.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        boton.setBackground(new Color(88, 130, 255));
+        boton.setBackground(new Color(63, 114, 175));
         boton.setForeground(Color.WHITE);
         boton.setFocusPainted(false);
         boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
         boton.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(new Color(88, 130, 255), 1, true),
+                new LineBorder(new Color(63, 114, 175), 1, true),
                 new EmptyBorder(10, 25, 10, 25)
         ));
+
+        boton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                boton.setBackground(new Color(52, 96, 148));
+            }
+
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                boton.setBackground(new Color(63, 114, 175));
+            }
+        });
     }
-
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        setBackground(new Color(211, 221, 233)); // Color sólido directamente
-    }
-
-
 }

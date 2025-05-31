@@ -19,6 +19,7 @@ public class TableCellAction extends DefaultCellEditor {
         data = (ModelAction) o;
         Action cell = new Action(data);
         cell.setBackground(new Color(30, 30, 30, 50));
+
         return cell;
     }
 
