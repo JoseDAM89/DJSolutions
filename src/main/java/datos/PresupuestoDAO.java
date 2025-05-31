@@ -11,7 +11,7 @@ public class PresupuestoDAO {
     public static boolean insertar(Presupuesto p) {
         String sql = "INSERT INTO presupuesto (nombre, cantidad, precio) VALUES (?, ?, ?)";
 
-        try (Connection conexion = ConexionBD.conectar();
+        try (Connection conexion = ConexionBD.getConexion();
              PreparedStatement ps = conexion.prepareStatement(sql)) {
 
             ps.setString(1, p.getNombre());
@@ -30,7 +30,7 @@ public class PresupuestoDAO {
         List<Presupuesto> lista = new ArrayList<>();
         String sql = "SELECT id, nombre, cantidad, precio FROM presupuesto";
 
-        try (Connection conexion = ConexionBD.conectar();
+        try (Connection conexion = ConexionBD.getConexion();
              Statement stmt = conexion.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
@@ -54,7 +54,7 @@ public class PresupuestoDAO {
     public static boolean actualizarPorID(Presupuesto p) {
         String sql = "UPDATE presupuesto SET nombre=?, cantidad=?, precio=? WHERE id=?";
 
-        try (Connection conexion = ConexionBD.conectar();
+        try (Connection conexion = ConexionBD.getConexion();
              PreparedStatement ps = conexion.prepareStatement(sql)) {
 
             ps.setString(1, p.getNombre());
@@ -72,7 +72,7 @@ public class PresupuestoDAO {
     public static boolean eliminarPorID(int id) {
         String sql = "DELETE FROM presupuesto WHERE id = ?";
 
-        try (Connection conexion = ConexionBD.conectar();
+        try (Connection conexion = ConexionBD.getConexion();
              PreparedStatement ps = conexion.prepareStatement(sql)) {
 
             ps.setInt(1, id);

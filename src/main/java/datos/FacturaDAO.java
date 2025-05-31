@@ -19,7 +19,7 @@ public class FacturaDAO {
         Connection conn = null;
 
         try {
-            conn = ConexionBD.conectar();
+            conn = ConexionBD.getConexion();
             conn.setAutoCommit(false); // Iniciar transacción
 
             // Insertar la cabecera de la factura
@@ -86,9 +86,8 @@ public class FacturaDAO {
         """;
 
         Factura factura = null;
-
-        try (Connection conn = ConexionBD.conectar();
-             PreparedStatement psFactura = conn.prepareStatement(sqlFactura);
+        Connection conn = ConexionBD.getConexion();
+        try ( PreparedStatement psFactura = conn.prepareStatement(sqlFactura);
              PreparedStatement psLineas = conn.prepareStatement(sqlLineas)) {
 
             psFactura.setInt(1, idFactura);
@@ -132,9 +131,15 @@ public class FacturaDAO {
 
         List<Factura> lista = new ArrayList<>();
 
+<<<<<<< HEAD
         try (Connection conn = ConexionBD.conectar();
              PreparedStatement psFacturas = conn.prepareStatement(sqlFacturas);
              PreparedStatement psLineas = conn.prepareStatement(sqlLineas)) {
+=======
+        Connection conn = ConexionBD.getConexion();
+        try (PreparedStatement ps = conn.prepareStatement(sqlFacturas);
+             ResultSet rs = ps.executeQuery()) {
+>>>>>>> f1eeceee13bd782a8d3cc8349c19edb2dee0d6c2
 
             // Paso 1: cargar todas las facturas
             ResultSet rsFacturas = psFacturas.executeQuery();

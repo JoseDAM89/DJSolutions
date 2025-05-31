@@ -19,7 +19,7 @@ public class ProductoDAO {
             FROM productos
         """;
 
-        try (Connection conn = ConexionBD.conectar();
+        try (Connection conn = ConexionBD.getConexion();
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
 
@@ -51,7 +51,7 @@ public class ProductoDAO {
             VALUES (?, ?, ?, ?, ?, ?, ?)
         """;
 
-        try (Connection conn = ConexionBD.conectar();
+        try (Connection conn = ConexionBD.getConexion();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, producto.getCodproduct());
@@ -96,7 +96,7 @@ public class ProductoDAO {
             WHERE codproduct = ?
         """;
 
-        try (Connection conn = ConexionBD.conectar();
+        try (Connection conn = ConexionBD.getConexion();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, producto.getNombreproduct());
@@ -125,7 +125,7 @@ public class ProductoDAO {
     public static boolean eliminarPorID(int codproduct) {
         String sql = "DELETE FROM productos WHERE codproduct = ?";
 
-        try (Connection conn = ConexionBD.conectar();
+        try (Connection conn = ConexionBD.getConexion();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, codproduct);
