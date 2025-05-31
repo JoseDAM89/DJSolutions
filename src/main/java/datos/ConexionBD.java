@@ -11,22 +11,36 @@ public class ConexionBD {
     private static final String USUARIO = "neondb_owner";
     private static final String CONTRASENA = "npg_LkV2h8vgPlfy";
 
-    public static Connection conectar() {
-        try {
-            System.out.println("Intentando conectar a: " + URL);
-            Connection conexion = DriverManager.getConnection(URL, USUARIO, CONTRASENA);
+    private static Connection conexion = null;
 
-            // Establecer el esquema por seguridad
-            try (Statement stmt = conexion.createStatement()) {
-                stmt.execute("SET search_path TO public");
+    private ConexionBD() {} // Evitar instanciación
+
+    public static Connection getConexion() {
+        try {
+            if (conexion == null) {
+                System.out.println("🔁 Conexión es null");
+            } else if (conexion.isClosed()) {
+                System.out.println("🔁 Conexión estaba cerrada");
+            } else {
+                System.out.println("✅ Reutilizando conexión existente");
             }
 
-            System.out.println("✅ Conexión exitosa a Neon.");
-            return conexion;
+            if (conexion == null || conexion.isClosed()) {
+                System.out.println("⏳ Estableciendo nueva conexión a Neon...");
+                conexion = DriverManager.getConnection(URL, USUARIO, CONTRASENA);
+
+                try (Statement stmt = conexion.createStatement()) {
+                    stmt.execute("SET search_path TO public");
+                }
+
+                System.out.println("✅ Conexión persistente establecida.");
+            }
         } catch (SQLException e) {
             System.err.println("❌ Error al conectar a Neon: " + e.getMessage());
             e.printStackTrace();
-            return null;
         }
+
+        return conexion;
     }
+
 }

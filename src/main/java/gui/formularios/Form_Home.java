@@ -48,7 +48,7 @@ public class Form_Home extends javax.swing.JPanel {
 
         String sql = "SELECT idcliente, campoNombre, campoCIF, campoEmail, campoPersonaDeContacto, campoDireccion, campoDescripcion FROM clientes";
 
-        try (Connection conn = ConexionBD.conectar();
+        try (Connection conn = ConexionBD.getConexion();
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
 
@@ -81,7 +81,7 @@ public class Form_Home extends javax.swing.JPanel {
         int cantidad = 0;
         String sql = "SELECT COUNT(*) FROM " + tabla;
 
-        try (Connection conn = ConexionBD.conectar();
+        try (Connection conn = ConexionBD.getConexion();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
 

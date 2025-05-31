@@ -16,7 +16,7 @@ public class UsuarioDAO {
         String hashed = BCrypt.hashpw(usuario.getContrasena(), BCrypt.gensalt());
         String sql = "INSERT INTO usuarios (nombre, apellido, correo_electronico, contraseña, admin) VALUES (?, ?, ?, ?, ?)";
 
-        try (Connection conn = ConexionBD.conectar();
+        try (Connection conn = ConexionBD.getConexion();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, usuario.getNombre());
@@ -36,7 +36,7 @@ public class UsuarioDAO {
     public static boolean correoYaExiste(String correo) {
         String sql = "SELECT 1 FROM usuarios WHERE correo_electronico = ?";
 
-        try (Connection conn = ConexionBD.conectar();
+        try (Connection conn = ConexionBD.getConexion();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, correo);
@@ -52,7 +52,7 @@ public class UsuarioDAO {
     public static void sincronizarSecuenciaId() {
         String sql = "SELECT setval('usuarios_id_seq', (SELECT COALESCE(MAX(id), 1) FROM usuarios))";
 
-        try (Connection conn = ConexionBD.conectar();
+        try (Connection conn = ConexionBD.getConexion();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.execute();
@@ -66,7 +66,7 @@ public class UsuarioDAO {
         List<Usuario> lista = new ArrayList<>();
         String sql = "SELECT id, nombre, apellido, correo_electronico, admin FROM usuarios";
 
-        try (Connection conn = ConexionBD.conectar();
+        try (Connection conn = ConexionBD.getConexion();
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
 
@@ -99,7 +99,7 @@ public class UsuarioDAO {
         WHERE id = ?
     """;
 
-        try (Connection conn = ConexionBD.conectar();
+        try (Connection conn = ConexionBD.getConexion();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, usuario.getNombre());
@@ -121,7 +121,7 @@ public class UsuarioDAO {
     public static boolean eliminarPorID(int id) {
         String sql = "DELETE FROM usuarios WHERE id = ?";
 
-        try (Connection conn = ConexionBD.conectar();
+        try (Connection conn = ConexionBD.getConexion();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, id);

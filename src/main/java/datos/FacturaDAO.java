@@ -17,7 +17,7 @@ public class FacturaDAO {
         Connection conn = null;
 
         try {
-            conn = ConexionBD.conectar();
+            conn = ConexionBD.getConexion();
             conn.setAutoCommit(false); // Iniciar transacción
 
             // Insertar la cabecera de la factura
@@ -83,9 +83,8 @@ public class FacturaDAO {
         """;
 
         Factura factura = null;
-
-        try (Connection conn = ConexionBD.conectar();
-             PreparedStatement psFactura = conn.prepareStatement(sqlFactura);
+        Connection conn = ConexionBD.getConexion();
+        try ( PreparedStatement psFactura = conn.prepareStatement(sqlFactura);
              PreparedStatement psLineas = conn.prepareStatement(sqlLineas)) {
 
             psFactura.setInt(1, idFactura);
@@ -122,8 +121,8 @@ public class FacturaDAO {
         String sqlFacturas = "SELECT * FROM facturas ORDER BY fecha DESC";
         List<Factura> lista = new ArrayList<>();
 
-        try (Connection conn = ConexionBD.conectar();
-             PreparedStatement ps = conn.prepareStatement(sqlFacturas);
+        Connection conn = ConexionBD.getConexion();
+        try (PreparedStatement ps = conn.prepareStatement(sqlFacturas);
              ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {

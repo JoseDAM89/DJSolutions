@@ -11,7 +11,7 @@ public class MateriaPrimaDAO {
         String sql = "SELECT idmateriaprima, descripcionmaterial FROM \"MateriasPrimas\"";
 
 
-        try (Connection conn = ConexionBD.conectar();
+        try (Connection conn = ConexionBD.getConexion();
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
 

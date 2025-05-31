@@ -18,16 +18,18 @@ public class ListadosGenerico extends JPanel {
     private JButton btnEditar;
     private JButton btnEliminar;
 
-    private final Color COLOR_FONDO = new Color(53, 107, 140,100);
+    private final Color COLOR_FONDO = new Color(53, 107, 140, 100);
     private final Color COLOR_PANEL = Color.WHITE;
     private final Color COLOR_BOTON_ACCION = new Color(80, 140, 255);
     private final Color COLOR_BOTON_PELIGRO = new Color(220, 85, 90);
     private final Color COLOR_TEXTO = new Color(50, 50, 50);
     private final Color COLOR_ENCABEZADO = new Color(120, 140, 180);
 
+    // Constructor con boolean para mostrar botones
     public ListadosGenerico(String titulo, String[] columnas, Object[][] datos,
                             BiFunction<Object[], JTable, JPanel> crearFormularioEdicion,
-                            Consumer<Object[]> accionEliminar) {
+                            Consumer<Object[]> accionEliminar,
+                            boolean mostrarBotones) {
 
         setLayout(new BorderLayout(10, 10));
         setBackground(COLOR_FONDO);
@@ -94,12 +96,16 @@ public class ListadosGenerico extends JPanel {
                 return;
             }
 
-            JPanel panelEdicion = crearFormularioEdicion.apply(fila, tabla);
-            JDialog dialog = new JDialog((JFrame) SwingUtilities.getWindowAncestor(this), "Editar", true);
-            dialog.setContentPane(panelEdicion);
-            dialog.pack();
-            dialog.setLocationRelativeTo(this);
-            dialog.setVisible(true);
+            if (crearFormularioEdicion != null) {
+                JPanel panelEdicion = crearFormularioEdicion.apply(fila, tabla);
+                JDialog dialog = new JDialog((JFrame) SwingUtilities.getWindowAncestor(this), "Editar", true);
+                dialog.setContentPane(panelEdicion);
+                dialog.pack();
+                dialog.setLocationRelativeTo(this);
+                dialog.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(this, "Función de edición no definida.");
+            }
         });
 
         btnEliminar.addActionListener(e -> {
@@ -114,19 +120,32 @@ public class ListadosGenerico extends JPanel {
                     "Confirmar eliminación", JOptionPane.YES_NO_OPTION);
 
             if (confirm == JOptionPane.YES_OPTION) {
-                accionEliminar.accept(fila);
-                eliminarFilaSeleccionada();
+                if (accionEliminar != null) {
+                    accionEliminar.accept(fila);
+                    eliminarFilaSeleccionada();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Función de eliminación no definida.");
+                }
             }
         });
 
-        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
-        panelBotones.setBackground(COLOR_FONDO);
-        panelBotones.add(btnEditar);
-        panelBotones.add(btnEliminar);
-
         add(panelBuscar, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
-        add(panelBotones, BorderLayout.SOUTH);
+
+        if (mostrarBotones) {
+            JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
+            panelBotones.setBackground(COLOR_FONDO);
+            panelBotones.add(btnEditar);
+            panelBotones.add(btnEliminar);
+            add(panelBotones, BorderLayout.SOUTH);
+        }
+    }
+
+    // Constructor original que llama al nuevo con mostrarBotones = true
+    public ListadosGenerico(String titulo, String[] columnas, Object[][] datos,
+                            BiFunction<Object[], JTable, JPanel> crearFormularioEdicion,
+                            Consumer<Object[]> accionEliminar) {
+        this(titulo, columnas, datos, crearFormularioEdicion, accionEliminar, true);
     }
 
     private JButton crearBoton(String texto, Color colorFondo) {

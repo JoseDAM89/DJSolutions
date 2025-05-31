@@ -68,7 +68,7 @@ public class InicioSesion extends JLayeredPane {
         panel.setPreferredSize(new Dimension(350, 400));
 
         ImageIcon originalIcon = new ImageIcon(getClass().getResource("/JSWINGICONS/icon/Logo-removebg-preview.png"));
-        Image scaledImage = originalIcon.getImage().getScaledInstance(400, 300, Image.SCALE_SMOOTH);
+        Image scaledImage = originalIcon.getImage().getScaledInstance(500, 300, Image.SCALE_SMOOTH);
         ImageIcon scaledIcon = new ImageIcon(scaledImage);
 
         JLabel logo = new JLabel(scaledIcon);
@@ -86,7 +86,7 @@ public class InicioSesion extends JLayeredPane {
             return;
         }
 
-        try (Connection conn = ConexionBD.conectar()) {
+        try (Connection conn = ConexionBD.getConexion()) {
             String sql = "SELECT * FROM usuarios WHERE correo_electronico = ? AND contraseña = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, correo);
