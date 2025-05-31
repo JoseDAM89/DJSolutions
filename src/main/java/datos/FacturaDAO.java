@@ -11,11 +11,11 @@ import java.util.Map;
 
 public class FacturaDAO {
 
+    // Método para insertar una factura con sus líneas
     public int insertarFactura(Factura factura) {
         String sqlFactura = "INSERT INTO facturas (idcliente, fecha) VALUES (?, ?) RETURNING idfactura";
         String sqlLinea = "INSERT INTO factura_productos (idfactura, idproducto, cantidad, precio_unitario) VALUES (?, ?, ?, ?)";
         int idGenerado = -1;
-
         Connection conn = null;
 
         try {
@@ -75,6 +75,7 @@ public class FacturaDAO {
         return idGenerado;
     }
 
+    // Método para recuperar una factura por su ID
     public Factura obtenerFacturaPorID(int idFactura) {
         String sqlFactura = "SELECT * FROM facturas WHERE idfactura = ?";
         String sqlLineas = """
@@ -120,13 +121,14 @@ public class FacturaDAO {
         return factura;
     }
 
+    // Método para listar todas las facturas con sus líneas
     public List<Factura> listarTodas() {
         String sqlFacturas = "SELECT * FROM facturas ORDER BY fecha DESC";
         String sqlLineas = """
-        SELECT fp.idfactura, fp.idproducto, p.descripcionproduct, fp.cantidad, fp.precio_unitario
-        FROM factura_productos fp
-        JOIN productos p ON fp.idproducto = p.codproduct
-    """;
+            SELECT fp.idfactura, fp.idproducto, p.descripcionproduct, fp.cantidad, fp.precio_unitario
+            FROM factura_productos fp
+            JOIN productos p ON fp.idproducto = p.codproduct
+        """;
 
         List<Factura> lista = new ArrayList<>();
 
@@ -173,6 +175,4 @@ public class FacturaDAO {
 
         return lista;
     }
-
-
 }
