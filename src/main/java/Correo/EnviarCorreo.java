@@ -1,5 +1,5 @@
 package Correo;
-
+// EnviarCorreo.java
 import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeBodyPart;
@@ -11,9 +11,9 @@ import java.util.Properties;
 
 public class EnviarCorreo {
 
-    public static void enviarArchivoPorCorreo(String destino, File archivo, String asunto, String mensajeTexto) throws Exception {
+    public static void enviarPresupuestoPorCorreo(String destino, File archivo) throws Exception {
         final String remitente = "djsolutionssa@gmail.com";
-        final String contrasena = "dazi psjp mpvc ouhv"; // Contraseña de aplicación
+        final String contrasena = "dazi psjp mpvc ouhv";  // Usa una contraseña de aplicación
 
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
@@ -30,19 +30,20 @@ public class EnviarCorreo {
         Message mensaje = new MimeMessage(sesion);
         mensaje.setFrom(new InternetAddress(remitente));
         mensaje.setRecipients(Message.RecipientType.TO, InternetAddress.parse(destino));
-        mensaje.setSubject(asunto);
+        mensaje.setSubject("Presupuesto generado");
 
-        MimeBodyPart cuerpoTexto = new MimeBodyPart();
-        cuerpoTexto.setText(mensajeTexto);
+        MimeBodyPart texto = new MimeBodyPart();
+        texto.setText("Adjunto le enviamos su presupuesto generado.");
 
-        MimeBodyPart cuerpoAdjunto = new MimeBodyPart();
-        cuerpoAdjunto.attachFile(archivo);
+        MimeBodyPart adjunto = new MimeBodyPart();
+        adjunto.attachFile(archivo);
 
         Multipart contenido = new MimeMultipart();
-        contenido.addBodyPart(cuerpoTexto);
-        contenido.addBodyPart(cuerpoAdjunto);
+        contenido.addBodyPart(texto);
+        contenido.addBodyPart(adjunto);
 
         mensaje.setContent(contenido);
+
         Transport.send(mensaje);
     }
 }

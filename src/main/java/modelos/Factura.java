@@ -8,20 +8,16 @@ public class Factura {
     private int idCliente;
     private LocalDateTime fecha;
     private List<LineaFactura> lineas;
-    private boolean pagada;
 
-    // Constructor completo (usado al recuperar desde BD)
-    public Factura(int idFactura, int idCliente, LocalDateTime fecha, List<LineaFactura> lineas, boolean pagada) {
+    public Factura(int idFactura, int idCliente, LocalDateTime fecha, List<LineaFactura> lineas) {
         this.idFactura = idFactura;
         this.idCliente = idCliente;
         this.fecha = fecha;
         this.lineas = lineas;
-        this.pagada = pagada;
     }
 
-    // Constructor parcial (usado al crear nueva factura)
     public Factura(int idCliente, List<LineaFactura> lineas) {
-        this(0, idCliente, LocalDateTime.now(), lineas, false); // ⬅ pagada por defecto: false
+        this(0, idCliente, LocalDateTime.now(), lineas);
     }
 
     // Getters y setters
@@ -55,13 +51,5 @@ public class Factura {
 
     public void setLineas(List<LineaFactura> lineas) {
         this.lineas = lineas;
-    }
-
-    public boolean isPagada() {
-        return pagada;
-    }
-
-    public void setPagada(boolean pagada) {
-        this.pagada = pagada;
     }
 }
