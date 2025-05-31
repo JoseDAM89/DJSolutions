@@ -41,6 +41,7 @@ public class ModelCard {
         this.values = values;
         this.percentage = percentage;
         this.icon = icon;
+
     }
 
     public ModelCard() {

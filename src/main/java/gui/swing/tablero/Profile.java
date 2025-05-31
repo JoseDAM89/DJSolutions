@@ -6,6 +6,7 @@ public class Profile extends javax.swing.JPanel {
         initComponents();
         pic.setIcon(data.getIcon());
         lbName.setText(data.getName());
+        lbName.setForeground(new java.awt.Color(0, 0, 0));
         setOpaque(false);
     }
     

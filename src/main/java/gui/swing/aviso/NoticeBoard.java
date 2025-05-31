@@ -25,12 +25,13 @@ public class NoticeBoard extends javax.swing.JPanel {
         title.setFont(new Font("sansserif", 1, 12));
         title.setForeground(data.getTitleColor());
         panel.add(title);
+
         JLabel time = new JLabel(data.getTime());
         time.setForeground(new Color(180, 180, 180));
         panel.add(time, "gap 10, wrap");
         JTextPane txt = new JTextPane();
         txt.setBackground(new Color(0, 0, 0, 0));
-        txt.setForeground(new Color(120, 120, 120));
+        txt.setForeground(new Color(0, 0, 0));
         txt.setSelectionColor(new Color(150, 150, 150));
         txt.setBorder(null);
         txt.setOpaque(false);

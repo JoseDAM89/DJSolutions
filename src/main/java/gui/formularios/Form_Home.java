@@ -24,6 +24,7 @@ public class Form_Home extends javax.swing.JPanel {
         table1.fixTable(jScrollPane1);
         setOpaque(false);
         initData();
+
     }
 
     private void initData() {
@@ -45,9 +46,6 @@ public class Form_Home extends javax.swing.JPanel {
             }
         };
 
-        // Limpia la tabla antes de cargar nuevos datos
-        // table1.clearRows(); // Descomenta si tienes este método
-
         String sql = "SELECT idcliente, campoNombre, campoCIF, campoEmail, campoPersonaDeContacto, campoDireccion, campoDescripcion FROM clientes";
 
         try (Connection conn = ConexionBD.conectar();
@@ -55,7 +53,6 @@ public class Form_Home extends javax.swing.JPanel {
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                // Crea un objeto Cliente desde la base de datos
                 Cliente cliente = new Cliente(
                         rs.getInt("idcliente"),
                         rs.getString("campoNombre"),
@@ -66,15 +63,10 @@ public class Form_Home extends javax.swing.JPanel {
                         rs.getString("campoDescripcion")
                 );
 
-                // Usamos nombre, email y descripción como los datos a mostrar
                 String nombre = cliente.getCampoNombre();
                 String email = cliente.getCampoEmail();
                 String descripcion = cliente.getCampoDescripcion();
-
-                // Icono por defecto (puedes usar otro si tienes imágenes por cliente)
                 ImageIcon icono = new ImageIcon(getClass().getResource("/JSWINGICONS/icon/profile.jpg"));
-
-                // Puedes usar los datos como desees; aquí los adapto a ModelStudent
                 ModelStudent student = new ModelStudent(icono, nombre, "Cliente", email, descripcion);
                 table1.addRow(student.toRowTable(eventAction));
             }
@@ -84,9 +76,6 @@ public class Form_Home extends javax.swing.JPanel {
             e.printStackTrace();
         }
     }
-
-
-
 
     private int obtenerCantidad(String tabla) {
         int cantidad = 0;
@@ -102,14 +91,13 @@ public class Form_Home extends javax.swing.JPanel {
 
         } catch (SQLException e) {
             e.printStackTrace();
-            // Aquí podrías manejar mejor el error o devolver -1 para indicar fallo
         }
 
         return cantidad;
     }
 
     private int calcularPorcentaje(int valor) {
-        int maxValor = 1000; // Cambia esto según tu lógica de porcentaje
+        int maxValor = 1000;
         int porcentaje = (valor * 100) / maxValor;
         return Math.min(porcentaje, 100);
     }
@@ -120,22 +108,17 @@ public class Form_Home extends javax.swing.JPanel {
         int totalUsuarios = obtenerCantidad("usuarios");
         int totalPresupuestos = obtenerCantidad("presupuestos");
 
-        int porcentajeProductos = calcularPorcentaje(totalProductos);
-        int porcentajeClientes = calcularPorcentaje(totalClientes);
-        int porcentajeUsuarios = calcularPorcentaje(totalUsuarios);
-        int porcentajePresupuesto = calcularPorcentaje(totalPresupuestos);
-
         Icon icon1 = IconFontSwing.buildIcon(GoogleMaterialDesignIcons.SHOPPING_BASKET, 60, new Color(255, 255, 255, 100), new Color(255, 255, 255, 15));
-        card1.setData(new ModelCard("Productos", totalProductos, porcentajeProductos, icon1));
+        card1.setData(new ModelCard("Productos", totalProductos, calcularPorcentaje(totalProductos), icon1));
 
         Icon icon2 = IconFontSwing.buildIcon(GoogleMaterialDesignIcons.PEOPLE, 60, new Color(255, 255, 255, 100), new Color(255, 255, 255, 15));
-        card2.setData(new ModelCard("Clientes", totalClientes, porcentajeClientes, icon2));
+        card2.setData(new ModelCard("Clientes", totalClientes, calcularPorcentaje(totalClientes), icon2));
 
         Icon icon3 = IconFontSwing.buildIcon(GoogleMaterialDesignIcons.PERSON, 60, new Color(255, 255, 255, 100), new Color(255, 255, 255, 15));
-        card3.setData(new ModelCard("Usuarios", totalUsuarios, porcentajeUsuarios, icon3));
+        card3.setData(new ModelCard("Usuarios", totalUsuarios, calcularPorcentaje(totalUsuarios), icon3));
 
         Icon icon4 = IconFontSwing.buildIcon(GoogleMaterialDesignIcons.BUSINESS_CENTER, 60, new Color(255, 255, 255, 100), new Color(255, 255, 255, 15));
-        card4.setData(new ModelCard("Presupuesto", totalPresupuestos, porcentajePresupuesto, icon4));
+        card4.setData(new ModelCard("Presupuesto", totalPresupuestos, calcularPorcentaje(totalPresupuestos), icon4));
     }
 
     private void initNoticeBoard() {
@@ -188,13 +171,10 @@ public class Form_Home extends javax.swing.JPanel {
         noticeBoard.scrollToTop();
     }
 
-
-
     private void showMessage(String message) {
         Message obj = new Message(JFrame.getFrames()[0], true);
         obj.showMessage(message);
     }
-
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -231,6 +211,7 @@ public class Form_Home extends javax.swing.JPanel {
 
         panelTransparent1.setTransparent(0.0F);
 
+
         table1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -251,6 +232,7 @@ public class Form_Home extends javax.swing.JPanel {
         if (table1.getColumnModel().getColumnCount() > 0) {
             table1.getColumnModel().getColumn(0).setPreferredWidth(150);
         }
+
 
         jLabel5.setFont(new java.awt.Font("sansserif", 1, 15)); // NOI18N
         jLabel5.setForeground(new Color(0, 0, 0));

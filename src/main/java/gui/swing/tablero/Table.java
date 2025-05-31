@@ -16,11 +16,11 @@ public class Table extends JTable {
 
     public Table() {
         setOpaque(false);
-        getTableHeader().setBackground(new Color(255, 255, 255));
+        getTableHeader().setBackground(new Color(64, 103, 139));
         setBackground(new Color(0, 0, 0, 0));
         setShowHorizontalLines(true);
         setGridColor(new Color(30, 30, 30, 50));
-        setForeground(new Color(0,0,0));
+        setForeground(new Color(0, 0, 0));
         setRowHeight(60);
         getTableHeader().setReorderingAllowed(false);
         getTableHeader().setDefaultRenderer(new DefaultTableCellRenderer() {
@@ -58,13 +58,12 @@ public class Table extends JTable {
                 } else {
                     Component com = super.getTableCellRendererComponent(jtable, o, selected, focus, i, i1);
                     setBorder(noFocusBorder);
-                    com.setForeground(new Color(0, 0, 0, 0));
-                    JLabel label = new JLabel(o + "");
-                    label.setForeground(new Color(102, 102, 102));
-                    return label;
+                    com.setForeground(Color.BLACK);
+                    return com;
                 }
             }
         });
+
     }
 
     @Override
