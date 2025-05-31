@@ -1,4 +1,4 @@
-package Modelos;
+package modelos;
 
 public class Cliente {
 
@@ -92,5 +92,9 @@ public class Cliente {
         this.campoDescripcion = campoDescripcion;
     }
 
+    @Override
+    public String toString() {
+        return campoNombre; // Cliente
+    }
 
 }

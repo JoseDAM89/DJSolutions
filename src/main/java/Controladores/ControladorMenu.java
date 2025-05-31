@@ -2,6 +2,7 @@ package Controladores;
 
 import FuncionesCliente.AltaCliente;
 import FuncionesCliente.ListarClientes;
+import FuncionesFacturas.HistorialFacturasPanel;
 import FuncionesInventario.AltaProducto;
 import FuncionesInventario.ConsultarStock;
 import FuncionesInventario.ListarProductos;
@@ -11,6 +12,8 @@ import FuncionesDeUsuarios.AltaUser;
 import FuncionesDeUsuarios.ListarUsuarios;
 import gui.GenerarPresupuestoPanel;
 import gui.formularios.Form_Home;
+import FuncionesFacturas.GenerarFacturaPanel;
+
 
 import javax.swing.*;
 
@@ -43,7 +46,15 @@ public class ControladorMenu {
                     default -> FabricaPresupuesto.crearPanel();
 //                  default -> panelVacio();
                 };
-            case 3: // Gestión de Usuarios (solo visible si es Admin)
+            case 3: // Funciones Factura
+            return switch (subMenuIndex) {
+                case 0 -> new GenerarFacturaPanel();
+                case 1 -> new HistorialFacturasPanel(); // ← AÑADIR ESTA LÍNEA
+                default -> panelVacio();
+            };
+
+
+            case 4: // Gestión de Usuarios (solo visible si es Admin)
                 return switch (subMenuIndex) {
                     case 0 -> new AltaUser().construirFormulario();
                     case 1 -> new ListarUsuarios().mostrarVentana();

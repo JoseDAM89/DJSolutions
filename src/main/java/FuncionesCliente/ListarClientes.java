@@ -1,13 +1,12 @@
 package FuncionesCliente;
 
-import Modelos.Cliente;
+import modelos.Cliente;
 import datos.ClienteDAO;
 import gui.EditarGenerico;
 import gui.EliminarGenerico;
 import gui.ListadosGenerico;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.List;
 
 public class ListarClientes {

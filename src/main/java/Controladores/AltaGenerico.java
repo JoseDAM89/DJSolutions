@@ -2,8 +2,8 @@ package Controladores;
 
 import datos.ClienteDAO;
 import datos.ProductoDAO;
-import Modelos.Cliente;
-import Modelos.Producto;
+import modelos.Cliente;
+import modelos.Producto;
 
 import javax.swing.*;
 import java.util.HashMap;

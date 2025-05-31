@@ -1,6 +1,6 @@
 package FuncionesDeUsuarios;
 
-import Modelos.Usuario;
+import modelos.Usuario;
 import datos.UsuarioDAO;
 import gui.EditarGenerico;
 import gui.EliminarGenerico;

@@ -1,6 +1,6 @@
 package datos;
 
-import Modelos.Cliente;
+import modelos.Cliente;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -96,6 +96,39 @@ public class ClienteDAO {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public static Cliente obtenerPorID(int idcliente) {
+        String sql = """
+        SELECT idcliente, camponombre, campocif, campoemail,
+               campopersonadecontacto, campodireccion, campodescripcion
+        FROM clientes
+        WHERE idcliente = ?
+    """;
+
+        try (Connection conn = ConexionBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, idcliente);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return new Cliente(
+                        rs.getInt("idcliente"),
+                        rs.getString("camponombre"),
+                        rs.getString("campocif"),
+                        rs.getString("campoemail"),
+                        rs.getString("campopersonadecontacto"),
+                        rs.getString("campodireccion"),
+                        rs.getString("campodescripcion")
+                );
+            }
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return null;
     }
 
     public static boolean eliminarPorID(int idcliente) {

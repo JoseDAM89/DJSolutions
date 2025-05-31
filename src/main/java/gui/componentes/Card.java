@@ -1,6 +1,6 @@
 package gui.componentes;
 
-import gui.modelos.ModelCard;
+import gui.modelosvista.ModelCard;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.GradientPaint;

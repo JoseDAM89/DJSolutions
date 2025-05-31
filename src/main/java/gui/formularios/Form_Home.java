@@ -1,10 +1,10 @@
 package gui.formularios;
 
-import Modelos.Cliente;
+import modelos.Cliente;
 import datos.ConexionBD;
 import gui.dialogos.Message;
-import gui.modelos.ModelCard;
-import gui.modelos.ModelStudent;
+import gui.modelosvista.ModelCard;
+import gui.modelosvista.ModelStudent;
 import gui.swing.iconos.GoogleMaterialDesignIcons;
 import gui.swing.iconos.IconFontSwing;
 import gui.swing.aviso.ModelNoticeBoard;

@@ -3,7 +3,7 @@ package gui.componentes;
 import gui.eventos.EventMenu;
 import gui.eventos.EventMenuSelected;
 import gui.eventos.EventShowPopupMenu;
-import gui.modelos.ModelMenu;
+import gui.modelosvista.ModelMenu;
 import gui.swing.MenuAnimation;
 import gui.swing.MenuItem;
 import gui.swing.PanelTransparent;
@@ -52,11 +52,13 @@ public class Menu extends PanelTransparent {
     }
 
     public void initMenuItem() {
-        boolean esAdmin = Modelos.Sesion.esAdmin();
+        boolean esAdmin = modelos.Sesion.esAdmin();
 
         addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/JSWINGICONS/icon/1.png")), "Funciones Cliente", "Alta Cliente", "Listar Clientes"));
         addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/JSWINGICONS/icon/2.png")), "Funciones Inventario", "Alta Productos", "Consultar Stock", "Listar Productos"));
         addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/JSWINGICONS/icon/3.png")), "Funciones Presupuesto", "Generar Presupuesto", "Historial de Presupuesto", "Seleccionar Materiales"));
+        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/JSWINGICONS/icon/5.png")), "Funciones Factura", "Generar Factura", "Historial Facturas"));
+
         if (esAdmin) {
             addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/JSWINGICONS/icon/4.png")), "Gestion de Usuarios", "Registrar Usuario", "Ver Usuario"));
         }

@@ -1,6 +1,6 @@
 package gui;
 
-import Modelos.Sesion;
+import modelos.Sesion;
 import datos.ConexionBD;
 import net.miginfocom.swing.MigLayout;
 import org.jdesktop.animation.timing.Animator;

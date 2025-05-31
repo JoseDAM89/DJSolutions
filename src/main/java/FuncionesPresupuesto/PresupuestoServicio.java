@@ -1,7 +1,7 @@
 package FuncionesPresupuesto;
 
-import Modelos.Cliente;
-import Modelos.Presupuesto;
+import modelos.Cliente;
+import modelos.Presupuesto;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
 
@@ -79,8 +79,6 @@ public class PresupuestoServicio {
 
         datosCliente.addCell(getCell("Para:", Font.BOLD));
         datosCliente.addCell(getCell(cliente.getCampoNombre(), Font.NORMAL));
-        datosCliente.addCell(getCell("Dirección:", Font.BOLD));
-        datosCliente.addCell(getCell(cliente.getCampoDireccion(), Font.NORMAL));
         datosCliente.addCell(getCell("Fecha:", Font.BOLD));
         datosCliente.addCell(getCell(LocalDate.now().toString(), Font.NORMAL));
         datosCliente.addCell(getCell("Presupuesto ID:", Font.BOLD));

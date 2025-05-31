@@ -1,7 +1,7 @@
 package gui;
 
-import Modelos.Cliente;
-import Modelos.Producto;
+import modelos.Cliente;
+import modelos.Producto;
 import datos.ProductoDAO;
 
 import javax.swing.*;

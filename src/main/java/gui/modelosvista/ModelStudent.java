@@ -1,4 +1,4 @@
-package gui.modelos;
+package gui.modelosvista;
 
 import gui.swing.tablero.EventAction;
 import gui.swing.tablero.ModelAction;

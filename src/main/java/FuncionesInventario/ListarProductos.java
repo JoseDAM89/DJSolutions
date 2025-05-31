@@ -1,13 +1,12 @@
 package FuncionesInventario;
 
-import Modelos.Producto;
+import modelos.Producto;
 import datos.ProductoDAO;
 import gui.EditarGenerico;
 import gui.EliminarGenerico;
 import gui.ListadosGenerico;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.List;
 
 public class ListarProductos {

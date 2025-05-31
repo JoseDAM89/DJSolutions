@@ -1,6 +1,6 @@
 package gui.dialogos;
 
-import Modelos.Cliente;
+import modelos.Cliente;
 import datos.ClienteDAO;
 
 import javax.swing.*;

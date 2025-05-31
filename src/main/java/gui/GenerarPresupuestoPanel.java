@@ -1,9 +1,9 @@
 package gui;
 
 import Controladores.GenerarPresupuestoControlador;
-import Modelos.Cliente;
-import Modelos.Producto;
-import Modelos.Presupuesto;
+import modelos.Cliente;
+import modelos.Producto;
+import modelos.Presupuesto;
 import datos.ProductoDAO;
 import gui.dialogos.SelectorClienteDialog;
 

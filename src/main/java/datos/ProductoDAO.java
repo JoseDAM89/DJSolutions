@@ -1,6 +1,6 @@
 package datos;
 
-import Modelos.Producto;
+import modelos.Producto;
 
 import javax.swing.*;
 import java.sql.Connection;

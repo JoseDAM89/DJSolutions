@@ -1,6 +1,6 @@
 package FuncionesPresupuesto;
 
-import Modelos.Presupuesto;
+import modelos.Presupuesto;
 import com.itextpdf.text.*;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Image;

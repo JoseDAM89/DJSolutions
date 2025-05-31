@@ -2,7 +2,7 @@ package gui.swing;
 
 import gui.eventos.EventMenu;
 import gui.eventos.EventMenuSelected;
-import gui.modelos.ModelMenu;
+import gui.modelosvista.ModelMenu;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics;

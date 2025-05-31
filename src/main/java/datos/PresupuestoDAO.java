@@ -1,6 +1,6 @@
 package datos;
 
-import Modelos.Presupuesto;
+import modelos.Presupuesto;
 
 import java.sql.*;
 import java.util.ArrayList;

@@ -1,6 +1,6 @@
 package datos;
 
-import Modelos.Usuario;
+import modelos.Usuario;
 import org.mindrot.jbcrypt.BCrypt;
 
 import javax.swing.*;

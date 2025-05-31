@@ -1,4 +1,4 @@
-package gui.modelos;
+package gui.modelosvista;
 
 import javax.swing.Icon;
 

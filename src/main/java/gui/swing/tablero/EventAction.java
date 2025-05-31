@@ -1,6 +1,6 @@
 package gui.swing.tablero;
 
-import gui.modelos.ModelStudent;
+import gui.modelosvista.ModelStudent;
 
 public interface EventAction {
 
