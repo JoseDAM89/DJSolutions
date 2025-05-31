@@ -131,15 +131,10 @@ public class FacturaDAO {
 
         List<Factura> lista = new ArrayList<>();
 
-<<<<<<< HEAD
-        try (Connection conn = ConexionBD.conectar();
+        try (Connection conn = ConexionBD.getConexion(); // ✅ Correcto
              PreparedStatement psFacturas = conn.prepareStatement(sqlFacturas);
              PreparedStatement psLineas = conn.prepareStatement(sqlLineas)) {
-=======
-        Connection conn = ConexionBD.getConexion();
-        try (PreparedStatement ps = conn.prepareStatement(sqlFacturas);
-             ResultSet rs = ps.executeQuery()) {
->>>>>>> f1eeceee13bd782a8d3cc8349c19edb2dee0d6c2
+
 
             // Paso 1: cargar todas las facturas
             ResultSet rsFacturas = psFacturas.executeQuery();
