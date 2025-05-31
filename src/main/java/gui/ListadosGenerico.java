@@ -51,7 +51,7 @@ public class ListadosGenerico extends JPanel {
         JTableHeader header = tabla.getTableHeader();
         header.setFont(new Font("Segoe UI", Font.BOLD, 14));
         header.setBackground(COLOR_ENCABEZADO);
-        header.setForeground(Color.WHITE);
+        header.setForeground(Color.BLACK);
         header.setBorder(new MatteBorder(0, 0, 2, 0, COLOR_ENCABEZADO.darker()));
 
         JScrollPane scrollPane = new JScrollPane(tabla);
