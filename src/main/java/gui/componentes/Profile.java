@@ -1,67 +1,66 @@
 package gui.componentes;
 
-import gui.VentanaPrincipal;  // IMPORTANTE: para reconocer la clase padre
+import java.awt.Image;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel; // Asegúrate de importar JLabel
+import javax.swing.JPanel; // Asegúrate de importar JPanel
+import java.awt.Font; // Importar Font
+import java.awt.Color; // Importar Color
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+// Si quieres añadir la funcionalidad de volverAHome al hacer clic en el logo
+// necesitarías una forma de que jLabel1 sea accesible o pasar un listener al Profile.
+// Por ahora, lo dejaremos como en el original para replicar el layout.
+// Si necesitas el clic, lo integramos de otra forma.
 
-public class Profile extends JPanel {
+public class Profile extends javax.swing.JPanel {
+
+    private JLabel jLabel1; // Declarar aquí para que sea un campo de la clase
 
     public Profile() {
         initComponents();
         setOpaque(false);
 
-        // Listener para que si haces clic en el logo, llame a volverAHome de VentanaPrincipal
-        jLabelLogo.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                llamarVolverAHome();
-            }
-        });
-    }
-
-    private void llamarVolverAHome() {
-        JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
-        if (topFrame instanceof VentanaPrincipal) {
-            ((VentanaPrincipal) topFrame).volverAHome();
-        } else {
-            System.out.println("El JFrame padre no es VentanaPrincipal o no encontrado.");
-        }
     }
 
     @SuppressWarnings("unchecked")
     private void initComponents() {
-        // Usamos BoxLayout vertical para apilar logo y texto
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-        // Label para el logo
-        jLabelLogo = new JLabel();
+        jLabel1 = new javax.swing.JLabel();
 
-        ImageIcon iconoOriginal = new ImageIcon(getClass().getResource("/JSWINGICONS/icon/Logo-removebg-preview.png"));
-        Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(120, -1, Image.SCALE_SMOOTH);
-        ImageIcon iconoEscalado = new ImageIcon(imagenEscalada);
-        jLabelLogo.setIcon(iconoEscalado);
+        jLabel1.setFont(new java.awt.Font("sansserif", 1, 24)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(30, 30, 30));
 
-        // Centrar logo horizontalmente
-        jLabelLogo.setAlignmentX(Component.CENTER_ALIGNMENT);
+// Cargar la imagen original
+        ImageIcon originalIcon = new ImageIcon(getClass().getResource("/JSWINGICONS/icon/Logo-removebg-preview.png"));
 
-        // Label para el texto de la empresa
-        jLabelTexto = new JLabel("DJSOLUTIONS");
-        jLabelTexto.setFont(new Font("SansSerif", Font.BOLD, 20));
-        jLabelTexto.setForeground(new Color(30, 30, 30));
-        jLabelTexto.setAlignmentX(Component.CENTER_ALIGNMENT);
+// Escalar la imagen (48x48 en este ejemplo)
+        Image scaledImage = originalIcon.getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
 
-        // Añadir un pequeño espacio entre logo y texto
-        add(Box.createVerticalStrut(10));
-        add(jLabelLogo);
-        add(Box.createVerticalStrut(1));
-        add(jLabelTexto);
-        add(Box.createVerticalGlue()); // para que se quede arriba y empuje hacia abajo
+// Crear un nuevo ImageIcon con la imagen escalada
+        ImageIcon scaledIcon = new ImageIcon(scaledImage);
+
+// Asignar el icono escalado al JLabel
+        jLabel1.setIcon(scaledIcon);
+
+        jLabel1.setText(" DJSOLUTIONS");
+
+// Layout (sin cambios)
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addGap(10, 10, 10)
+                                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 280, Short.MAX_VALUE)
+                                .addGap(10, 10, 10))
+        );
+        layout.setVerticalGroup(
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 68, Short.MAX_VALUE)
+                                .addContainerGap())
+        );
+
     }
-
-    // Variables declaration
-    private JLabel jLabelLogo;
-    private JLabel jLabelTexto;
 }

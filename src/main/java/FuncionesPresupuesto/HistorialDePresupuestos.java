@@ -1,5 +1,7 @@
 package FuncionesPresupuesto;
 
+import Correo.EnviarCorreo;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -109,7 +111,12 @@ public class HistorialDePresupuestos extends JPanel {
             String correo = JOptionPane.showInputDialog(item, "Introduce el correo destino:");
             if (correo != null && !correo.trim().isEmpty()) {
                 try {
-                    Correo.EnviarCorreo.enviarPresupuestoPorCorreo(correo, archivo);
+                    EnviarCorreo.enviarArchivoPorCorreo(
+                            correo,
+                            archivo,
+                            "Presupuesto generado",
+                            "Adjunto le enviamos su presupuesto generado."
+                    );
                     JOptionPane.showMessageDialog(item, "Correo enviado correctamente.");
                 } catch (Exception ex) {
                     ex.printStackTrace();
