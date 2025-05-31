@@ -5,7 +5,9 @@ import modelos.LineaFactura;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class FacturaDAO {
 
@@ -120,32 +122,57 @@ public class FacturaDAO {
 
     public List<Factura> listarTodas() {
         String sqlFacturas = "SELECT * FROM facturas ORDER BY fecha DESC";
+        String sqlLineas = """
+        SELECT fp.idfactura, fp.idproducto, p.descripcionproduct, fp.cantidad, fp.precio_unitario
+        FROM factura_productos fp
+        JOIN productos p ON fp.idproducto = p.codproduct
+    """;
+
         List<Factura> lista = new ArrayList<>();
 
         try (Connection conn = ConexionBD.conectar();
-             PreparedStatement ps = conn.prepareStatement(sqlFacturas);
-             ResultSet rs = ps.executeQuery()) {
+             PreparedStatement psFacturas = conn.prepareStatement(sqlFacturas);
+             PreparedStatement psLineas = conn.prepareStatement(sqlLineas)) {
 
-            while (rs.next()) {
-                int idFactura = rs.getInt("idfactura");
-                int idCliente = rs.getInt("idcliente");
-                Timestamp fecha = rs.getTimestamp("fecha");
+            // Paso 1: cargar todas las facturas
+            ResultSet rsFacturas = psFacturas.executeQuery();
+            Map<Integer, Factura> mapaFacturas = new HashMap<>();
 
-                // Cargar líneas asociadas usando el método ya existente
-                Factura factura = obtenerFacturaPorID(idFactura);
+            while (rsFacturas.next()) {
+                int id = rsFacturas.getInt("idfactura");
+                int idCliente = rsFacturas.getInt("idcliente");
+                Timestamp fecha = rsFacturas.getTimestamp("fecha");
 
-                // Evitamos nulls si hubo error al cargar
+                Factura f = new Factura(id, idCliente, fecha.toLocalDateTime(), new ArrayList<>());
+                mapaFacturas.put(id, f);
+            }
+
+            // Paso 2: cargar todas las líneas
+            ResultSet rsLineas = psLineas.executeQuery();
+            while (rsLineas.next()) {
+                int idFactura = rsLineas.getInt("idfactura");
+                int idProducto = rsLineas.getInt("idproducto");
+                String desc = rsLineas.getString("descripcionproduct");
+                int cantidad = rsLineas.getInt("cantidad");
+                double precio = rsLineas.getDouble("precio_unitario");
+
+                LineaFactura linea = new LineaFactura(idProducto, desc, cantidad, precio);
+
+                Factura factura = mapaFacturas.get(idFactura);
                 if (factura != null) {
-                    lista.add(factura);
+                    factura.getLineas().add(linea);
                 }
             }
 
+            lista.addAll(mapaFacturas.values());
+
         } catch (SQLException e) {
-            System.err.println("❌ Error al listar todas las facturas:");
+            System.err.println("❌ Error al listar todas las facturas con líneas:");
             e.printStackTrace();
         }
 
         return lista;
     }
+
 
 }

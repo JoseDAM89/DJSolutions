@@ -1,6 +1,8 @@
 package FuncionesFacturas;
 
+import datos.ClienteDAO;
 import datos.FacturaDAO;
+import modelos.Cliente;
 import modelos.Factura;
 import utilidades.GeneradorFacturaPDF;
 
@@ -62,6 +64,7 @@ public class HistorialFacturasPanel extends JPanel {
             });
         }
     }
+
     private void verFacturaPDF() {
         int filaSeleccionada = tabla.getSelectedRow();
         if (filaSeleccionada == -1) {
@@ -75,13 +78,13 @@ public class HistorialFacturasPanel extends JPanel {
         Factura factura = dao.obtenerFacturaPorID(idFactura);
 
         if (factura != null) {
-            String rutaPDF = "factura_" + idFactura + ".pdf";
-            GeneradorFacturaPDF.generar(factura, rutaPDF);
-            abrirPDF(rutaPDF);
+            Cliente cliente = ClienteDAO.obtenerPorID(factura.getIdCliente());
+            GeneradorFacturaPDF.generarYMostrar(factura, cliente);
         } else {
             JOptionPane.showMessageDialog(this, "No se pudo obtener la factura.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
 
     private void abrirPDF(String ruta) {
         try {
