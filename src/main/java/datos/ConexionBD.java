@@ -1,46 +1,65 @@
 package datos;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 public class ConexionBD {
 
-    private static final String URL = "jdbc:postgresql://ep-late-art-a2jopc25.eu-central-1.aws.neon.tech:5432/neondb?sslmode=require";
-    private static final String USUARIO = "neondb_owner";
-    private static final String CONTRASENA = "npg_LkV2h8vgPlfy";
+    private static HikariDataSource dataSource;
 
-    private static Connection conexion = null;
-
-    private ConexionBD() {} // Evitar instanciación
-
-    public static Connection getConexion() {
+    static {
         try {
-            if (conexion == null) {
-                System.out.println("🔁 Conexión es null");
-            } else if (conexion.isClosed()) {
-                System.out.println("🔁 Conexión estaba cerrada");
-            } else {
-                System.out.println("✅ Reutilizando conexión existente");
-            }
+            HikariConfig config = new HikariConfig();
 
-            if (conexion == null || conexion.isClosed()) {
-                System.out.println("⏳ Estableciendo nueva conexión a Neon...");
-                conexion = DriverManager.getConnection(URL, USUARIO, CONTRASENA);
+            config.setJdbcUrl("jdbc:postgresql://ep-late-art-a2jopc25.eu-central-1.aws.neon.tech:5432/neondb?sslmode=require");
+            config.setUsername("neondb_owner");
+            config.setPassword("npg_LkV2h8vgPlfy");
 
-                try (Statement stmt = conexion.createStatement()) {
-                    stmt.execute("SET search_path TO public");
-                }
+            config.setMaximumPoolSize(20);
+            config.setMinimumIdle(6);
+            config.setConnectionTimeout(30000);
+            config.setIdleTimeout(600000);
+            config.setMaxLifetime(1800000);
 
-                System.out.println("✅ Conexión persistente establecida.");
-            }
-        } catch (SQLException e) {
-            System.err.println("❌ Error al conectar a Neon: " + e.getMessage());
+            config.setConnectionInitSql("SET search_path TO public");
+
+            dataSource = new HikariDataSource(config);
+            System.out.println("✅ Pool de conexiones HikariCP inicializado");
+
+        } catch (Exception e) {
+            System.err.println("❌ Error inicializando pool HikariCP: " + e.getMessage());
             e.printStackTrace();
         }
-
-        return conexion;
     }
 
+    private ConexionBD() {
+        // Evitar instanciación
+    }
+
+    /**
+     * Devuelve una conexión del pool.
+     * Importante: el caller debe cerrar la conexión para devolverla al pool.
+     * Aquí no se captura ni lanza SQLException para que sea coherente con tu DAO actual.
+     */
+    public static Connection getConexion() {
+        if (dataSource == null) {
+            throw new RuntimeException("El pool de conexiones no está inicializado.");
+        }
+        try {
+            return dataSource.getConnection();
+        } catch (SQLException e) {
+            // Aquí sí conviene lanzar RuntimeException para no forzar manejo checked en DAO
+            throw new RuntimeException("No se pudo obtener conexión del pool", e);
+        }
+    }
+
+    public static void cerrarPool() {
+        if (dataSource != null && !dataSource.isClosed()) {
+            dataSource.close();
+            System.out.println("🛑 Pool de conexiones cerrado");
+        }
+    }
 }
