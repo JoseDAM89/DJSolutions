@@ -87,17 +87,23 @@ public class InicioSesion extends JLayeredPane {
         }
 
         try (Connection conn = ConexionBD.getConexion()) {
-            String sql = "SELECT * FROM usuarios WHERE correo_electronico = ? AND contraseña = ?";
+            String sql = "SELECT contraseña, admin FROM usuarios WHERE correo_electronico = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, correo);
-            stmt.setString(2, pass);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
+                String hashedPassword = rs.getString("contraseña");
                 boolean esAdmin = rs.getBoolean("admin");
-                Sesion.iniciarSesion(correo, esAdmin);
-                if (loginDialog != null) {
-                    loginDialog.onLoginSuccess(correo, esAdmin);
+
+                // Comprobamos la contraseña hasheada
+                if (org.mindrot.jbcrypt.BCrypt.checkpw(pass, hashedPassword)) {
+                    Sesion.iniciarSesion(correo, esAdmin);
+                    if (loginDialog != null) {
+                        loginDialog.onLoginSuccess(correo, esAdmin);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "Credenciales incorrectas.");
                 }
             } else {
                 JOptionPane.showMessageDialog(this, "Credenciales incorrectas.");
@@ -107,6 +113,7 @@ public class InicioSesion extends JLayeredPane {
             JOptionPane.showMessageDialog(this, "Error al conectar con la base de datos.");
         }
     }
+
 
     // -------------------------
     // BOTÓN CON EFECTO ONCLICK

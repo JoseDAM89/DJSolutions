@@ -16,8 +16,8 @@ public class ClienteDAO {
             VALUES (?, ?, ?, ?, ?, ?)
         """;
 
-        Connection conn = ConexionBD.getConexion();
-        try ( PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = ConexionBD.getConexion();
+        PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, cliente.getCampoNombre());
             stmt.setString(2, cliente.getCampoCIF());
@@ -42,8 +42,9 @@ public class ClienteDAO {
                campopersonadecontacto, campodireccion, campodescripcion
         FROM clientes
     """;
-        Connection conn = ConexionBD.getConexion();
-        try ( PreparedStatement stmt = conn.prepareStatement(sql);
+
+        try (  Connection conn = ConexionBD.getConexion();
+            PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
@@ -78,8 +79,9 @@ public class ClienteDAO {
         WHERE idcliente = ?
     """;
 
-        Connection conn = ConexionBD.getConexion();
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+        try ( Connection conn = ConexionBD.getConexion();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, cliente.getCampoNombre());
             stmt.setString(2, cliente.getCampoCIF());
@@ -105,8 +107,8 @@ public class ClienteDAO {
         WHERE idcliente = ?
     """;
 
-        Connection conn = ConexionBD.getConexion();
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try ( Connection conn = ConexionBD.getConexion();
+        PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, idcliente);
             ResultSet rs = stmt.executeQuery();
@@ -132,8 +134,8 @@ public class ClienteDAO {
 
     public static boolean eliminarPorID(int idcliente) {
         String sql = "DELETE FROM clientes WHERE idcliente = ?";
-        Connection conn = ConexionBD.getConexion();
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = ConexionBD.getConexion();
+        PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, idcliente);
             return stmt.executeUpdate() > 0;
