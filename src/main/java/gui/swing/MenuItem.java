@@ -3,11 +3,8 @@ package gui.swing;
 import gui.eventos.EventMenu;
 import gui.eventos.EventMenuSelected;
 import gui.modelosvista.ModelMenu;
-import java.awt.AlphaComposite;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import net.miginfocom.swing.MigLayout;
@@ -53,9 +50,11 @@ public class MenuItem extends javax.swing.JPanel {
         this.menu = menu;
         this.eventSelected = eventSelected;
         this.index = index;
+
         setOpaque(false);
         setLayout(new MigLayout("wrap, fillx, insets 0", "[fill]", "[fill, 40!]0[fill, 35!]"));
         MenuButton firstItem = new MenuButton(menu.getIcon(), "     " + menu.getMenuName());
+        firstItem.setFont(new Font("sanserif", Font.BOLD, 13));
         firstItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
@@ -72,6 +71,7 @@ public class MenuItem extends javax.swing.JPanel {
         for (String st : menu.getSubMenu()) {
             MenuButton item = new MenuButton(st);
             item.setIndex(++subMenuIndex);
+            item.setFont(new Font("sanserif", Font.BOLD, 12));
             item.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent ae) {

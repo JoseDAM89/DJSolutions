@@ -9,7 +9,7 @@ public class TableHeader extends JLabel {
 
     public TableHeader(String text) {
         super(text);
-        setFont(new Font("sansserif", 1, 12));
+        setFont(new Font("sansserif", Font.BOLD, 12));
         setForeground(new Color(0, 0, 0));
         setBorder(new EmptyBorder(10, 5, 10, 5));
 

@@ -49,9 +49,16 @@ public class ControladorMenu {
                 case 1 -> new HistorialFacturasPanel(); // ← AÑADIR ESTA LÍNEA
                 default -> null;
             };
+            case 4: // Funciones Factura
+                return switch (subMenuIndex) {
+                    case 0 -> new GenerarFacturaPanel();
+                    case 1 -> new HistorialFacturasPanel(); // ← AÑADIR ESTA LÍNEA
+                    default -> null;
+            };
 
 
-            case 4: // Gestión de Usuarios (solo visible si es Admin)
+
+            case 5: // Gestión de Usuarios (solo visible si es Admin)
                 return switch (subMenuIndex) {
                     case 0 -> new AltaUser().construirFormulario();
                     case 1 -> new ListarUsuarios().mostrarVentana();

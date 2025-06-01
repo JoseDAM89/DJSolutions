@@ -54,13 +54,14 @@ public class Menu extends PanelTransparent {
     public void initMenuItem() {
         boolean esAdmin = modelos.Sesion.esAdmin(); // Asegúrate de que 'modelos.Sesion' sea accesible
 
-        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/JSWINGICONS/icon/1.png")), "Funciones Cliente", "Alta Cliente", "Listar Clientes"));
-        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/JSWINGICONS/icon/2.png")), "Funciones Inventario", "Alta Productos", "Consultar Stock", "Listar Productos"));
-        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/JSWINGICONS/icon/3.png")), "Funciones Presupuesto", "Generar Presupuesto", "Historial de Presupuesto", "Seleccionar Materiales"));
-        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/JSWINGICONS/icon/5.png")), "Funciones Factura", "Generar Factura", "Historial Facturas"));
+        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/JSWINGICONS/icon/5.png")), "Cliente", "Alta Cliente", "Listar Clientes"));
+        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/JSWINGICONS/icon/1.png")), "Inventario", "Alta Productos", "Consultar Stock", "Listar Productos"));
+        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/JSWINGICONS/icon/3.png")), "Presupuesto", "Generar Presupuesto", "Historial de Presupuesto", "Seleccionar Materiales"));
+        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/JSWINGICONS/icon/11.png")), "Factura", "Generar Factura", "Historial Facturas"));
+        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/JSWINGICONS/icon/9.png")), "Precios", "Dar Precios"));
 
         if (esAdmin) {
-            addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/JSWINGICONS/icon/4.png")), "Gestion de Usuarios", "Registrar Usuario", "Ver Usuario"));
+            addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/JSWINGICONS/icon/6.png")), "Gestion de Usuarios", "Registrar Usuario", "Ver Usuario"));
         }
     }
 
@@ -106,7 +107,7 @@ public class Menu extends PanelTransparent {
 
         sp = new javax.swing.JScrollPane();
         panel = new javax.swing.JPanel();
-        profile1 = new gui.componentes.Profile(); // Tu clase Profile
+        profile1 = new gui.componentes.Profile();
 
         sp.setBorder(null);
         sp.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);

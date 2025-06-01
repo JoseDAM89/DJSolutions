@@ -21,6 +21,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+import static modelos.Sesion.cerrarSesion;
+
 public class VentanaPrincipal extends JFrame {
 
     private MigLayout layout;
@@ -148,6 +150,7 @@ public class VentanaPrincipal extends JFrame {
                 null, opciones, opciones[0]);
 
         if (opcion == 0) {
+            cerrarSesion(); // <- LLAMADA NECESARIA
             dispose();
             new LoginDialog(null).setVisible(true);
         } else if (opcion == 1) {

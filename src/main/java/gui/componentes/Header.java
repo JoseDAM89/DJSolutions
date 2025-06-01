@@ -47,10 +47,6 @@ public class Header extends PanelTransparent {
 
         jSeparator1.setOrientation(javax.swing.SwingConstants.VERTICAL);
 
-        buttonBadges1.setForeground(new java.awt.Color(250, 49, 49));
-        buttonBadges1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/JSWINGICONS/icon/notification.png"))); // NOI18N
-        buttonBadges1.setBadges(12);
-
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);

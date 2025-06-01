@@ -59,7 +59,7 @@ public class Profile extends JPanel {
         // Asignar el icono escalado al JLabel
         jLabel1.setIcon(scaledIcon);
 
-        jLabel1.setText("DJSOLUTIONS");
+        jLabel1.setText(" DJSolutions");
 
         // Layout (sin cambios)
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);

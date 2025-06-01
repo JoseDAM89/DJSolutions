@@ -312,12 +312,12 @@ public class Form_Home extends javax.swing.JPanel {
 
         jLabel3.setFont(new java.awt.Font("sansserif", 1, 12)); // NOI18N
         jLabel3.setForeground(new Color(0, 0, 0));
-        jLabel3.setText("Simple Miglayout API Doc");
+        jLabel3.setText("Consultas DJSOLUTIONS");
         jLabel3.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 1));
 
         jLabel2.setFont(new java.awt.Font("sansserif", 1, 15)); // NOI18N
         jLabel2.setForeground(new Color(0, 0, 0));
-        jLabel2.setText("Notice Board");
+        jLabel2.setText("Ultimas Noticias");
         jLabel2.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 1));
 
         jLabel4.setOpaque(true);

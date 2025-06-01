@@ -1,8 +1,8 @@
 package gui.swing.tablero;
 
 import gui.swing.scrollbar.ScrollBarCustom;
-import java.awt.Color;
-import java.awt.Component;
+
+import java.awt.*;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -20,6 +20,7 @@ public class Table extends JTable {
         setBackground(new Color(0, 0, 0, 0));
         setShowHorizontalLines(true);
         setGridColor(new Color(30, 30, 30, 50));
+        setFont(new Font("sansserif", Font.BOLD, 12));
         setForeground(new Color(0, 0, 0));
         setRowHeight(60);
         getTableHeader().setReorderingAllowed(false);

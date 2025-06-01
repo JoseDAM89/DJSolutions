@@ -32,6 +32,7 @@ public class ModelMenu {
         this.icon = icon;
         this.menuName = menuName;
         this.subMenu = subMenu;
+
     }
 
     public ModelMenu() {

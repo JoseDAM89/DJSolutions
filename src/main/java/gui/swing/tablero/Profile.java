@@ -1,5 +1,7 @@
 package gui.swing.tablero;
 
+import java.awt.*;
+
 public class Profile extends javax.swing.JPanel {
     
     public Profile(ModelProfile data) {
@@ -17,7 +19,7 @@ public class Profile extends javax.swing.JPanel {
         pic = new gui.swing.ImageAvatar();
         lbName = new javax.swing.JLabel();
 
-        lbName.setForeground(new java.awt.Color(102, 102, 102));
+        lbName.setFont(new Font("sansserif", Font.BOLD, 12));
         lbName.setText("Name");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
