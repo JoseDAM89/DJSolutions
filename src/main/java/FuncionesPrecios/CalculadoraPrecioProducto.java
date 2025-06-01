@@ -4,33 +4,39 @@ import modelos.PrecioProducto;
 
 public class CalculadoraPrecioProducto {
 
-    // Costes fijos exactos según la hoja Excel
-    private static final double COSTE_OPERARIO_POR_HORA = 13.05; // €/h
-    private static final double COSTE_OPERARIO_POR_MIN = COSTE_OPERARIO_POR_HORA / 60.0;
-    private static final double COSTE_ENERGIA_POR_MIN = 0.03; // €/min
-    private static final double PORCENTAJE_HERRAMIENTA = 0.024; // 2.4%
+    // Constantes según el Excel
+    private static final double COSTE_OPERARIO_HORA = 13.05;   // K7
+    private static final double COSTE_ENERGIA_MIN = 0.03;      // K13
+    private static final double COSTE_TRANSPORTE = 27.48;      // C8
 
-    public static double calcularCosteTotalSinEstructura(PrecioProducto p) {
-        // Costes por pieza
-        double costeOperario = p.getTiempoOperarioMin() * COSTE_OPERARIO_POR_MIN;
-        double costeEnergia = p.getTiempoMaquinaMin() * COSTE_ENERGIA_POR_MIN;
-        double costePreparacion = (p.getTiempoPreparacionMin() * COSTE_OPERARIO_POR_MIN) / p.getCantidad();
+    public static double calcularPrecioVentaUnidad(PrecioProducto p) {
 
+        // C3: Coste operario por unidad = (coste hora * tiempo operario) / 60
+        double costeOperario = (p.getTiempoOperarioMin() * COSTE_OPERARIO_HORA) / 60.0;
+
+        // C4: Coste material por unidad = coste barra / piezas por barra
         double costeMaterial = p.getCosteBarra() / p.getPiezasPorBarra();
-        double costeHerramienta = costeMaterial * PORCENTAJE_HERRAMIENTA;
 
-        double costeZincado = p.isZincado() ? (p.getCosteZincadoManual() / p.getCantidad()) : 0.0;
+        // C5: Coste energía por unidad = tiempo máquina * coste energía por minuto
+        double costeEnergia = p.getTiempoMaquinaMin() * COSTE_ENERGIA_MIN;
 
-        return costeOperario + costeEnergia + costePreparacion + costeMaterial + costeHerramienta + costeZincado;
-    }
+        // C6: Zincado por unidad (si aplica)
+        double costeZincado = p.isZincado() ? p.getCosteZincadoManual() / p.getCantidad() : 0.0;
 
-    public static double calcularCosteConEstructura(PrecioProducto p) {
-        double base = calcularCosteTotalSinEstructura(p);
-        return base * (1 + (p.getEstructura() / 100.0));
-    }
+        // C7: Coste estructura = (C3+C4+C5+C6) * % estructura
+        double baseSinEstructura = costeOperario + costeMaterial + costeEnergia + costeZincado;
+        double costeEstructura = baseSinEstructura * p.getEstructura();
 
-    public static double calcularPrecioPorUnidad(PrecioProducto p) {
-        double base = calcularCosteConEstructura(p);
-        return base * (1 + (p.getMargen() / 100.0));
+        // C9: Preparación por unidad = (tiempo preparación * coste hora) / 60
+        double costePreparacion = (p.getTiempoPreparacionMin() * COSTE_OPERARIO_HORA) / 60.0;
+
+        // C8: Transporte por unidad
+        double costeTransporte = COSTE_TRANSPORTE / p.getCantidad();
+
+        // C12: Coste total por unidad con todo incluido
+        double costeTotalUnidad = baseSinEstructura + costeEstructura + costePreparacion + costeTransporte;
+
+        // H4: Precio de venta por unidad con margen
+        return costeTotalUnidad / (1 - p.getMargen()); // ✅ Fórmula correcta
     }
 }

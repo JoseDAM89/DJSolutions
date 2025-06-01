@@ -99,7 +99,7 @@ public class PrecioProductoPanel extends JPanel {
                 ((double) spnMargen.getValue()) / 100.0       // % → decimal
         );
 
-        double precioUnidad = CalculadoraPrecioProducto.calcularPrecioPorUnidad(p);
+        double precioUnidad = CalculadoraPrecioProducto.calcularPrecioVentaUnidad(p);
         DecimalFormat df = new DecimalFormat("#,##0.00");
         lblPrecioFinal.setText("Precio por unidad: " + df.format(precioUnidad) + " €");
     }
