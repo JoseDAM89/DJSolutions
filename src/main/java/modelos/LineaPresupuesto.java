@@ -1,12 +1,12 @@
 package modelos;
 
-public class LineaFactura {
+public class LineaPresupuesto {
     private int idProducto;
     private String nombreProducto;
     private int cantidad;
     private double precioUnitario;
 
-    public LineaFactura(int idProducto, String nombreProducto, int cantidad, double precioUnitario) {
+    public LineaPresupuesto(int idProducto, String nombreProducto, int cantidad, double precioUnitario) {
         this.idProducto = idProducto;
         this.nombreProducto = nombreProducto;
         this.cantidad = cantidad;
@@ -20,16 +20,10 @@ public class LineaFactura {
     public String getNombreProducto() {
         return nombreProducto;
     }
-
     public int getCantidad() {
         return cantidad;
     }
-
     public double getPrecioUnitario() {
         return precioUnitario;
-    }
-
-    public double getSubtotal() {
-        return cantidad * precioUnitario;
     }
 }

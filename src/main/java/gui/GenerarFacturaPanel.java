@@ -1,8 +1,6 @@
-package FuncionesFacturas;
+package gui;
 
-import datos.ClienteDAO;
-import datos.FacturaDAO;
-import datos.ProductoDAO;
+import Controladores.GenerarFacturaControlador;
 import modelos.Cliente;
 import modelos.Factura;
 import modelos.LineaFactura;
@@ -16,6 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GenerarFacturaPanel extends JPanel {
+
+    private final GenerarFacturaControlador controlador = new GenerarFacturaControlador();
+
     private JComboBox<Cliente> comboClientes;
     private JTable tablaProductos;
     private DefaultTableModel modeloTabla;
@@ -24,7 +25,7 @@ public class GenerarFacturaPanel extends JPanel {
     public GenerarFacturaPanel() {
         setLayout(new BorderLayout());
 
-        // Panel superior: Cliente y botón Agregar producto
+        // 🔝 Panel superior
         JPanel panelSuperior = new JPanel(new FlowLayout(FlowLayout.LEFT));
         panelSuperior.add(new JLabel("Cliente:"));
 
@@ -42,25 +43,25 @@ public class GenerarFacturaPanel extends JPanel {
 
         add(panelSuperior, BorderLayout.NORTH);
 
-        // Tabla inferior: productos añadidos
-        modeloTabla = new DefaultTableModel(new Object[]{"ID", "Descripción", "Cantidad", "Precio", "Subtotal"}, 0);
+        // 📋 Tabla productos añadidos
+        modeloTabla = new DefaultTableModel(new Object[]{"ID", "Nombre", "Cantidad", "Precio", "Subtotal"}, 0);
         tablaProductos = new JTable(modeloTabla);
         add(new JScrollPane(tablaProductos), BorderLayout.CENTER);
     }
 
     private void cargarClientes() {
-        List<Cliente> clientes = new ClienteDAO().listarTodos();
+        List<Cliente> clientes = controlador.obtenerClientes();
         for (Cliente c : clientes) {
             comboClientes.addItem(c);
         }
     }
 
     private void agregarProducto(ActionEvent e) {
-        List<Producto> productos = new ProductoDAO().listarTodos();
+        List<Producto> productos = controlador.obtenerProductos();
 
         Producto seleccionado = (Producto) JOptionPane.showInputDialog(
                 this,
-                "Selecciona un producto",
+                "Selecciona un producto:",
                 "Productos",
                 JOptionPane.PLAIN_MESSAGE,
                 null,
@@ -72,42 +73,47 @@ public class GenerarFacturaPanel extends JPanel {
             String cantidadStr = JOptionPane.showInputDialog(this, "Cantidad:");
             try {
                 int cantidad = Integer.parseInt(cantidadStr);
+
                 LineaFactura linea = new LineaFactura(
                         seleccionado.getCodproduct(),
-                        seleccionado.getNombreproduct(),
+                        seleccionado.getNombreproduct(), // usamos el nombre como "descripción"
                         cantidad,
                         seleccionado.getPrecioproduct()
                 );
+
                 lineasFactura.add(linea);
+
                 modeloTabla.addRow(new Object[]{
                         linea.getIdProducto(),
-                        linea.getDescripcion(),
-                        linea.getCantidad(),
+                        linea.getNombreProducto(),
+                        cantidad,
                         String.format("%.2f €", linea.getPrecioUnitario()),
                         String.format("%.2f €", linea.getSubtotal())
                 });
+
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(this, "Cantidad inválida.");
+                JOptionPane.showMessageDialog(this, "❌ Cantidad inválida.");
             }
         }
     }
 
     private void generarFactura(ActionEvent e) {
         Cliente cliente = (Cliente) comboClientes.getSelectedItem();
+
         if (cliente == null || lineasFactura.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Completa todos los campos.");
+            JOptionPane.showMessageDialog(this, "⚠️ Selecciona un cliente y al menos un producto.");
             return;
         }
 
         Factura factura = new Factura(cliente.getIdcliente(), lineasFactura);
-        int id = new FacturaDAO().insertarFactura(factura);
+        int id = controlador.guardarFactura(factura);
 
         if (id > 0) {
-            JOptionPane.showMessageDialog(this, "Factura generada correctamente con ID: " + id);
+            JOptionPane.showMessageDialog(this, "✅ Factura generada con ID: " + id);
             lineasFactura.clear();
             modeloTabla.setRowCount(0);
         } else {
-            JOptionPane.showMessageDialog(this, "Error al generar la factura.");
+            JOptionPane.showMessageDialog(this, "❌ Error al generar la factura.");
         }
     }
 }

@@ -103,14 +103,16 @@ public class PresupuestoServicio {
 
         double total = 0;
         for (Presupuesto p : productos) {
-            double subtotal = p.getCantidad() * p.getPrecio();
-            total += subtotal;
+            for (var linea : p.getLineas()) {
+                double subtotal = linea.getCantidad() * linea.getPrecioUnitario();
+                total += subtotal;
 
-            tabla.addCell(getCell(String.valueOf(p.getId()), Font.NORMAL));
-            tabla.addCell(getCell(p.getNombre(), Font.NORMAL));
-            tabla.addCell(getCell(String.valueOf(p.getCantidad()), Font.NORMAL));
-            tabla.addCell(getCell(String.format("%.2f €", p.getPrecio()), Font.NORMAL));
-            tabla.addCell(getCell(String.format("%.2f €", subtotal), Font.NORMAL));
+                tabla.addCell(getCell(String.valueOf(linea.getIdProducto()), Font.NORMAL));
+                tabla.addCell(getCell(linea.getNombreProducto(), Font.NORMAL));
+                tabla.addCell(getCell(String.valueOf(linea.getCantidad()), Font.NORMAL));
+                tabla.addCell(getCell(String.format("%.2f €", linea.getPrecioUnitario()), Font.NORMAL));
+                tabla.addCell(getCell(String.format("%.2f €", subtotal), Font.NORMAL));
+            }
         }
 
         doc.add(tabla);

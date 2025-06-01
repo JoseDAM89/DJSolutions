@@ -1,25 +1,26 @@
 package Controladores;
 
 import modelos.Cliente;
+import modelos.LineaPresupuesto;
 import modelos.Presupuesto;
 import datos.PresupuestoDAO;
 import gui.GenerarPresupuestoPanel;
 import FuncionesPresupuesto.PresupuestoServicio;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GenerarPresupuestoControlador {
 
-    private List<Presupuesto> productos = new ArrayList<>();
-    private GenerarPresupuestoPanel panel;  // Referencia al panel, si necesitas notificarle
+    private List<LineaPresupuesto> listaProductos = new ArrayList<>();
+    private GenerarPresupuestoPanel panel;
+    private PresupuestoDAO dao = new PresupuestoDAO();
 
-    // Constructor que recibe el panel
     public GenerarPresupuestoControlador(GenerarPresupuestoPanel panel) {
         this.panel = panel;
     }
 
-    // Constructor por defecto, por si se quiere usar sin panel
     public GenerarPresupuestoControlador() {
     }
 
@@ -27,31 +28,73 @@ public class GenerarPresupuestoControlador {
         this.panel = panel;
     }
 
-    public void agregarProducto(Presupuesto p) {
-        productos.add(p);
-        // Aquí puedes actualizar el panel si fuera necesario
-        // if (panel != null) panel.actualizarTabla(productos);
+    // ✅ Agregar una línea al presupuesto
+    public void agregarProducto(LineaPresupuesto linea) {
+        listaProductos.add(linea);
+        actualizarTabla();
     }
 
-    public void guardarPresupuestoEnBD() {
-        for (Presupuesto p : productos) {
-            PresupuestoDAO.insertar(p);
+    // ✅ Obtener productos añadidos (para el panel)
+    public List<LineaPresupuesto> getProductos() {
+        return listaProductos;
+    }
+
+    // ✅ Eliminar una línea por índice
+    public void eliminarProducto(int index) {
+        if (index >= 0 && index < listaProductos.size()) {
+            listaProductos.remove(index);
+            actualizarTabla();
         }
     }
 
-    public void generarPDF(List<Presupuesto> productos, Cliente cliente) {
+    // ✅ Mostrar productos por consola (puede enlazarse con tabla)
+    public void actualizarTabla() {
+        System.out.println("Productos actuales en el presupuesto:");
+        for (LineaPresupuesto lp : listaProductos) {
+            System.out.println("- " + lp.getNombreProducto() + ", cantidad: " + lp.getCantidad());
+        }
+    }
 
-        PresupuestoServicio service = new PresupuestoServicio();
+    // ✅ Guardar en base de datos
+    public Presupuesto guardarPresupuestoEnBD(Cliente cliente) {
+        double total = listaProductos.stream()
+                .mapToDouble(lp -> lp.getCantidad() * lp.getPrecioUnitario())
+                .sum();
+
+        Presupuesto presupuesto = new Presupuesto(
+                cliente.getIdcliente(),
+                LocalDate.now(),
+                new ArrayList<>(listaProductos),
+                total
+        );
+
+        dao.insertar(presupuesto);  // Este método debe rellenar el ID
+        return presupuesto;
+    }
+
+    // ✅ Generar PDF con datos
+    public void generarPDF(Cliente cliente) {
         try {
-            guardarPresupuestoEnBD();
-            service.generarPDF(productos, cliente);
+            guardarPresupuestoEnBD(cliente);
+            List<Presupuesto> lista = new ArrayList<>();
+            double total = listaProductos.stream()
+                    .mapToDouble(lp -> lp.getCantidad() * lp.getPrecioUnitario())
+                    .sum();
+
+            Presupuesto p = new Presupuesto(
+                    cliente.getIdcliente(),
+                    LocalDate.now(),
+                    new ArrayList<>(listaProductos),
+                    total
+            );
+
+            lista.add(p);
+
+            PresupuestoServicio service = new PresupuestoServicio();
+            service.generarPDF(lista, cliente);
         } catch (Exception e) {
             e.printStackTrace();
-            // if (panel != null) panel.mostrarError("Error al generar el PDF");
+            // Aquí puedes mostrar un mensaje en el panel si quieres
         }
-    }
-
-    public List<Presupuesto> getProductos() {
-        return productos;
     }
 }

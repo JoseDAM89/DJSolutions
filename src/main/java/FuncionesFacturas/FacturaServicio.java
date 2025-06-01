@@ -91,7 +91,7 @@ public class FacturaServicio {
 
         for (LineaFactura linea : lineas) {
             tabla.addCell(String.valueOf(linea.getIdProducto()));
-            tabla.addCell(linea.getDescripcion());
+            tabla.addCell(linea.getNombreProducto());
             tabla.addCell(String.valueOf(linea.getCantidad()));
             tabla.addCell(String.format("%.2f €", linea.getPrecioUnitario()));
             tabla.addCell(String.format("%.2f €", linea.getSubtotal()));

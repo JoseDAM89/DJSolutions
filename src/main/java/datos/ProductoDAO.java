@@ -136,4 +136,38 @@ public class ProductoDAO {
             return false;
         }
     }
+    public static Producto obtenerPorID(int codproduct) {
+        String sql = """
+        SELECT codproduct, nombreproduct, precioproduct, descripcionproduct,
+               stockproduct, materiaprima, idmateriaprima
+        FROM productos
+        WHERE codproduct = ?
+    """;
+
+        try (Connection conn = ConexionBD.getConexion();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, codproduct);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return new Producto(
+                            rs.getInt("codproduct"),
+                            rs.getString("nombreproduct"),
+                            rs.getDouble("precioproduct"),
+                            rs.getString("descripcionproduct"),
+                            rs.getInt("stockproduct"),
+                            rs.getBoolean("materiaprima"),
+                            rs.getInt("idmateriaprima")
+                    );
+                }
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "❌ Error al obtener producto: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+
 }

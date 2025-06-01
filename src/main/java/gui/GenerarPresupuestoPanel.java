@@ -2,6 +2,7 @@ package gui;
 
 import Controladores.GenerarPresupuestoControlador;
 import modelos.Cliente;
+import modelos.LineaPresupuesto;
 import modelos.Producto;
 import modelos.Presupuesto;
 import datos.ProductoDAO;
@@ -136,8 +137,8 @@ public class GenerarPresupuestoPanel extends JPanel {
                 });
 
                 if (controlador != null) {
-                    Presupuesto p = new Presupuesto(id, nombre, cantidad, precio);
-                    controlador.agregarProducto(p);
+                    LineaPresupuesto linea = new LineaPresupuesto(id, nombre, cantidad, precio);
+                    controlador.agregarProducto(linea);
                 }
 
             } catch (NumberFormatException ex) {
@@ -173,11 +174,15 @@ public class GenerarPresupuestoPanel extends JPanel {
             }
             if (controlador != null) {
                 try {
-                    controlador.generarPDF(controlador.getProductos(), cliente);
-                    JOptionPane.showMessageDialog(this, "Presupuesto generado correctamente.");
+                    Presupuesto presupuestoGuardado = controlador.guardarPresupuestoEnBD(cliente);
+                    if (presupuestoGuardado != null) {
+                        JOptionPane.showMessageDialog(this, "Presupuesto guardado correctamente en la base de datos.");
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Error: no se pudo guardar el presupuesto.");
+                    }
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    JOptionPane.showMessageDialog(this, "Error al generar el presupuesto:\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Error al guardar el presupuesto:\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
             } else {
                 JOptionPane.showMessageDialog(this, "Controlador no inicializado.");

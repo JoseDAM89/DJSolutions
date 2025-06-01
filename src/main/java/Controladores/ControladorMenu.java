@@ -2,17 +2,17 @@ package Controladores;
 
 import FuncionesCliente.AltaCliente;
 import FuncionesCliente.ListarClientes;
-import FuncionesFacturas.HistorialFacturasPanel;
+import gui.HistorialDePresupuestosPanel;
+import gui.HistorialFacturasPanel;
 import FuncionesInventario.AltaProducto;
 import FuncionesInventario.ConsultarStock;
 import FuncionesInventario.ListarProductos;
-import FuncionesPresupuesto.HistorialDePresupuestos;
 import FuncionesPresupuesto.SeleccionarMateriales;
 import FuncionesDeUsuarios.AltaUser;
 import FuncionesDeUsuarios.ListarUsuarios;
 import gui.GenerarPresupuestoPanel;
 import gui.formularios.Form_Home;
-import FuncionesFacturas.GenerarFacturaPanel;
+import gui.GenerarFacturaPanel;
 
 
 import javax.swing.*;
@@ -39,7 +39,7 @@ public class ControladorMenu {
             case 2: // Funciones Presupuesto
                 return switch (subMenuIndex) {
                     case 0 -> FabricaPresupuesto.crearPanel();
-                    case 1 -> new HistorialDePresupuestos();
+                    case 1 -> new HistorialDePresupuestosPanel();
                     case 2 -> new SeleccionarMateriales();
                     default -> null;
                 };
