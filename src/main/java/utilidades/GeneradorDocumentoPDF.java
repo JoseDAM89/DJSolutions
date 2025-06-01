@@ -44,13 +44,8 @@ public class GeneradorDocumentoPDF {
             doc.open();
 
             // Datos empresa
-            agregarCabeceraEmpresa(doc);
+            agregarCabeceraEmpresa(doc, tipo);
 
-            // Título
-            Paragraph titulo = new Paragraph(tipo, FONT_TITULO);
-            titulo.setAlignment(Element.ALIGN_CENTER);
-            doc.add(titulo);
-            doc.add(new Paragraph(" "));
 
             // Datos cliente
             agregarDatosCliente(doc, cliente, documento, tipo);
@@ -65,7 +60,7 @@ public class GeneradorDocumentoPDF {
             doc.add(new Paragraph(" "));
             String pieTexto = tipo.equals("Factura") ?
                     "Gracias por su confianza." :
-                    "Este presupuesto tiene validez de 30 días.";
+                    "Este presupuesto es válido durante 30 días.";
             Paragraph pie = new Paragraph(pieTexto, FONT_NORMAL);
             pie.setAlignment(Element.ALIGN_CENTER);
             doc.add(pie);
@@ -97,16 +92,68 @@ public class GeneradorDocumentoPDF {
         }
     }
 
-    private static void agregarCabeceraEmpresa(Document doc) throws DocumentException {
-        PdfPTable header = new PdfPTable(1);
-        header.setWidthPercentage(100);
-        header.addCell(getCelda("DJSOLUTIONS S.A.", FONT_NEGRITA));
-        header.addCell(getCelda("Calle Ejemplo 123, Madrid", FONT_NORMAL));
-        header.addCell(getCelda("djsolutionssa@gmail.com", FONT_NORMAL));
-        header.addCell(getCelda("+34 000 000 000", FONT_NORMAL));
-        doc.add(header);
+    private static void agregarCabeceraEmpresa(Document doc, String tipo) throws Exception {
+        PdfPTable tablaCabecera = new PdfPTable(2);
+        tablaCabecera.setWidthPercentage(100);
+        tablaCabecera.setWidths(new float[]{75, 25}); // Más espacio para texto, menos para logo
+
+
+
+
+        // 👉 Parte izquierda: datos sin recuadro
+        PdfPTable subtabla = new PdfPTable(1);
+        subtabla.setWidthPercentage(100);
+        subtabla.addCell(getCeldaSinBorde("DJSOLUTIONS S.A.", FONT_NEGRITA));
+        subtabla.addCell(getCeldaSinBorde("Calle Ejemplo 123", FONT_NORMAL));
+        subtabla.addCell(getCeldaSinBorde("MADRID, España", FONT_NORMAL));
+        subtabla.addCell(getCeldaSinBorde("djsolutionssa@gmail.com", FONT_NORMAL));
+        subtabla.addCell(getCeldaSinBorde("+34 000 000 000", FONT_NORMAL));
+        if (tipo.equals("Factura")) {
+            subtabla.addCell(getCeldaSinBorde("CIF: B12345678", FONT_NORMAL));
+        }
+
+        PdfPCell celdaTexto = new PdfPCell(subtabla);
+        celdaTexto.setBorder(Rectangle.NO_BORDER);
+        tablaCabecera.addCell(celdaTexto);
+
+        // 👉 Parte derecha: imagen/logo alineado arriba a la derecha
+        try {
+            Image logo = Image.getInstance("src/resources/logo.jpg");
+            logo.scaleToFit(175, 175);
+            logo.setAlignment(Image.ALIGN_RIGHT);
+
+            PdfPCell celdaLogo = new PdfPCell();
+            celdaLogo.addElement(logo);
+            celdaLogo.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            celdaLogo.setVerticalAlignment(Element.ALIGN_TOP);
+            celdaLogo.setBorder(Rectangle.NO_BORDER);
+            tablaCabecera.addCell(celdaLogo);
+        } catch (Exception e) {
+            System.err.println("⚠️ No se pudo cargar el logo: " + e.getMessage());
+            PdfPCell vacia = new PdfPCell(new Phrase(""));
+            vacia.setBorder(Rectangle.NO_BORDER);
+            tablaCabecera.addCell(vacia);
+        }
+
+        doc.add(tablaCabecera);
+        doc.add(new Paragraph(" "));
+
+        // 👉 Título centrado (Factura / Presupuesto)
+        Paragraph titulo = new Paragraph(tipo, FONT_TITULO);
+        titulo.setAlignment(Element.ALIGN_CENTER);
+        doc.add(titulo);
         doc.add(new Paragraph(" "));
     }
+
+    private static PdfPCell getCeldaSinBorde(String texto, Font fuente) {
+        PdfPCell celda = new PdfPCell(new Phrase(texto, fuente));
+        celda.setBorder(Rectangle.NO_BORDER);
+        return celda;
+    }
+
+
+
+
 
     private static void agregarDatosCliente(Document doc, Cliente cliente, Object docObj, String tipo) throws DocumentException {
         PdfPTable datos = new PdfPTable(2);
@@ -125,8 +172,8 @@ public class GeneradorDocumentoPDF {
         datos.addCell(getCelda(fecha, FONT_NORMAL));
         datos.addCell(getCelda(tipo + " ID:", FONT_NEGRITA));
         String id = (tipo.equals("Factura")) ?
-                "F" + ((Factura) docObj).getIdFactura() :
-                "P" + ((Presupuesto) docObj).getId();
+                String.valueOf(((Factura) docObj).getIdFactura()) :
+                String.valueOf(((Presupuesto) docObj).getId());
         datos.addCell(getCelda(id, FONT_NORMAL));
         doc.add(datos);
         doc.add(new Paragraph(" "));
@@ -180,7 +227,11 @@ public class GeneradorDocumentoPDF {
         PdfPTable totales = new PdfPTable(2);
         totales.setWidthPercentage(40);
         totales.setHorizontalAlignment(Element.ALIGN_RIGHT);
-        totales.addCell(getCelda("TOTAL (IVA incluido)", FONT_NEGRITA));
+        totales.addCell(getCelda("Subtotal", FONT_NEGRITA));
+        totales.addCell(getCelda(String.format("%.2f €", subtotal), FONT_NORMAL));
+        totales.addCell(getCelda("IVA (21%)", FONT_NEGRITA));
+        totales.addCell(getCelda(String.format("%.2f €", iva), FONT_NORMAL));
+        totales.addCell(getCelda("TOTAL", FONT_NEGRITA));
         totales.addCell(getCelda(String.format("%.2f €", total), FONT_NORMAL));
         doc.add(totales);
     }
