@@ -83,7 +83,7 @@ public class VentanaPrincipal extends JFrame {
                 MenuItem item = (MenuItem) com;
                 PopupMenu popup = new PopupMenu(VentanaPrincipal.this, item.getIndex(), item.getEventSelected(), item.getMenu().getSubMenu());
                 int x = getX() + 62;
-                int y = getY() + com.getY() + 95;
+                int y = getY() + com.getY() + 128;
                 popup.setLocation(x, y);
                 popup.setVisible(true);
             }
