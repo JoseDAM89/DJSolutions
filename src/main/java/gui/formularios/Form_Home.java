@@ -24,7 +24,6 @@ public class Form_Home extends javax.swing.JPanel {
         table1.fixTable(jScrollPane1);
         setOpaque(false);
         initData();
-
     }
 
     private void initData() {
@@ -77,7 +76,45 @@ public class Form_Home extends javax.swing.JPanel {
         }
     }
 
-    private int obtenerCantidad(String tabla) {
+    private int contarAprobados(String tabla) {
+        int cantidad = 0;
+        String sql = "SELECT COUNT(*) FROM " + tabla + " WHERE aceptado = TRUE";
+
+        try (Connection conn = ConexionBD.getConexion();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                cantidad = rs.getInt(1);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return cantidad;
+    }
+
+    private int contarPagadas(String tabla) {
+        int cantidad = 0;
+        String sql = "SELECT COUNT(*) FROM " + tabla + " WHERE pagada = TRUE";
+
+        try (Connection conn = ConexionBD.getConexion();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                cantidad = rs.getInt(1);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return cantidad;
+    }
+
+    private int contarTotales(String tabla) {
         int cantidad = 0;
         String sql = "SELECT COUNT(*) FROM " + tabla;
 
@@ -96,29 +133,32 @@ public class Form_Home extends javax.swing.JPanel {
         return cantidad;
     }
 
-    private int calcularPorcentaje(int valor) {
-        int maxValor = 1000;
-        int porcentaje = (valor * 100) / maxValor;
-        return Math.min(porcentaje, 100);
+    private int calcularPorcentaje(int parte, int total) {
+        if (total == 0) return 0;
+        return Math.min((parte * 100) / total, 100);
     }
 
     private void initCardData() {
-        int totalProductos = obtenerCantidad("productos");
-        int totalClientes = obtenerCantidad("clientes");
-        int totalUsuarios = obtenerCantidad("usuarios");
-        int totalPresupuestos = obtenerCantidad("presupuestos");
+        int totalProductos = contarTotales("productos");
+        int totalClientes = contarTotales("clientes");
+
+        int facturasTotales = contarTotales("facturas");
+        int facturasAprobadas = contarPagadas("facturas");
+
+        int presupuestosTotales = contarTotales("presupuestos");
+        int presupuestosAprobados = contarAprobados("presupuestos");
 
         Icon icon1 = IconFontSwing.buildIcon(GoogleMaterialDesignIcons.SHOPPING_BASKET, 60, new Color(255, 255, 255, 100), new Color(255, 255, 255, 15));
-        card1.setData(new ModelCard("Productos", totalProductos, calcularPorcentaje(totalProductos), icon1));
+        card1.setData(new ModelCard("Productos", totalProductos, calcularPorcentaje(totalProductos, 1000), icon1));
 
         Icon icon2 = IconFontSwing.buildIcon(GoogleMaterialDesignIcons.PEOPLE, 60, new Color(255, 255, 255, 100), new Color(255, 255, 255, 15));
-        card2.setData(new ModelCard("Clientes", totalClientes, calcularPorcentaje(totalClientes), icon2));
+        card2.setData(new ModelCard("Clientes", totalClientes, calcularPorcentaje(totalClientes, 1000), icon2));
 
-        Icon icon3 = IconFontSwing.buildIcon(GoogleMaterialDesignIcons.PERSON, 60, new Color(255, 255, 255, 100), new Color(255, 255, 255, 15));
-        card3.setData(new ModelCard("Usuarios", totalUsuarios, calcularPorcentaje(totalUsuarios), icon3));
+        Icon icon3 = IconFontSwing.buildIcon(GoogleMaterialDesignIcons.ACCOUNT_BALANCE, 60, new Color(255, 255, 255, 100), new Color(255, 255, 255, 15));
+        card3.setData(new ModelCard("Facturas Aprobadas", facturasAprobadas, calcularPorcentaje(facturasAprobadas, facturasTotales), icon3));
 
-        Icon icon4 = IconFontSwing.buildIcon(GoogleMaterialDesignIcons.BUSINESS_CENTER, 60, new Color(255, 255, 255, 100), new Color(255, 255, 255, 15));
-        card4.setData(new ModelCard("Presupuesto", totalPresupuestos, calcularPorcentaje(totalPresupuestos), icon4));
+        Icon icon4 = IconFontSwing.buildIcon(GoogleMaterialDesignIcons.PRINT, 60, new Color(255, 255, 255, 100), new Color(255, 255, 255, 15));
+        card4.setData(new ModelCard("Presupuestos Aprobados", presupuestosAprobados, calcularPorcentaje(presupuestosAprobados, presupuestosTotales), icon4));
     }
 
     private void initNoticeBoard() {
@@ -175,7 +215,13 @@ public class Form_Home extends javax.swing.JPanel {
         Message obj = new Message(JFrame.getFrames()[0], true);
         obj.showMessage(message);
     }
-    @SuppressWarnings("unchecked")
+
+    // Componentes Swing generados automáticamente...
+    // Aquí incluirías tu método initComponents() tal como ya lo tienes.
+
+
+
+@SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 

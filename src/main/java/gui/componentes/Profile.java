@@ -1,51 +1,67 @@
 package gui.componentes;
 
+import gui.VentanaPrincipal;  // IMPORTANTE: para reconocer la clase padre
+
 import java.awt.Image;
 import javax.swing.ImageIcon;
-import javax.swing.JLabel; // Asegúrate de importar JLabel
-import javax.swing.JPanel; // Asegúrate de importar JPanel
-import java.awt.Font; // Importar Font
-import java.awt.Color; // Importar Color
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import java.awt.Font;
+import java.awt.Color;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
-// Si quieres añadir la funcionalidad de volverAHome al hacer clic en el logo
-// necesitarías una forma de que jLabel1 sea accesible o pasar un listener al Profile.
-// Por ahora, lo dejaremos como en el original para replicar el layout.
-// Si necesitas el clic, lo integramos de otra forma.
+public class Profile extends JPanel {
 
-public class Profile extends javax.swing.JPanel {
-
-    private JLabel jLabel1; // Declarar aquí para que sea un campo de la clase
+    private JLabel jLabel1;
 
     public Profile() {
         initComponents();
         setOpaque(false);
 
+        // Listener para que si haces clic en el logo, llame a volverAHome de VentanaPrincipal
+        jLabel1.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                llamarVolverAHome();
+            }
+        });
+    }
+
+    private void llamarVolverAHome() {
+        JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
+        if (topFrame instanceof VentanaPrincipal) {
+            ((VentanaPrincipal) topFrame).volverAHome();
+        } else {
+            System.out.println("El JFrame padre no es VentanaPrincipal o no encontrado.");
+        }
     }
 
     @SuppressWarnings("unchecked")
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
+        jLabel1 = new JLabel();
 
-        jLabel1.setFont(new java.awt.Font("sansserif", 1, 24)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(30, 30, 30));
+        jLabel1.setFont(new Font("sansserif", 1, 24));
+        jLabel1.setForeground(new Color(30, 30, 30));
 
-// Cargar la imagen original
+        // Cargar la imagen original
         ImageIcon originalIcon = new ImageIcon(getClass().getResource("/JSWINGICONS/icon/Logo-removebg-preview.png"));
 
-// Escalar la imagen (48x48 en este ejemplo)
-        Image scaledImage = originalIcon.getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
+        // Escalar la imagen (40x40 en este ejemplo)
+        Image scaledImage = originalIcon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
 
-// Crear un nuevo ImageIcon con la imagen escalada
+        // Crear un nuevo ImageIcon con la imagen escalada
         ImageIcon scaledIcon = new ImageIcon(scaledImage);
 
-// Asignar el icono escalado al JLabel
+        // Asignar el icono escalado al JLabel
         jLabel1.setIcon(scaledIcon);
 
         jLabel1.setText("DJSOLUTIONS");
 
-
-// Layout (sin cambios)
+        // Layout (sin cambios)
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -62,6 +78,5 @@ public class Profile extends javax.swing.JPanel {
                                 .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 68, Short.MAX_VALUE)
                                 .addContainerGap())
         );
-
     }
 }
