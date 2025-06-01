@@ -2,17 +2,14 @@ package Controladores;
 
 import FuncionesCliente.AltaCliente;
 import FuncionesCliente.ListarClientes;
-import gui.HistorialDePresupuestosPanel;
-import gui.HistorialFacturasPanel;
+import gui.*;
 import FuncionesInventario.AltaProducto;
 import FuncionesInventario.ConsultarStock;
 import FuncionesInventario.ListarProductos;
 import FuncionesPresupuesto.SeleccionarMateriales;
 import FuncionesDeUsuarios.AltaUser;
 import FuncionesDeUsuarios.ListarUsuarios;
-import gui.GenerarPresupuestoPanel;
 import gui.formularios.Form_Home;
-import gui.GenerarFacturaPanel;
 
 
 import javax.swing.*;
@@ -49,14 +46,11 @@ public class ControladorMenu {
                 case 1 -> new HistorialFacturasPanel(); // ← AÑADIR ESTA LÍNEA
                 default -> null;
             };
-            case 4: // Funciones Factura
+            case 4: // Funciones de Precios
                 return switch (subMenuIndex) {
-                    case 0 -> new GenerarFacturaPanel();
-                    case 1 -> new HistorialFacturasPanel(); // ← AÑADIR ESTA LÍNEA
+                    case 0 -> new PrecioProductoPanel(); // Mostrará el panel de cálculo de precio y alta
                     default -> null;
-            };
-
-
+                };
 
             case 5: // Gestión de Usuarios (solo visible si es Admin)
                 return switch (subMenuIndex) {
