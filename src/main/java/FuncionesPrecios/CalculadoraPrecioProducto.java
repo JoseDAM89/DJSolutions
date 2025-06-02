@@ -1,42 +1,61 @@
 package FuncionesPrecios;
 
 import modelos.PrecioProducto;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class CalculadoraPrecioProducto {
 
-    // Constantes según el Excel
-    private static final double COSTE_OPERARIO_HORA = 13.05;   // K7
-    private static final double COSTE_ENERGIA_MIN = 0.03;      // K13
-    private static final double COSTE_TRANSPORTE = 27.48;      // C8
+    // Constantes (valores desde Excel)
+    private static final BigDecimal COSTE_OPERARIO_HORA = new BigDecimal("13.05");      // K7
+    private static final BigDecimal COSTE_ENERGIA_MIN = new BigDecimal("0.03");         // K13
+    private static final BigDecimal COSTE_TRANSPORTE_TOTAL = new BigDecimal("27.48");   // C8
+    private static final BigDecimal FACTOR_COSTE_HERRAMIENTA = new BigDecimal("0.024"); // K6 (2.40%)
+    private static final BigDecimal COSTE_FINANCIACION_POR_PIEZA = BigDecimal.ZERO;     // C6 (Asumimos 0.0)
 
     public static double calcularPrecioVentaUnidad(PrecioProducto p) {
+        if (p == null || p.getCantidad() <= 0 || p.getPiezasPorBarra() <= 0) {
+            throw new IllegalArgumentException("Datos inválidos: cantidad o piezas por barra no pueden ser <= 0.");
+        }
 
-        // C3: Coste operario por unidad = (coste hora * tiempo operario) / 60
-        double costeOperario = (p.getTiempoOperarioMin() * COSTE_OPERARIO_HORA) / 60.0;
+        BigDecimal cantidad = BigDecimal.valueOf(p.getCantidad());           // E4
+        BigDecimal piezasPorBarra = BigDecimal.valueOf(p.getPiezasPorBarra());
+        BigDecimal tiempoOperario = BigDecimal.valueOf(p.getTiempoOperarioMin());    // C3
+        BigDecimal tiempoMaquina = BigDecimal.valueOf(p.getTiempoMaquinaMin());      // C4
+        BigDecimal tiempoPreparacion = BigDecimal.valueOf(p.getTiempoPreparacionMin()); // C9
+        BigDecimal costeBarra = BigDecimal.valueOf(p.getCosteBarra());         // C5
+        BigDecimal costeZincado = p.isZincado() ? BigDecimal.valueOf(p.getCosteZincadoManual()) : BigDecimal.ZERO; // C10
+        BigDecimal estructura = BigDecimal.valueOf(p.getEstructura());         // K1 (estructura)
+        BigDecimal margen = BigDecimal.valueOf(p.getMargen());                 // K2 (margen)
 
-        // C4: Coste material por unidad = coste barra / piezas por barra
-        double costeMaterial = p.getCosteBarra() / p.getPiezasPorBarra();
+        if (margen.compareTo(BigDecimal.ONE) >= 0) {
+            throw new IllegalArgumentException("El margen debe ser menor que 1 para evitar división por cero.");
+        }
 
-        // C5: Coste energía por unidad = tiempo máquina * coste energía por minuto
-        double costeEnergia = p.getTiempoMaquinaMin() * COSTE_ENERGIA_MIN;
+        // Costes variables unitarios (CVU)
+        BigDecimal c3 = tiempoOperario.multiply(COSTE_OPERARIO_HORA).divide(BigDecimal.valueOf(60), 10, RoundingMode.HALF_UP);
+        BigDecimal c4 = costeBarra.divide(piezasPorBarra, 10, RoundingMode.HALF_UP);
+        BigDecimal c5 = tiempoMaquina.multiply(COSTE_ENERGIA_MIN).setScale(10, RoundingMode.HALF_UP);
+        BigDecimal c6 = COSTE_FINANCIACION_POR_PIEZA;  // 0 por ahora
+        BigDecimal c7 = c3.add(c4).add(c5).add(c6).multiply(FACTOR_COSTE_HERRAMIENTA).setScale(10, RoundingMode.HALF_UP);
 
-        // C6: Zincado por unidad (si aplica)
-        double costeZincado = p.isZincado() ? p.getCosteZincadoManual() / p.getCantidad() : 0.0;
+        BigDecimal costeVariableUnidad = c3.add(c4).add(c5).add(c6).add(c7);
 
-        // C7: Coste estructura = (C3+C4+C5+C6) * % estructura
-        double baseSinEstructura = costeOperario + costeMaterial + costeEnergia + costeZincado;
-        double costeEstructura = baseSinEstructura * p.getEstructura();
+        // Costes fijos totales (CFT)
+        BigDecimal c8 = COSTE_TRANSPORTE_TOTAL;
+        BigDecimal c9 = tiempoPreparacion.multiply(COSTE_OPERARIO_HORA).divide(BigDecimal.valueOf(60), 10, RoundingMode.HALF_UP);
+        BigDecimal c10 = costeZincado;
 
-        // C9: Preparación por unidad = (tiempo preparación * coste hora) / 60
-        double costePreparacion = (p.getTiempoPreparacionMin() * COSTE_OPERARIO_HORA) / 60.0;
+        BigDecimal costesFijosTotales = c8.add(c9).add(c10);
 
-        // C8: Transporte por unidad
-        double costeTransporte = COSTE_TRANSPORTE / p.getCantidad();
+        // Coste total por unidad
+        BigDecimal coste = costeVariableUnidad.add(costesFijosTotales.divide(cantidad, 10, RoundingMode.HALF_UP));
 
-        // C12: Coste total por unidad con todo incluido
-        double costeTotalUnidad = baseSinEstructura + costeEstructura + costePreparacion + costeTransporte;
+        // Aplicar estructura y margen
+        BigDecimal costeMasEstructura = coste.divide(BigDecimal.ONE.subtract(estructura), 10, RoundingMode.HALF_UP);
+        BigDecimal precioFinal = costeMasEstructura.divide(BigDecimal.ONE.subtract(margen), 2, RoundingMode.HALF_UP);
 
-        // H4: Precio de venta por unidad con margen
-        return costeTotalUnidad / (1 - p.getMargen()); // ✅ Fórmula correcta
+        return precioFinal.doubleValue();
     }
+
 }

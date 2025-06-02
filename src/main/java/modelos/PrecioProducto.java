@@ -1,7 +1,6 @@
 package modelos;
 
 public class PrecioProducto {
-
     private int cantidad;
     private double tiempoOperarioMin;
     private double tiempoMaquinaMin;
@@ -9,14 +8,13 @@ public class PrecioProducto {
     private double costeBarra;
     private int piezasPorBarra;
     private boolean zincado;
-    private double costeZincadoManual;
-    private double estructura;
-    private double margen;
+    private double costeZincadoManual; // This will be the total zincado cost (e.g., 30)
+    private double estructura; // Already a decimal (e.g., 0.10 for 10%)
+    private double margen;     // Already a decimal (e.g., 0.30 for 30%)
 
     public PrecioProducto(int cantidad, double tiempoOperarioMin, double tiempoMaquinaMin,
                           double tiempoPreparacionMin, double costeBarra, int piezasPorBarra,
-                          boolean zincado, double costeZincadoManual,
-                          double estructura, double margen) {
+                          boolean zincado, double costeZincadoManual, double estructura, double margen) {
         this.cantidad = cantidad;
         this.tiempoOperarioMin = tiempoOperarioMin;
         this.tiempoMaquinaMin = tiempoMaquinaMin;
@@ -29,6 +27,7 @@ public class PrecioProducto {
         this.margen = margen;
     }
 
+    // Getters for all fields
     public int getCantidad() {
         return cantidad;
     }

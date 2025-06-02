@@ -82,7 +82,7 @@ public class PrecioProductoPanel extends JPanel {
     }
 
     private JSpinner crearSpinner(double valorInicial) {
-        return new JSpinner(new SpinnerNumberModel(valorInicial, 0.0, 10000.0, 0.1));
+        return new JSpinner(new SpinnerNumberModel(valorInicial, 0.0, 100000.0, 0.1));
     }
 
     private void calcularPrecio() {
@@ -118,4 +118,5 @@ public class PrecioProductoPanel extends JPanel {
         spnCantidad.setValue(1);
         lblPrecioFinal.setText("Precio por unidad: -");
     }
+
 }
