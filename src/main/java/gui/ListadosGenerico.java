@@ -86,8 +86,8 @@ public class ListadosGenerico extends JPanel {
         panelBuscar.add(new JLabel("🔍 Buscar:", SwingConstants.LEFT), BorderLayout.WEST);
         panelBuscar.add(campoBuscar, BorderLayout.CENTER);
 
-        btnEditar = crearBoton("✏ Editar", COLOR_BOTON_ACCION);
-        btnEliminar = crearBoton("🗑 Eliminar", COLOR_BOTON_PELIGRO);
+        btnEditar = crearBoton("Editar", COLOR_BOTON_ACCION);
+        btnEliminar = crearBoton("Eliminar", COLOR_BOTON_PELIGRO);
 
         btnEditar.addActionListener(e -> {
             Object[] fila = getFilaSeleccionada();
