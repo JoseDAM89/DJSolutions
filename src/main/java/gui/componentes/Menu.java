@@ -58,7 +58,7 @@ public class Menu extends PanelTransparent {
         boolean esAdmin = modelos.Sesion.esAdmin(); // Asegúrate de que 'modelos.Sesion' sea accesible
 
         addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/JSWINGICONS/icon/5.png")), "Cliente", "Alta Cliente", "Listar Clientes"));
-        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/JSWINGICONS/icon/1.png")), "Inventario", "Alta Productos", "Consultar Stock", "Listar Productos"));
+        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/JSWINGICONS/icon/1.png")), "Inventario", "Alta Productos", "Listar Productos","Alta Materiales","Listar Materiales", "Consultar Stock"));
         addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/JSWINGICONS/icon/3.png")), "Presupuesto", "Generar Presupuesto", "Historial de Presupuesto"));
         addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/JSWINGICONS/icon/11.png")), "Factura", "Generar Factura", "Historial Facturas"));
         addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/JSWINGICONS/icon/9.png")), "Precios", "Dar Precios"));

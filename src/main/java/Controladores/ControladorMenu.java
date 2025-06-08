@@ -2,10 +2,8 @@ package Controladores;
 
 import FuncionesCliente.AltaCliente;
 import FuncionesCliente.ListarClientes;
+import FuncionesInventario.*;
 import gui.*;
-import FuncionesInventario.AltaProducto;
-import FuncionesInventario.ConsultarStock;
-import FuncionesInventario.ListarProductos;
 import FuncionesPresupuesto.SeleccionarMateriales;
 import FuncionesDeUsuarios.AltaUser;
 import FuncionesDeUsuarios.ListarUsuarios;
@@ -28,9 +26,10 @@ public class ControladorMenu {
             case 1: // Funciones Inventario
                 return switch (subMenuIndex) {
                     case 0 -> new AltaProducto().construirFormulario();
-                    case 1 -> new ConsultarStock();
-                    case 2 -> new ListarProductos().mostrarVentana();
-                    case 3 -> new ListarProductos().mostrarVentana();
+                    case 1 -> new ListarProductos().mostrarVentana();
+                    case 2 -> new AltaMateriaPrima().construirFormulario();
+                    case 3 -> new ListarMateriaPrima().mostrarVentana();
+                    case 4 -> new ConsultarStock();
                     default -> null;
                 };
             case 2: // Funciones Presupuesto
