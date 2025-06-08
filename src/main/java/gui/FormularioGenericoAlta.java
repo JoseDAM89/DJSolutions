@@ -14,7 +14,6 @@ public class FormularioGenericoAlta extends JPanel {
     private final HashMap<String, JComponent> campos = new HashMap<>();
     private final JButton btnGuardar;
     private final Map<Integer, String> materiasDisponibles;
-
     private final JLabel etiquetaTipoFormulario;
 
     public FormularioGenericoAlta(Map<String, String> camposDefinicion, ActionListener accionGuardar) {
@@ -27,7 +26,6 @@ public class FormularioGenericoAlta extends JPanel {
 
         materiasDisponibles = MateriaPrimaDAO.obtenerTodas();
 
-        // Panel contenedor (card)
         JPanel card = new JPanel(new GridBagLayout());
         card.setBackground(Color.WHITE);
         card.setBorder(BorderFactory.createCompoundBorder(
@@ -59,7 +57,6 @@ public class FormularioGenericoAlta extends JPanel {
             etiquetaTipoFormulario = null;
         }
 
-        // Agregar campos
         for (String etiqueta : camposDefinicion.keySet()) {
             String tipo = camposDefinicion.get(etiqueta);
 
@@ -94,6 +91,28 @@ public class FormularioGenericoAlta extends JPanel {
             } else {
                 JTextField textField = new JTextField(20);
                 estilizarTextField(textField);
+
+                if (etiqueta.equalsIgnoreCase("CIF")) {
+                    textField.setInputVerifier(new InputVerifier() {
+                        @Override
+                        public boolean verify(JComponent input) {
+                            String texto = ((JTextField) input).getText().trim();
+                            return texto.matches("^[A-Za-z]{1}\\d{8}$");
+                        }
+
+                        @Override
+                        public boolean shouldYieldFocus(JComponent input) {
+                            boolean valido = verify(input);
+                            if (!valido) {
+                                JOptionPane.showMessageDialog(FormularioGenericoAlta.this,
+                                        "El CIF debe tener exactamente 1 letra seguida de 8 números.\nEjemplo válido: A12345678",
+                                        "Formato inválido", JOptionPane.WARNING_MESSAGE);
+                            }
+                            return valido;
+                        }
+                    });
+                }
+
                 campo = textField;
             }
 
@@ -112,7 +131,6 @@ public class FormularioGenericoAlta extends JPanel {
         gbc.anchor = GridBagConstraints.CENTER;
         card.add(btnGuardar, gbc);
 
-        // Añadir el panel "card" al principal
         GridBagConstraints wrap = new GridBagConstraints();
         wrap.gridx = 0;
         wrap.gridy = 0;
@@ -122,7 +140,6 @@ public class FormularioGenericoAlta extends JPanel {
         wrap.insets = new Insets(30, 60, 30, 60);
         add(card, wrap);
 
-        // Vinculación de campos
         JComponent comboMateriaPrima = campos.get("Materia Prima");
         JComponent campoIDMateria = campos.get("ID Materia");
 
@@ -201,7 +218,6 @@ public class FormularioGenericoAlta extends JPanel {
         return btnGuardar;
     }
 
-    // === Estilos ===
     private void estilizarTextField(JTextField textField) {
         textField.setFont(new Font("Segoe UI", Font.PLAIN, 15));
         textField.setBorder(BorderFactory.createCompoundBorder(

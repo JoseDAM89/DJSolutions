@@ -96,23 +96,34 @@ public class InicioSesion extends JLayeredPane {
                 String hashedPassword = rs.getString("contraseña");
                 boolean esAdmin = rs.getBoolean("admin");
 
-                // Comprobamos la contraseña hasheada
-                if (org.mindrot.jbcrypt.BCrypt.checkpw(pass, hashedPassword)) {
-                    Sesion.iniciarSesion(correo, esAdmin);
-                    if (loginDialog != null) {
-                        loginDialog.onLoginSuccess(correo, esAdmin);
+                // Validar formato del hash antes de usarlo
+                if (hashedPassword != null && hashedPassword.startsWith("$2")) {
+                    try {
+                        if (org.mindrot.jbcrypt.BCrypt.checkpw(pass, hashedPassword)) {
+                            Sesion.iniciarSesion(correo, esAdmin);
+                            if (loginDialog != null) {
+                                loginDialog.onLoginSuccess(correo, esAdmin);
+                            }
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Credenciales incorrectas.");
+                        }
+                    } catch (IllegalArgumentException ex) {
+                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(this, "Formato de contraseña inválido en la base de datos.");
                     }
                 } else {
-                    JOptionPane.showMessageDialog(this, "Credenciales incorrectas.");
+                    JOptionPane.showMessageDialog(this, "Contraseña almacenada no válida.");
                 }
             } else {
                 JOptionPane.showMessageDialog(this, "Credenciales incorrectas.");
             }
+
         } catch (Exception ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(this, "Error al conectar con la base de datos.");
         }
     }
+
 
 
     // -------------------------

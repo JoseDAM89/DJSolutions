@@ -22,6 +22,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 import static modelos.Sesion.cerrarSesion;
+import static modelos.Sesion.esAdmin;
 
 public class VentanaPrincipal extends JFrame {
 
@@ -150,13 +151,24 @@ public class VentanaPrincipal extends JFrame {
                 null, opciones, opciones[0]);
 
         if (opcion == 0) {
-            cerrarSesion(); // <- LLAMADA NECESARIA
-            dispose();
-            new LoginDialog(null).setVisible(true);
+            cerrarSesion(); // <- Limpia estado de sesión actual si lo haces
+            dispose(); // Cierra la ventana actual
+
+            LoginDialog login = new LoginDialog(null);
+            login.setVisible(true);
+
+            if (login.isSucceeded()) {
+                // Aquí relanzas la app con los datos del nuevo usuario
+                new VentanaPrincipal(login.getCorreo(),esAdmin()).setVisible(true);
+            } else {
+                System.exit(0); // Si cancela el login, cerramos todo
+            }
+
         } else if (opcion == 1) {
             System.exit(0);
         }
     }
+
 
     public void volverAHome() {
         menu.limpiarSeleccion(); // <- limpiar selección visual
