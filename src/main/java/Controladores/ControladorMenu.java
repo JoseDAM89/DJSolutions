@@ -28,7 +28,7 @@ public class ControladorMenu {
                     case 0 -> new AltaProducto().construirFormulario();
                     case 1 -> new ListarProductos().mostrarVentana();
                     case 2 -> new AltaMateriaPrima().construirFormulario();
-                    //case 3 -> new ListarMateriaPrima().mostrarVentana();
+                    case 3 -> new ListarMateriasPrimas().mostrarVentana();
                     case 4 -> new ConsultarStock();
                     default -> null;
                 };

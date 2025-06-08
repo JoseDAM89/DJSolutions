@@ -1,7 +1,9 @@
 package gui;
 
+import datos.MateriaPrimaDAO;
 import datos.UsuarioDAO;
 import modelos.Cliente;
+import modelos.MateriaPrima;
 import modelos.Producto;
 import datos.ProductoDAO;
 import modelos.Usuario;
@@ -234,7 +236,33 @@ public class EditarGenerico {
                     } else {
                         JOptionPane.showMessageDialog(null, "❌ Error al actualizar usuario.");
                     }
+                }else if (tabla.equalsIgnoreCase("materiasprimas")) {
+                    String descripcion = "";
+                    double stock = 0.0;
+
+                    for (int i = 0; i < columnas.length; i++) {
+                        String col = columnas[i].toLowerCase();
+                        String valor = campos[i].getText();
+                        filaActualizada[i] = valor;
+
+                        switch (col) {
+                            case "descripción", "descripcion" -> descripcion = valor;
+                            case "stock" -> stock = Double.parseDouble(valor);
+                        }
+                    }
+
+                    int id = Integer.parseInt(idValor.toString());
+                    MateriaPrima materia = new MateriaPrima(id, descripcion, stock);
+                    boolean actualizado = MateriaPrimaDAO.actualizarPorID(materia);
+
+                    if (actualizado) {
+                        JOptionPane.showMessageDialog(null, "✅ Materia prima actualizada correctamente.");
+                        if (onSuccess != null) onSuccess.accept(filaActualizada);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "❌ Error al actualizar materia prima.");
+                    }
                 }
+
 
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(null, "❌ Error al guardar: " + ex.getMessage());
