@@ -1,6 +1,5 @@
 package gui;
 
-import datos.ConsultarDAO;
 import datos.UsuarioDAO;
 import modelos.Cliente;
 import modelos.Producto;
@@ -72,10 +71,16 @@ public class EditarGenerico {
                 combos.put(i, combo);
             } else {
                 campos[i] = new JTextField(fila[i].toString());
+
+                // 🔒 Desactivar edición del campo ID (primer campo)
+                if (i == 0) {
+                    campos[i].setEditable(false);
+                    campos[i].setBackground(new Color(230, 230, 230));
+                }
+
                 panel.add(campos[i], gbc);
             }
         }
-
 
         // 🔄 Vincular comportamiento entre "Materia Prima" y "ID Materia"
         Integer idxMateriaPrima = null, idxIDMateria = null;
@@ -236,7 +241,6 @@ public class EditarGenerico {
                 ex.printStackTrace();
             }
         });
-
 
         btnCancelar.addActionListener(e -> SwingUtilities.getWindowAncestor(panel).dispose());
 

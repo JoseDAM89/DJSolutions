@@ -28,24 +28,4 @@ public class ConsultarDAO {
         }
     }
 
-    public static boolean existeId(String tabla, String nombreCampoId, Object idValor) {
-        String sql = "SELECT COUNT(*) FROM " + tabla + " WHERE " + nombreCampoId + " = ?";
-
-        try (Connection conn = ConexionBD.getConexion();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setObject(1, idValor);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                return rs.getInt(1) > 0;
-            }
-
-        } catch (Exception e) {
-            System.err.println("Error al comprobar existencia de ID en tabla " + tabla + ": " + e.getMessage());
-            e.printStackTrace();
-        }
-
-        return false;
-    }
 }
