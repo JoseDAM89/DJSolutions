@@ -1,8 +1,11 @@
 package gui;
 
+import datos.ConsultarDAO;
+import datos.UsuarioDAO;
 import modelos.Cliente;
 import modelos.Producto;
 import datos.ProductoDAO;
+import modelos.Usuario;
 
 import javax.swing.*;
 import java.awt.*;
@@ -52,7 +55,6 @@ public class EditarGenerico {
                 datos.MateriaPrimaDAO.obtenerTodas().forEach((id, nombre) ->
                         comboMateria.addItem(id + " - " + nombre));
 
-
                 String valorActual = fila[i].toString();
                 for (int j = 0; j < comboMateria.getItemCount(); j++) {
                     if (comboMateria.getItemAt(j).startsWith(valorActual + " -") || comboMateria.getItemAt(j).equals(valorActual)) {
@@ -63,11 +65,17 @@ public class EditarGenerico {
 
                 panel.add(comboMateria, gbc);
                 combos.put(i, comboMateria);
+            } else if (columnas[i].equalsIgnoreCase("Administrador")) {
+                JComboBox<String> combo = new JComboBox<>(new String[]{"Sí", "No"});
+                combo.setSelectedItem(fila[i].toString());
+                panel.add(combo, gbc);
+                combos.put(i, combo);
             } else {
                 campos[i] = new JTextField(fila[i].toString());
                 panel.add(campos[i], gbc);
             }
         }
+
 
         // 🔄 Vincular comportamiento entre "Materia Prima" y "ID Materia"
         Integer idxMateriaPrima = null, idxIDMateria = null;
@@ -124,7 +132,7 @@ public class EditarGenerico {
                     for (int i = 0; i < columnas.length; i++) {
                         String col = columnas[i].toLowerCase();
                         String valor = campos[i] != null ? campos[i].getText() : "";
-                        filaActualizada[i] = valor; // ⚠️ Para refrescar fila completa
+                        filaActualizada[i] = valor;
                         switch (col) {
                             case "nombre" -> nombre = valor;
                             case "cif" -> cif = valor;
@@ -188,6 +196,39 @@ public class EditarGenerico {
                     } else {
                         JOptionPane.showMessageDialog(null, "❌ Error al actualizar producto.");
                     }
+
+                } else if (tabla.equalsIgnoreCase("usuarios")) {
+                    String nombre = "", apellido = "", correo = "";
+                    boolean admin = false;
+
+                    for (int i = 0; i < columnas.length; i++) {
+                        String col = columnas[i].toLowerCase();
+                        if (col.equals("administrador")) {
+                            JComboBox<String> combo = combos.get(i);
+                            admin = combo.getSelectedItem().toString().equalsIgnoreCase("Sí");
+                            filaActualizada[i] = admin ? "Sí" : "No";
+                        } else {
+                            String valor = campos[i].getText();
+                            filaActualizada[i] = valor;
+                            switch (col) {
+                                case "nombre" -> nombre = valor;
+                                case "apellido" -> apellido = valor;
+                                case "correo electrónico", "correo electronico" -> correo = valor;
+                            }
+                        }
+                    }
+
+                    int id = Integer.parseInt(idValor.toString());
+                    Usuario usuario = new Usuario(id, nombre, apellido, correo, null, admin);
+
+                    boolean actualizado = UsuarioDAO.actualizarPorID(usuario);
+
+                    if (actualizado) {
+                        JOptionPane.showMessageDialog(null, "✅ Usuario actualizado correctamente.");
+                        if (onSuccess != null) onSuccess.accept(filaActualizada);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "❌ Error al actualizar usuario.");
+                    }
                 }
 
             } catch (Exception ex) {
@@ -195,6 +236,7 @@ public class EditarGenerico {
                 ex.printStackTrace();
             }
         });
+
 
         btnCancelar.addActionListener(e -> SwingUtilities.getWindowAncestor(panel).dispose());
 

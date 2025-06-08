@@ -7,7 +7,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
-import datos.DocumentosRelacionadosDAO;
+import datos.ConsultarDAO;
 
 
 public class ListadosGenerico extends JPanel {
@@ -129,11 +129,10 @@ public class ListadosGenerico extends JPanel {
 
                     boolean relacionado = false;
                     if (nombreTabla.equals("clientes")) {
-                        relacionado = DocumentosRelacionadosDAO.clienteTieneDocumentos((int) id);
-
+                        relacionado = ConsultarDAO.clienteTieneDocumentos((int) id);
                     } else if (nombreTabla.equals("productos")) {
-                        relacionado = DocumentosRelacionadosDAO.productoTieneDocumentos((int) id);
-                        
+                        relacionado = ConsultarDAO.productoTieneDocumentos((int) id);
+
                     }
 
                     if (relacionado) {

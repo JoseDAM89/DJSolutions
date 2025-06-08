@@ -1,12 +1,10 @@
 package datos;
 
-import datos.ConexionBD;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-public class DocumentosRelacionadosDAO {
+public class ConsultarDAO {
 
     public static boolean clienteTieneDocumentos(int idCliente) {
         return tieneRelacion("SELECT 1 FROM facturas WHERE idcliente = ? LIMIT 1", idCliente)
@@ -28,5 +26,26 @@ public class DocumentosRelacionadosDAO {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public static boolean existeId(String tabla, String nombreCampoId, Object idValor) {
+        String sql = "SELECT COUNT(*) FROM " + tabla + " WHERE " + nombreCampoId + " = ?";
+
+        try (Connection conn = ConexionBD.getConexion();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setObject(1, idValor);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+
+        } catch (Exception e) {
+            System.err.println("Error al comprobar existencia de ID en tabla " + tabla + ": " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return false;
     }
 }

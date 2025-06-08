@@ -1,6 +1,6 @@
 package FuncionesInventario;
 
-import datos.DocumentosRelacionadosDAO;
+import datos.ConsultarDAO;
 import modelos.Producto;
 import datos.ProductoDAO;
 import gui.EditarGenerico;
@@ -40,7 +40,7 @@ public class ListarProductos {
                 ),
                 fila -> {
                     int idProducto = Integer.parseInt(fila[0].toString());
-                    if (DocumentosRelacionadosDAO.productoTieneDocumentos(idProducto)) {
+                    if (ConsultarDAO.productoTieneDocumentos(idProducto)) {
                         JOptionPane.showMessageDialog(null, "Este producto no se puede eliminar porque está presente en presupuestos o facturas.");
                         return;
                     }

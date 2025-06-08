@@ -1,6 +1,6 @@
 package FuncionesCliente;
 
-import datos.DocumentosRelacionadosDAO;
+import datos.ConsultarDAO;
 import modelos.Cliente;
 import datos.ClienteDAO;
 import gui.EditarGenerico;
@@ -40,7 +40,7 @@ public class ListarClientes {
                 ),
                 fila -> {
                     int idCliente = Integer.parseInt(fila[0].toString());
-                    if (DocumentosRelacionadosDAO.clienteTieneDocumentos(idCliente)) {
+                    if (ConsultarDAO.clienteTieneDocumentos(idCliente)) {
                         JOptionPane.showMessageDialog(null, "Este cliente no se puede eliminar porque tiene facturas o presupuestos asociados.");
                         return;
                     }
