@@ -155,7 +155,7 @@ public class Form_Home extends javax.swing.JPanel {
         card2.setData(new ModelCard("Clientes", totalClientes, calcularPorcentaje(totalClientes, 1000), icon2));
 
         Icon icon3 = IconFontSwing.buildIcon(GoogleMaterialDesignIcons.ACCOUNT_BALANCE, 60, new Color(255, 255, 255, 100), new Color(255, 255, 255, 15));
-        card3.setData(new ModelCard("Facturas Aprobadas", facturasAprobadas, calcularPorcentaje(facturasAprobadas, facturasTotales), icon3));
+        card3.setData(new ModelCard("Facturas Pagadas", facturasAprobadas, calcularPorcentaje(facturasAprobadas, facturasTotales), icon3));
 
         Icon icon4 = IconFontSwing.buildIcon(GoogleMaterialDesignIcons.PRINT, 60, new Color(255, 255, 255, 100), new Color(255, 255, 255, 15));
         card4.setData(new ModelCard("Presupuestos Aprobados", presupuestosAprobados, calcularPorcentaje(presupuestosAprobados, presupuestosTotales), icon4));

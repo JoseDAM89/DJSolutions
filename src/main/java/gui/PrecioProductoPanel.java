@@ -32,7 +32,7 @@ public class PrecioProductoPanel extends JPanel {
         spnMargen = crearSpinner(0.0);
         spnCantidad = new JSpinner(new SpinnerNumberModel(1, 1, 100000, 1));
 
-        chkZincado = new JCheckBox("¿Zincado?");
+        chkZincado = new JCheckBox("¿Zincado? (€)");
         chkZincado.addActionListener(e -> spnCosteZincado.setEnabled(chkZincado.isSelected()));
 
         // Añadimos campos al panel

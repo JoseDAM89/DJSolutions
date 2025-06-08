@@ -27,10 +27,10 @@ public class ConexionBD {
             config.setConnectionInitSql("SET search_path TO public");
 
             dataSource = new HikariDataSource(config);
-            System.out.println("✅ Pool de conexiones HikariCP inicializado");
+            System.out.println("Pool de conexiones HikariCP inicializado");
 
         } catch (Exception e) {
-            System.err.println("❌ Error inicializando pool HikariCP: " + e.getMessage());
+            System.err.println("Error inicializando pool HikariCP: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -59,7 +59,7 @@ public class ConexionBD {
     public static void cerrarPool() {
         if (dataSource != null && !dataSource.isClosed()) {
             dataSource.close();
-            System.out.println("🛑 Pool de conexiones cerrado");
+            System.out.println("Pool de conexiones cerrado");
         }
     }
 }
