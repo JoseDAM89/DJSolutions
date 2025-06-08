@@ -35,15 +35,15 @@ public class ControladorMenu {
                 };
             case 2: // Funciones Presupuesto
                 return switch (subMenuIndex) {
-                    case 0 -> FabricaPresupuesto.crearPanel();
-                    case 1 -> new HistorialDePresupuestosPanel();
+                    case 0 -> new GenerarDocumentoPanel(GenerarDocumentoPanel.TipoDocumento.PRESUPUESTO);
+                    case 1 -> new HistorialDocumentosPanel(HistorialDocumentosPanel.TipoDocumento.PRESUPUESTO);
                     case 2 -> new SeleccionarMateriales();
                     default -> null;
                 };
             case 3: // Funciones Factura
             return switch (subMenuIndex) {
-                case 0 -> new GenerarFacturaPanel();
-                case 1 -> new HistorialFacturasPanel(); // ← AÑADIR ESTA LÍNEA
+                case 0 -> new GenerarDocumentoPanel(GenerarDocumentoPanel.TipoDocumento.FACTURA);
+                case 1 -> new HistorialDocumentosPanel(HistorialDocumentosPanel.TipoDocumento.FACTURA);
                 default -> null;
             };
             case 4: // Funciones de Precios
@@ -60,22 +60,6 @@ public class ControladorMenu {
                 };
             default:
                 return new Form_Home();
-        }
-    }
-
-    private static JPanel panelVacio() {
-        JPanel panel = new JPanel();
-
-        panel.add(new JLabel("Funcionalidad no implementada"));
-        return panel;
-    }
-
-    public class FabricaPresupuesto {
-        public static GenerarPresupuestoPanel crearPanel() {
-            GenerarPresupuestoPanel panel = new GenerarPresupuestoPanel();
-            GenerarPresupuestoControlador controlador = new GenerarPresupuestoControlador(panel);
-            panel.setControlador(controlador);
-            return panel;
         }
     }
 

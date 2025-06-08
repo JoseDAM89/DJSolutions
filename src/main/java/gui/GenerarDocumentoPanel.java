@@ -1,9 +1,12 @@
 package gui;
 
+import Controladores.GenerarFacturaControlador;
 import Controladores.GenerarPresupuestoControlador;
 import modelos.Cliente;
+import modelos.LineaFactura;
 import modelos.LineaPresupuesto;
 import modelos.Producto;
+import modelos.Factura;
 import modelos.Presupuesto;
 import datos.ProductoDAO;
 import gui.dialogos.SelectorClienteDialog;
@@ -11,22 +14,31 @@ import gui.dialogos.SelectorClienteDialog;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 
-public class GenerarPresupuestoPanel extends JPanel {
+public class GenerarDocumentoPanel extends JPanel {
 
-    private JTable tablaProductos;
-    private JTable tablaPresupuesto;
-    private DefaultTableModel modeloProductos;
-    private DefaultTableModel modeloPresupuesto;
-    private JTextField campoBuscar;
-    private JButton btnAgregar, btnEliminar, btnGenerarPDF, btnDatosCliente;
-    private JLabel labelClienteSeleccionado;
+    public enum TipoDocumento { PRESUPUESTO, FACTURA }
 
-    private GenerarPresupuestoControlador controlador;
+    private TipoDocumento tipo;
     private Cliente cliente;
 
-    public GenerarPresupuestoPanel() {
+    private JTable tablaProductos;
+    private JTable tablaDocumento;
+    private DefaultTableModel modeloProductos;
+    private DefaultTableModel modeloDocumento;
+    private JTextField campoBuscar;
+    private JButton btnAgregar, btnEliminar, btnGenerar, btnDatosCliente;
+    private JLabel labelClienteSeleccionado;
+
+    // Controladores
+    private final GenerarPresupuestoControlador controladorPresupuesto = new GenerarPresupuestoControlador();
+    private final GenerarFacturaControlador controladorFactura = new GenerarFacturaControlador();
+    private final List<Object> lineas = new ArrayList<>();
+
+    public GenerarDocumentoPanel(TipoDocumento tipo) {
+        this.tipo = tipo;
         setLayout(new BorderLayout());
 
         // ---------------- PANEL SUPERIOR ----------------
@@ -53,63 +65,58 @@ public class GenerarPresupuestoPanel extends JPanel {
         add(contenedorSuperior, BorderLayout.NORTH);
 
         // ---------------- PANEL INFERIOR ----------------
-        String[] columnasPresupuesto = {"ID", "Nombre", "Cantidad", "Precio/u", "Total"};
-        modeloPresupuesto = new DefaultTableModel(columnasPresupuesto, 0) {
+        String[] columnasDocumento = {"ID", "Nombre", "Cantidad", "Precio/u", "Total"};
+        modeloDocumento = new DefaultTableModel(columnasDocumento, 0) {
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
-        tablaPresupuesto = new JTable(modeloPresupuesto);
-        JScrollPane scrollPresupuesto = new JScrollPane(tablaPresupuesto);
-        scrollPresupuesto.setPreferredSize(new Dimension(0, 250));
+        tablaDocumento = new JTable(modeloDocumento);
+        JScrollPane scrollDocumento = new JScrollPane(tablaDocumento);
+        scrollDocumento.setPreferredSize(new Dimension(0, 250));
 
-        // ---------- Label del cliente (ANTES de la tabla inferior) ----------
         labelClienteSeleccionado = new JLabel("Cliente seleccionado: (ninguno)");
         labelClienteSeleccionado.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        JPanel panelInferior = new JPanel();
-        panelInferior.setLayout(new BorderLayout());
+        JPanel panelInferior = new JPanel(new BorderLayout());
         panelInferior.add(labelClienteSeleccionado, BorderLayout.NORTH);
-        panelInferior.add(scrollPresupuesto, BorderLayout.CENTER);
-
+        panelInferior.add(scrollDocumento, BorderLayout.CENTER);
         add(panelInferior, BorderLayout.SOUTH);
 
-        // ---------------- PANEL DE BOTONES ----------------
+        // ---------------- BOTONES ----------------
         JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER));
         btnDatosCliente = new JButton("Datos Cliente");
         btnAgregar = new JButton("Agregar Producto");
         btnEliminar = new JButton("Eliminar Seleccionado");
-        btnGenerarPDF = new JButton("Generar Presupuesto");
+        btnGenerar = new JButton(tipo == TipoDocumento.PRESUPUESTO ? "Generar Presupuesto" : "Generar Factura");
 
         panelBotones.add(btnDatosCliente);
         panelBotones.add(btnAgregar);
         panelBotones.add(btnEliminar);
-        panelBotones.add(btnGenerarPDF);
+        panelBotones.add(btnGenerar);
 
         JPanel panelCentro = new JPanel();
         panelCentro.setLayout(new BoxLayout(panelCentro, BoxLayout.Y_AXIS));
         panelCentro.add(Box.createVerticalStrut(10));
         panelCentro.add(panelBotones);
         panelCentro.add(Box.createVerticalStrut(10));
-
         add(panelCentro, BorderLayout.CENTER);
 
-        // ---------------- EVENTOS Y FUNCIONALIDAD ----------------
+        // ---------------- EVENTOS ----------------
         campoBuscar.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
-            public void changedUpdate(javax.swing.event.DocumentEvent e) {
-                filtrar();
-            }
-
-            public void removeUpdate(javax.swing.event.DocumentEvent e) {
-                filtrar();
-            }
-
-            public void insertUpdate(javax.swing.event.DocumentEvent e) {
-                filtrar();
-            }
+            public void insertUpdate(javax.swing.event.DocumentEvent e) { filtrar(); }
+            public void removeUpdate(javax.swing.event.DocumentEvent e) { filtrar(); }
+            public void changedUpdate(javax.swing.event.DocumentEvent e) { filtrar(); }
         });
 
-        cargarProductos("");
+        btnDatosCliente.addActionListener(e -> {
+            SelectorClienteDialog selector = new SelectorClienteDialog(SwingUtilities.getWindowAncestor(this));
+            Cliente seleccionado = selector.mostrarYObtenerSeleccion();
+            if (seleccionado != null) {
+                this.cliente = seleccionado;
+                labelClienteSeleccionado.setText("Cliente seleccionado: " + cliente.getCampoNombre());
+            }
+        });
 
         btnAgregar.addActionListener(e -> {
             int fila = tablaProductos.getSelectedRow();
@@ -126,19 +133,17 @@ public class GenerarPresupuestoPanel extends JPanel {
             try {
                 int cantidad = Integer.parseInt(input);
                 if (cantidad <= 0) throw new NumberFormatException();
+
                 double total = cantidad * precio;
+                modeloDocumento.addRow(new Object[]{id, nombre, cantidad, String.format("%.3f", precio), String.format("%.3f", total)});
 
-                modeloPresupuesto.addRow(new Object[]{
-                        id,
-                        nombre,
-                        cantidad,
-                        String.format("%.3f", precio),
-                        String.format("%.3f", total)
-                });
-
-                if (controlador != null) {
+                if (tipo == TipoDocumento.PRESUPUESTO) {
                     LineaPresupuesto linea = new LineaPresupuesto(id, nombre, cantidad, precio);
-                    controlador.agregarProducto(linea);
+                    controladorPresupuesto.agregarProducto(linea);
+                    lineas.add(linea);
+                } else {
+                    LineaFactura linea = new LineaFactura(id, nombre, cantidad, precio);
+                    lineas.add(linea);
                 }
 
             } catch (NumberFormatException ex) {
@@ -147,48 +152,49 @@ public class GenerarPresupuestoPanel extends JPanel {
         });
 
         btnEliminar.addActionListener(e -> {
-            int fila = tablaPresupuesto.getSelectedRow();
+            int fila = tablaDocumento.getSelectedRow();
             if (fila != -1) {
-                modeloPresupuesto.removeRow(fila);
-                if (controlador != null) {
-                    controlador.getProductos().remove(fila);
-                }
+                modeloDocumento.removeRow(fila);
+                lineas.remove(fila);
             } else {
-                JOptionPane.showMessageDialog(this, "Selecciona un producto del presupuesto para eliminar.");
+                JOptionPane.showMessageDialog(this, "Selecciona un producto para eliminar.");
             }
         });
 
-        btnDatosCliente.addActionListener(e -> {
-            SelectorClienteDialog selector = new SelectorClienteDialog(SwingUtilities.getWindowAncestor(this));
-            Cliente seleccionado = selector.mostrarYObtenerSeleccion();
-            if (seleccionado != null) {
-                this.cliente = seleccionado;
-                labelClienteSeleccionado.setText("Cliente seleccionado: " + cliente.getCampoNombre());
-            }
-        });
-
-        btnGenerarPDF.addActionListener(e -> {
+        btnGenerar.addActionListener(e -> {
             if (cliente == null) {
-                JOptionPane.showMessageDialog(this, "Primero introduce datos del cliente.");
+                JOptionPane.showMessageDialog(this, "Primero selecciona un cliente.");
                 return;
             }
-            if (controlador != null) {
-                try {
-                    Presupuesto presupuestoGuardado = controlador.guardarPresupuestoEnBD(cliente);
-                    if (presupuestoGuardado != null) {
-                        JOptionPane.showMessageDialog(this, "Presupuesto guardado correctamente en la base de datos.");
-                    } else {
-                        JOptionPane.showMessageDialog(this, "Error: no se pudo guardar el presupuesto.");
-                    }
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    JOptionPane.showMessageDialog(this, "Error al guardar el presupuesto:\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+
+            if (lineas.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Añade al menos un producto.");
+                return;
+            }
+
+            if (tipo == TipoDocumento.PRESUPUESTO) {
+                Presupuesto p = controladorPresupuesto.guardarPresupuestoEnBD(cliente);
+                if (p != null) {
+                    JOptionPane.showMessageDialog(this, "✅ Presupuesto guardado correctamente.");
+                } else {
+                    JOptionPane.showMessageDialog(this, "❌ Error al guardar presupuesto.");
                 }
             } else {
-                JOptionPane.showMessageDialog(this, "Controlador no inicializado.");
+                Factura f = new Factura(cliente.getIdcliente(), (List<LineaFactura>) (List<?>) lineas);
+                int id = controladorFactura.guardarFactura(f);
+                if (id > 0) {
+                    JOptionPane.showMessageDialog(this, "✅ Factura generada con ID: " + id);
+                } else {
+                    JOptionPane.showMessageDialog(this, "❌ Error al generar factura.");
+                }
             }
+
+            // Limpiar después de guardar
+            modeloDocumento.setRowCount(0);
+            lineas.clear();
         });
 
+        cargarProductos("");
     }
 
     private void cargarProductos(String filtro) {
@@ -207,9 +213,5 @@ public class GenerarPresupuestoPanel extends JPanel {
     private void filtrar() {
         String texto = campoBuscar.getText();
         cargarProductos(texto);
-    }
-
-    public void setControlador(GenerarPresupuestoControlador c) {
-        this.controlador = c;
     }
 }
