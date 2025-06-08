@@ -5,6 +5,7 @@ import gui.eventos.EventMenuSelected;
 import gui.eventos.EventShowPopupMenu;
 import gui.modelosvista.ModelMenu; // Revisa si tu clase se llama 'ModelMenu' o 'com.raven.model.ModelMenu'
 import gui.swing.MenuAnimation;
+import gui.swing.MenuButton;
 import gui.swing.MenuItem;
 import gui.swing.PanelTransparent;
 import gui.swing.scrollbar.ScrollBarCustom;
@@ -40,6 +41,8 @@ public class Menu extends PanelTransparent {
     private EventShowPopupMenu eventShowPopup;
     private boolean enableMenu = true;
     private boolean showMenu = true;
+    private MenuButton botonSeleccionadoGlobal;
+
 
     public Menu() {
         initComponents();
@@ -159,6 +162,17 @@ public class Menu extends PanelTransparent {
         g2.setPaint(gp);
         g2.fillRect(0, 0, getWidth(), getHeight());
     }
+
+    public void marcarSeleccion(MenuButton nuevo) {
+        if (botonSeleccionadoGlobal != null) {
+            botonSeleccionadoGlobal.setBackground(null);
+            botonSeleccionadoGlobal.setForeground(new Color(30, 30, 30));
+        }
+        botonSeleccionadoGlobal = nuevo;
+        botonSeleccionadoGlobal.setBackground(new Color(100, 149, 237)); // azul
+        botonSeleccionadoGlobal.setForeground(Color.WHITE);
+    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel panel;

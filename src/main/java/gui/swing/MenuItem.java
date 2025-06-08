@@ -75,9 +75,20 @@ public class MenuItem extends javax.swing.JPanel {
             item.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent ae) {
+                    // Buscar el componente padre de tipo Menu
+                    Component parent = MenuItem.this.getParent();
+                    while (parent != null && !(parent instanceof gui.componentes.Menu)) {
+                        parent = parent.getParent();
+                    }
+                    if (parent instanceof gui.componentes.Menu menuPadre) {
+                        menuPadre.marcarSeleccion(item);  // delegamos la selección
+                    }
+
+                    // Lanzar el evento de selección real
                     eventSelected.menuSelected(index, item.getIndex());
                 }
             });
+
             add(item);
         }
     }
