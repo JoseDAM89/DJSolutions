@@ -4,6 +4,7 @@ import Correo.EnviarCorreo;
 import datos.ClienteDAO;
 import datos.FacturaDAO;
 import datos.PresupuestoDAO;
+import gui.dialogos.SelectorClienteDialog;
 import modelos.*;
 import utilidades.GeneradorDocumentoPDF;
 
@@ -78,7 +79,64 @@ public class HistorialDocumentosPanel extends JPanel {
         JButton btnEnviar = new JButton("Enviar por correo");
 
         btnVerPDF.addActionListener(e -> verPDF());
-        btnEnviar.addActionListener(e -> enviarCorreo());
+        btnEnviar.addActionListener(e -> {
+            int fila = tabla.getSelectedRow();
+            if (fila == -1) {
+                JOptionPane.showMessageDialog(this, "Selecciona un documento.");
+                return;
+            }
+
+            // Selección del cliente desde el diálogo
+            SelectorClienteDialog selector = new SelectorClienteDialog(SwingUtilities.getWindowAncestor(this));
+            Cliente clienteSeleccionado = selector.mostrarYObtenerSeleccion();
+            if (clienteSeleccionado == null) {
+                JOptionPane.showMessageDialog(this, "No se seleccionó ningún cliente.");
+                return;
+            }
+
+            String correoCliente = clienteSeleccionado.getCampoEmail().trim();
+
+            // Preguntar si quiere usar otro correo
+            String nuevoCorreo = JOptionPane.showInputDialog(this,
+                    "Correo actual del cliente: " + (correoCliente.isEmpty() ? "(no tiene)" : correoCliente) +
+                            "\nIntroduce otro correo si quieres cambiarlo, o deja vacío para usar el existente:");
+
+            // Determinar el correo final a usar
+            String correoDestino = (nuevoCorreo != null && !nuevoCorreo.trim().isEmpty())
+                    ? nuevoCorreo.trim()
+                    : correoCliente;
+
+            if (correoDestino.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "No se ha proporcionado ningún correo.");
+                return;
+            }
+
+            // Obtener el documento según el tipo
+            int id = (int) modelo.getValueAt(tabla.convertRowIndexToModel(fila), 0);
+            File archivo;
+            if (tipo == TipoDocumento.FACTURA) {
+                Factura f = new FacturaDAO().obtenerFacturaPorID(id);
+                archivo = GeneradorDocumentoPDF.generarFactura(f, clienteSeleccionado);
+            } else {
+                Presupuesto p = new PresupuestoDAO().obtenerPorID(id);
+                archivo = GeneradorDocumentoPDF.generarPresupuesto(p, clienteSeleccionado);
+            }
+
+            // Enviar el correo
+            try {
+                EnviarCorreo.enviarArchivoPorCorreo(
+                        correoDestino,
+                        archivo,
+                        (tipo == TipoDocumento.FACTURA ? "Factura DJ Solutions" : "Presupuesto DJ Solutions"),
+                        "Adjunto le enviamos su " + tipo.toString().toLowerCase() + ". Gracias por su confianza."
+                );
+                JOptionPane.showMessageDialog(this, "📧 Documento enviado correctamente a " + correoDestino);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(this, "❌ Error al enviar: " + ex.getMessage());
+            }
+        });
+
 
         panelBotones.add(btnVerPDF);
         panelBotones.add(btnEnviar);
