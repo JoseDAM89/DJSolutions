@@ -1,5 +1,6 @@
 package FuncionesCliente;
 
+import datos.DocumentosRelacionadosDAO;
 import modelos.Cliente;
 import datos.ClienteDAO;
 import gui.EditarGenerico;
@@ -37,7 +38,15 @@ public class ListarClientes {
                         filaActualizada -> ((ListadosGenerico) SwingUtilities.getAncestorOfClass(ListadosGenerico.class, tabla))
                                 .actualizarFila(filaActualizada)
                 ),
-                fila -> EliminarGenerico.eliminarRegistro("clientes", fila[0])
+                fila -> {
+                    int idCliente = Integer.parseInt(fila[0].toString());
+                    if (DocumentosRelacionadosDAO.clienteTieneDocumentos(idCliente)) {
+                        JOptionPane.showMessageDialog(null, "Este cliente no se puede eliminar porque tiene facturas o presupuestos asociados.");
+                        return;
+                    }
+                    EliminarGenerico.eliminarRegistro("clientes", idCliente);
+                }
+
         );
 
 

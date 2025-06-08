@@ -1,5 +1,6 @@
 package FuncionesInventario;
 
+import datos.DocumentosRelacionadosDAO;
 import modelos.Producto;
 import datos.ProductoDAO;
 import gui.EditarGenerico;
@@ -37,7 +38,15 @@ public class ListarProductos {
                         filaActualizada -> ((ListadosGenerico) SwingUtilities.getAncestorOfClass(ListadosGenerico.class, tabla))
                                 .actualizarFila(filaActualizada)
                 ),
-                fila -> EliminarGenerico.eliminarRegistro("productos", fila[0])
+                fila -> {
+                    int idProducto = Integer.parseInt(fila[0].toString());
+                    if (DocumentosRelacionadosDAO.productoTieneDocumentos(idProducto)) {
+                        JOptionPane.showMessageDialog(null, "Este producto no se puede eliminar porque está presente en presupuestos o facturas.");
+                        return;
+                    }
+                    EliminarGenerico.eliminarRegistro("productos", idProducto);
+                }
+
         );
 
     }

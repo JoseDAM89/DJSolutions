@@ -173,6 +173,14 @@ public class Menu extends PanelTransparent {
         botonSeleccionadoGlobal.setForeground(Color.WHITE);
     }
 
+    public void limpiarSeleccion() {
+        if (botonSeleccionadoGlobal != null) {
+            botonSeleccionadoGlobal.setBackground(null);
+            botonSeleccionadoGlobal.setForeground(new Color(30, 30, 30));
+            botonSeleccionadoGlobal = null;
+        }
+    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel panel;

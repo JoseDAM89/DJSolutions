@@ -7,6 +7,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import datos.DocumentosRelacionadosDAO;
+
 
 public class ListadosGenerico extends JPanel {
 
@@ -121,13 +123,34 @@ public class ListadosGenerico extends JPanel {
 
             if (confirm == JOptionPane.YES_OPTION) {
                 if (accionEliminar != null) {
+                    // Comprobación personalizada para evitar eliminar si hay relaciones
+                    String nombreTabla = titulo.toLowerCase();
+                    Object id = fila[0];
+
+                    boolean relacionado = false;
+                    if (nombreTabla.equals("clientes")) {
+                        relacionado = DocumentosRelacionadosDAO.clienteTieneDocumentos((int) id);
+
+                    } else if (nombreTabla.equals("productos")) {
+                        relacionado = DocumentosRelacionadosDAO.productoTieneDocumentos((int) id);
+                        
+                    }
+
+                    if (relacionado) {
+                        JOptionPane.showMessageDialog(this,
+                                "Este " + nombreTabla.substring(0, nombreTabla.length() - 1) +
+                                        " no se puede eliminar porque tiene historial de facturas o presupuestos.");
+                        return;
+                    }
+
+                    // Si no está relacionado, eliminar y repintar
                     accionEliminar.accept(fila);
                     eliminarFilaSeleccionada();
-                } else {
-                    JOptionPane.showMessageDialog(this, "Función de eliminación no definida.");
+                    JOptionPane.showMessageDialog(this, "Registro eliminado correctamente.");
                 }
             }
         });
+
 
         add(panelBuscar, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);

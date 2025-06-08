@@ -159,7 +159,9 @@ public class VentanaPrincipal extends JFrame {
     }
 
     public void volverAHome() {
+        menu.limpiarSeleccion(); // <- limpiar selección visual
         ponPanel(new Form_Home());
     }
+
 
 }
