@@ -18,11 +18,12 @@ public class NoticeBoard extends javax.swing.JPanel {
         jScrollPane1.setViewportBorder(null);
         jScrollPane1.setVerticalScrollBar(new ScrollBarCustom());
         panel.setLayout(new MigLayout("nogrid, fillx"));
+
     }
 
     public void addNoticeBoard(ModelNoticeBoard data) {
         JLabel title = new JLabel(data.getTitle());
-        title.setFont(new Font("sansserif", 1, 12));
+        title.setFont(new Font("sansserif", Font.BOLD, 12));
         title.setForeground(data.getTitleColor());
         panel.add(title);
 
@@ -32,6 +33,7 @@ public class NoticeBoard extends javax.swing.JPanel {
         JTextPane txt = new JTextPane();
         txt.setBackground(new Color(0, 0, 0, 0));
         txt.setForeground(new Color(0, 0, 0));
+        txt.setFont(new Font("sansserif", Font.BOLD, 12));
         txt.setSelectionColor(new Color(150, 150, 150));
         txt.setBorder(null);
         txt.setOpaque(false);
@@ -43,7 +45,7 @@ public class NoticeBoard extends javax.swing.JPanel {
     public void addDate(String date) {
         JLabel lbDate = new JLabel(date);
         lbDate.setBorder(new EmptyBorder(5, 5, 5, 5));
-        lbDate.setFont(new Font("sansserif", 1, 13));
+        lbDate.setFont(new Font("sansserif", Font.BOLD, 13));
         lbDate.setForeground(new Color(80, 80, 80));
         panel.add(lbDate, "wrap");
     }

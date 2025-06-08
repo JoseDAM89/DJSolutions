@@ -82,8 +82,6 @@ public class Menu extends PanelTransparent {
                         }
                         return true;
                     } else {
-                        // Aquí es donde el menú colapsado podría mostrar algo como el botón de hamburguesa
-                        // si el layout principal lo permite.
                         eventShowPopup.showPopup(com);
                     }
                 }

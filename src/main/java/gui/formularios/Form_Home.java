@@ -203,6 +203,7 @@ public class Form_Home extends javax.swing.JPanel {
 
         noticeBoard.addNoticeBoard(new ModelNoticeBoard(
                 new Color(238, 46, 57),
+
                 "Actualización",
                 "7:00",
                 "La App muy sencilla asi cualquier persona puede entenderla y utilizarla facilmente"
