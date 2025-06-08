@@ -11,4 +11,28 @@ public class MateriaPrima {
         this.descripcionMaterial = descripcionMaterial;
         this.stockMaterial = stockMaterial;
     }
+
+    public int getIdMaterial() {
+        return idMaterial;
+    }
+
+    public String getDescripcionMaterial() {
+        return descripcionMaterial;
+    }
+
+    public double getStockMaterial() {
+        return stockMaterial;
+    }
+
+    public void setIdMaterial(int idMaterial) {
+        this.idMaterial = idMaterial;
+    }
+
+    public void setDescripcionMaterial(String descripcionMaterial) {
+        this.descripcionMaterial = descripcionMaterial;
+    }
+
+    public void setStockMaterial(double stockMaterial) {
+        this.stockMaterial = stockMaterial;
+    }
 }

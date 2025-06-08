@@ -27,7 +27,7 @@ public class ControladorMenu {
                 return switch (subMenuIndex) {
                     case 0 -> new AltaProducto().construirFormulario();
                     case 1 -> new ListarProductos().mostrarVentana();
-                    //case 2 -> new AltaMateriaPrima().construirFormulario();
+                    case 2 -> new AltaMateriaPrima().construirFormulario();
                     //case 3 -> new ListarMateriaPrima().mostrarVentana();
                     case 4 -> new ConsultarStock();
                     default -> null;

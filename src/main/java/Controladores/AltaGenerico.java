@@ -2,8 +2,10 @@ package Controladores;
 
 import datos.ClienteDAO;
 import datos.ProductoDAO;
+import datos.MateriaPrimaDAO;
 import modelos.Cliente;
 import modelos.Producto;
+import modelos.MateriaPrima;
 
 import javax.swing.*;
 import java.util.HashMap;
@@ -13,8 +15,8 @@ public class AltaGenerico {
     /**
      * Procesa los datos del formulario y llama al DAO correspondiente para insertar.
      *
-     * @param tabla      Nombre de la tabla (ej: "clientes", "productos")
-     * @param valores    HashMap con clave = etiqueta del campo, valor = contenido escrito
+     * @param tabla   Nombre de la tabla (ej: "clientes", "productos", "materiasprimas")
+     * @param valores HashMap con clave = etiqueta del campo, valor = contenido escrito
      */
     public static boolean procesarAlta(String tabla, HashMap<String, String> valores) {
         boolean insertado = false;
@@ -23,7 +25,6 @@ public class AltaGenerico {
             switch (tabla.toLowerCase()) {
 
                 case "clientes" -> {
-                    // Extraer valores
                     String nombre = valores.get("Nombre");
                     String cif = valores.get("CIF");
                     String email = valores.get("Email");
@@ -48,6 +49,14 @@ public class AltaGenerico {
                     insertado = ProductoDAO.insertar(producto);
                 }
 
+                case "materiasprimas" -> {
+                    String descripcion = valores.get("Descripción");
+                    double stock = Double.parseDouble(valores.get("Stock"));
+
+                    MateriaPrima materia = new MateriaPrima(0,descripcion, stock);
+                    insertado = MateriaPrimaDAO.insertar(materia);
+                }
+
                 default -> {
                     JOptionPane.showMessageDialog(null, "❌ Tabla no soportada: " + tabla);
                     return false;
@@ -62,10 +71,9 @@ public class AltaGenerico {
             }
 
         } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, "❌ Error al procesar datos: " + e.getMessage());
-                 e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "❌ Error al procesar datos: " + e.getMessage());
+            e.printStackTrace();
             return false;
+        }
     }
-
-}
 }
