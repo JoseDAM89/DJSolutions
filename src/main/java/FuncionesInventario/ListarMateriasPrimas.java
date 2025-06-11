@@ -24,7 +24,7 @@ public class ListarMateriasPrimas {
             datos[i][2] = m.getStockMaterial();
         }
 
-        return new ListadosGenerico("MateriasPrimas", columnas, datos,
+        return new ListadosGenerico("Materias Primas", columnas, datos,
                 // Formulario de edición genérico
                 (fila, tabla) -> EditarGenerico.crearFormularioEdicion(
                         "materiasprimas", columnas, fila, "idmateriaprima", fila[0], "INTEGER",

@@ -264,7 +264,7 @@ public class Form_Home extends javax.swing.JPanel {
 
             },
             new String [] {
-                "Nombre", "Tipo", "Correo", "Descripcion"
+                "Nombre", "Correo", "Descripcion"
             }
         ) {
             boolean[] canEdit = new boolean [] {
