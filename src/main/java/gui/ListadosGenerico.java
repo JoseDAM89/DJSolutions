@@ -9,7 +9,6 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import datos.ConsultarDAO;
 
-
 public class ListadosGenerico extends JPanel {
 
     private JTable tabla;
@@ -27,7 +26,6 @@ public class ListadosGenerico extends JPanel {
     private final Color COLOR_TEXTO = new Color(50, 50, 50);
     private final Color COLOR_ENCABEZADO = new Color(120, 140, 180);
 
-    // Constructor con boolean para mostrar botones
     public ListadosGenerico(String titulo, String[] columnas, Object[][] datos,
                             BiFunction<Object[], JTable, JPanel> crearFormularioEdicion,
                             Consumer<Object[]> accionEliminar,
@@ -37,7 +35,12 @@ public class ListadosGenerico extends JPanel {
         setBackground(COLOR_FONDO);
         setBorder(new EmptyBorder(20, 20, 20, 20));
 
-        modelo = new DefaultTableModel(datos, columnas);
+        modelo = new DefaultTableModel(datos, columnas) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         tabla = new JTable(modelo);
         tabla.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         sorter = new TableRowSorter<>(modelo);
@@ -79,6 +82,11 @@ public class ListadosGenerico extends JPanel {
             }
         });
 
+        JLabel etiquetaTitulo = new JLabel("Listar " + titulo, SwingConstants.LEFT);
+        etiquetaTitulo.setFont(new Font("Segoe UI", Font.BOLD, 20));
+        etiquetaTitulo.setForeground(COLOR_TEXTO);
+        etiquetaTitulo.setBorder(new EmptyBorder(0, 5, 10, 5));
+
         JPanel panelBuscar = new JPanel(new BorderLayout());
         panelBuscar.setBackground(COLOR_PANEL);
         panelBuscar.setBorder(new CompoundBorder(
@@ -87,6 +95,11 @@ public class ListadosGenerico extends JPanel {
         ));
         panelBuscar.add(new JLabel("🔍 Buscar:", SwingConstants.LEFT), BorderLayout.WEST);
         panelBuscar.add(campoBuscar, BorderLayout.CENTER);
+
+        JPanel panelSuperior = new JPanel(new BorderLayout(0, 10));
+        panelSuperior.setBackground(COLOR_FONDO);
+        panelSuperior.add(etiquetaTitulo, BorderLayout.NORTH);
+        panelSuperior.add(panelBuscar, BorderLayout.CENTER);
 
         btnEditar = crearBoton("Editar", COLOR_BOTON_ACCION);
         btnEliminar = crearBoton("Eliminar", COLOR_BOTON_PELIGRO);
@@ -100,7 +113,7 @@ public class ListadosGenerico extends JPanel {
 
             if (crearFormularioEdicion != null) {
                 JPanel panelEdicion = crearFormularioEdicion.apply(fila, tabla);
-                JDialog dialog = new JDialog((JFrame) SwingUtilities.getWindowAncestor(this), "Editar", true);
+                JDialog dialog = new JDialog((JFrame) SwingUtilities.getWindowAncestor(this), "Editar " + titulo, true);
                 dialog.setContentPane(panelEdicion);
                 dialog.pack();
                 dialog.setLocationRelativeTo(this);
@@ -123,7 +136,6 @@ public class ListadosGenerico extends JPanel {
 
             if (confirm == JOptionPane.YES_OPTION) {
                 if (accionEliminar != null) {
-                    // Comprobación personalizada para evitar eliminar si hay relaciones
                     String nombreTabla = titulo.toLowerCase();
                     Object id = fila[0];
 
@@ -132,7 +144,6 @@ public class ListadosGenerico extends JPanel {
                         relacionado = ConsultarDAO.clienteTieneDocumentos((int) id);
                     } else if (nombreTabla.equals("productos")) {
                         relacionado = ConsultarDAO.productoTieneDocumentos((int) id);
-
                     }
 
                     if (relacionado) {
@@ -142,7 +153,6 @@ public class ListadosGenerico extends JPanel {
                         return;
                     }
 
-                    // Si no está relacionado, eliminar y repintar
                     accionEliminar.accept(fila);
                     eliminarFilaSeleccionada();
                     JOptionPane.showMessageDialog(this, "Registro eliminado correctamente.");
@@ -150,8 +160,7 @@ public class ListadosGenerico extends JPanel {
             }
         });
 
-
-        add(panelBuscar, BorderLayout.NORTH);
+        add(panelSuperior, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
 
         if (mostrarBotones) {
@@ -163,7 +172,6 @@ public class ListadosGenerico extends JPanel {
         }
     }
 
-    // Constructor original que llama al nuevo con mostrarBotones = true
     public ListadosGenerico(String titulo, String[] columnas, Object[][] datos,
                             BiFunction<Object[], JTable, JPanel> crearFormularioEdicion,
                             Consumer<Object[]> accionEliminar) {
@@ -211,7 +219,6 @@ public class ListadosGenerico extends JPanel {
         modelo.removeRow(filaModelo);
     }
 
-    // Clase para bordes redondeados
     private static class RoundedBorder extends AbstractBorder {
         private final int radius;
 

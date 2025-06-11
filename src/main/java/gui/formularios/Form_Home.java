@@ -165,14 +165,14 @@ public class Form_Home extends javax.swing.JPanel {
         noticeBoard.addDate("27/05/2025");
 
         noticeBoard.addNoticeBoard(new ModelNoticeBoard(
-                new Color(94, 49, 238),
+                new Color(174, 54, 12), // Naranja fuerte
                 "Inventario",
                 "Ahora",
                 "Mejoramos el control del stock. Ahora puedes ver fácilmente los productos con poco inventario."
         ));
 
         noticeBoard.addNoticeBoard(new ModelNoticeBoard(
-                new Color(218, 49, 238),
+                new Color(156, 39, 176), // Púrpura vibrante
                 "Clientes",
                 "Hace 1 hora",
                 "Puedes Visualizar todos los clientes registrados"
@@ -181,36 +181,36 @@ public class Form_Home extends javax.swing.JPanel {
         noticeBoard.addDate("26/05/2025");
 
         noticeBoard.addNoticeBoard(new ModelNoticeBoard(
-                new Color(32, 171, 43),
+                new Color(76, 175, 80), // Verde brillante
                 "Reportes",
                 "14:30",
                 "Agregamos nuevos reportes de ventas. Puedes descargarlos en PDF."
         ));
 
         noticeBoard.addNoticeBoard(new ModelNoticeBoard(
-                new Color(50, 93, 215),
+                new Color(218, 12, 12), // Azul cielo (resalta bien sobre azul oscuro)
                 "Productos",
                 "11:00",
                 "El formulario para agregar productos es más fácil."
         ));
 
         noticeBoard.addNoticeBoard(new ModelNoticeBoard(
-                new Color(27, 188, 204),
+                new Color(0, 188, 212), // Cian fuerte
                 "Permisos",
                 "9:15",
                 "Puedes dar permisos a cada usuario. Controla quién puede ver o editar datos."
         ));
 
         noticeBoard.addNoticeBoard(new ModelNoticeBoard(
-                new Color(238, 46, 57),
-
+                new Color(205, 36, 23), // Rojo brillante
                 "Actualización",
                 "7:00",
-                "La App muy sencilla asi cualquier persona puede entenderla y utilizarla facilmente"
+                "La App muy sencilla así cualquier persona puede entenderla y utilizarla fácilmente"
         ));
 
         noticeBoard.scrollToTop();
     }
+
 
     private void showMessage(String message) {
         Message obj = new Message(JFrame.getFrames()[0], true);

@@ -35,14 +35,14 @@ public class ControladorMenu {
             case 2: // Funciones Presupuesto
                 return switch (subMenuIndex) {
                     case 0 -> new GenerarDocumentoPanel(GenerarDocumentoPanel.TipoDocumento.PRESUPUESTO);
-                    case 1 -> new HistorialDocumentosPanel(HistorialDocumentosPanel.TipoDocumento.PRESUPUESTO);
+                    case 1 -> new HistorialDocumentosPanel(HistorialDocumentosPanel.TipoDocumento.presupuesto);
                     case 2 -> new SeleccionarMateriales();
                     default -> null;
                 };
             case 3: // Funciones Factura
             return switch (subMenuIndex) {
                 case 0 -> new GenerarDocumentoPanel(GenerarDocumentoPanel.TipoDocumento.FACTURA);
-                case 1 -> new HistorialDocumentosPanel(HistorialDocumentosPanel.TipoDocumento.FACTURA);
+                case 1 -> new HistorialDocumentosPanel(HistorialDocumentosPanel.TipoDocumento.factura);
                 default -> null;
             };
             case 4: // Funciones de Precios

@@ -35,7 +35,7 @@ public class ListarMateriasPrimas {
                 // Eliminación genérica sin validación extra
                 fila -> {
                     int id = Integer.parseInt(fila[0].toString());
-                    EliminarGenerico.eliminarRegistro("materiasprimas", id);
+                    EliminarGenerico.eliminarRegistro("MateriasPrimas", id);
                 }
         );
     }

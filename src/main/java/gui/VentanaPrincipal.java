@@ -84,9 +84,29 @@ public class VentanaPrincipal extends JFrame {
         menu.addEventShowPopup(new EventShowPopupMenu() {
             public void showPopup(Component com) {
                 MenuItem item = (MenuItem) com;
+
+                // Medir ancho necesario para el submenu más largo
+                FontMetrics fm = com.getFontMetrics(com.getFont());
+                int maxWidth = 0;
+                for (String sub : item.getMenu().getSubMenu()) {
+                    maxWidth = Math.max(maxWidth, fm.stringWidth(sub));
+                }
+                maxWidth += 40; // un margen extra para no cortar texto
+
+                // Definir altura por opción (ajusta según tu diseño)
+                int itemHeight = 30;
+                int totalItems = item.getMenu().getSubMenu().length;
+                int totalHeight = itemHeight * totalItems;
+
                 PopupMenu popup = new PopupMenu(VentanaPrincipal.this, item.getIndex(), item.getEventSelected(), item.getMenu().getSubMenu());
+
+                // Ajustar tamaño del popup con ancho y alto calculados
+                popup.setPreferredSize(new Dimension(maxWidth, totalHeight));
+                popup.pack(); // actualizar tamaño
+
                 int x = getX() + 62;
                 int y = getY() + com.getY() + 128;
+
                 popup.setLocation(x, y);
                 popup.setVisible(true);
             }

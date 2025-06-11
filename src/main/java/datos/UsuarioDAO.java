@@ -21,7 +21,7 @@ public class UsuarioDAO {
 
             stmt.setString(1, usuario.getNombre());
             stmt.setString(2, usuario.getApellido());
-            stmt.setString(3, usuario.getCorreoElectronico());
+            stmt.setString(3, usuario.getCampoEmail());
             stmt.setString(4, hashed);
             stmt.setBoolean(5, usuario.isAdmin());
 
@@ -104,7 +104,7 @@ public class UsuarioDAO {
 
             stmt.setString(1, usuario.getNombre());
             stmt.setString(2, usuario.getApellido());
-            stmt.setString(3, usuario.getCorreoElectronico());
+            stmt.setString(3, usuario.getCampoEmail());
             stmt.setBoolean(4, usuario.isAdmin());
             stmt.setInt(5, usuario.getId());
 

@@ -90,6 +90,21 @@ public class MateriaPrimaDAO {
         }
     }
 
+    // Método que te faltaba para eliminar por ID:
+    public static boolean eliminarPorID(int id) {
+        String sql = "DELETE FROM \"MateriasPrimas\" WHERE idmateriaprima = ?";
+
+        try (Connection conn = ConexionBD.getConexion();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, id);
+            return stmt.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
 
 

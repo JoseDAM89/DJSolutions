@@ -21,7 +21,7 @@ import java.util.List;
 
 public class HistorialDocumentosPanel extends JPanel {
 
-    public enum TipoDocumento { FACTURA, PRESUPUESTO }
+    public enum TipoDocumento { factura, presupuesto }
 
     private JTable tabla;
     private DefaultTableModel modelo;
@@ -41,7 +41,7 @@ public class HistorialDocumentosPanel extends JPanel {
         add(panelBusqueda, BorderLayout.NORTH);
 
         // Modelo de tabla
-        modelo = new DefaultTableModel(new Object[]{"ID", "Cliente", "Fecha", "Total", (tipo == TipoDocumento.FACTURA ? "Pagada" : "Aceptado")}, 0) {
+        modelo = new DefaultTableModel(new Object[]{"ID", "Cliente", "Fecha", "Total", (tipo == TipoDocumento.factura ? "Pagada" : "Aceptado")}, 0) {
             public boolean isCellEditable(int row, int column) {
                 return column == 4;
             }
@@ -114,7 +114,7 @@ public class HistorialDocumentosPanel extends JPanel {
             // Obtener el documento según el tipo
             int id = (int) modelo.getValueAt(tabla.convertRowIndexToModel(fila), 0);
             File archivo;
-            if (tipo == TipoDocumento.FACTURA) {
+            if (tipo == TipoDocumento.factura) {
                 Factura f = new FacturaDAO().obtenerFacturaPorID(id);
                 archivo = GeneradorDocumentoPDF.generarFactura(f, clienteSeleccionado);
             } else {
@@ -127,7 +127,7 @@ public class HistorialDocumentosPanel extends JPanel {
                 EnviarCorreo.enviarArchivoPorCorreo(
                         correoDestino,
                         archivo,
-                        (tipo == TipoDocumento.FACTURA ? "Factura DJ Solutions" : "Presupuesto DJ Solutions"),
+                        (tipo == TipoDocumento.factura ? "Factura DJ Solutions" : "Presupuesto DJ Solutions"),
                         "Adjunto le enviamos su " + tipo.toString().toLowerCase() + ". Gracias por su confianza."
                 );
                 JOptionPane.showMessageDialog(this, "📧 Documento enviado correctamente a " + correoDestino);
@@ -149,7 +149,7 @@ public class HistorialDocumentosPanel extends JPanel {
             if (col == 4 && fila >= 0) {
                 int id = (int) modelo.getValueAt(fila, 0);
                 boolean valor = (boolean) modelo.getValueAt(fila, 4);
-                if (tipo == TipoDocumento.FACTURA) {
+                if (tipo == TipoDocumento.factura) {
                     new FacturaDAO().actualizarEstadoPagada(id, valor);
                 } else {
                     new PresupuestoDAO().actualizarAceptado(id, valor);
@@ -164,7 +164,7 @@ public class HistorialDocumentosPanel extends JPanel {
         modelo.setRowCount(0);
         DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
-        if (tipo == TipoDocumento.FACTURA) {
+        if (tipo == TipoDocumento.factura) {
             List<Factura> facturas = new FacturaDAO().listarTodas();
             for (Factura f : facturas) {
                 double total = f.getLineas().stream().mapToDouble(l -> l.getCantidad() * l.getPrecioUnitario()).sum();
@@ -188,7 +188,7 @@ public class HistorialDocumentosPanel extends JPanel {
         }
         int id = (int) modelo.getValueAt(tabla.convertRowIndexToModel(fila), 0);
         Cliente cliente;
-        if (tipo == TipoDocumento.FACTURA) {
+        if (tipo == TipoDocumento.factura) {
             Factura f = new FacturaDAO().obtenerFacturaPorID(id);
             cliente = ClienteDAO.obtenerPorID(f.getIdCliente());
             GeneradorDocumentoPDF.generarYMostrarFactura(f, cliente);
@@ -208,7 +208,7 @@ public class HistorialDocumentosPanel extends JPanel {
         int id = (int) modelo.getValueAt(tabla.convertRowIndexToModel(fila), 0);
         Cliente cliente;
         File archivo;
-        if (tipo == TipoDocumento.FACTURA) {
+        if (tipo == TipoDocumento.factura) {
             Factura f = new FacturaDAO().obtenerFacturaPorID(id);
             cliente = ClienteDAO.obtenerPorID(f.getIdCliente());
             archivo = GeneradorDocumentoPDF.generarFactura(f, cliente);
@@ -224,7 +224,7 @@ public class HistorialDocumentosPanel extends JPanel {
             EnviarCorreo.enviarArchivoPorCorreo(
                     correo,
                     archivo,
-                    (tipo == TipoDocumento.FACTURA ? "Factura DJ Solutions" : "Presupuesto DJ Solutions"),
+                    (tipo == TipoDocumento.factura ? "Factura DJ Solutions" : "Presupuesto DJ Solutions"),
                     "Adjunto le enviamos su " + tipo.toString().toLowerCase() + ". Gracias por su confianza."
             );
             JOptionPane.showMessageDialog(this, "📧 Documento enviado correctamente.");

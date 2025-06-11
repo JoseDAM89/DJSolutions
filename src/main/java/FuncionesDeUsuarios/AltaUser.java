@@ -34,6 +34,13 @@ public class AltaUser {
             String contrasena = valores.get("Contraseña").trim();
             boolean admin = "Sí".equalsIgnoreCase(valores.get("Administrador"));
 
+            // Validar que el correo tenga un formato válido
+            if (!correo.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")) {
+                JOptionPane.showMessageDialog(null, "El correo ingresado no es válido.", "Correo inválido", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            // Verificar si el correo ya existe en la base de datos
             if (UsuarioDAO.correoYaExiste(correo)) {
                 JOptionPane.showMessageDialog(null, "Ese correo ya está registrado.", "Correo duplicado", JOptionPane.ERROR_MESSAGE);
                 return;

@@ -77,8 +77,32 @@ public class PrecioProductoPanel extends JPanel {
     }
 
     private JSpinner crearSpinner(double valorInicial) {
-        return new JSpinner(new SpinnerNumberModel(valorInicial, 0.0, 100000.0, 0.1));
+        JSpinner spinner = new JSpinner(new SpinnerNumberModel(valorInicial, 0.0, 100000.0, 0.1));
+
+        // Verificador que permite , como decimal (y convierte a . internamente)
+        JComponent editor = spinner.getEditor();
+        if (editor instanceof JSpinner.DefaultEditor defaultEditor) {
+            defaultEditor.getTextField().setInputVerifier(new InputVerifier() {
+                @Override
+                public boolean verify(JComponent input) {
+                    JTextField tf = (JTextField) input;
+                    String texto = tf.getText().replace(",", "."); // Normaliza
+
+                    try {
+                        double valor = Double.parseDouble(texto);
+                        spinner.setValue(valor);
+                        return true;
+                    } catch (NumberFormatException e) {
+                        JOptionPane.showMessageDialog(null, "Formato numérico inválido (usa coma o punto como decimal).");
+                        return false;
+                    }
+                }
+            });
+        }
+
+        return spinner;
     }
+
 
     private void calcularPrecio() {
         PrecioProducto p = construirPrecioProductoDesdeCampos();
