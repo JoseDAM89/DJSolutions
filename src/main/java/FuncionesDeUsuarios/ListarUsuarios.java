@@ -24,7 +24,7 @@ public class ListarUsuarios {
             datos[i][0] = u.getId();
             datos[i][1] = u.getNombre();
             datos[i][2] = u.getApellido();
-            datos[i][3] = u.getCampoEmail();
+            datos[i][3] = u.getemail();
             datos[i][4] = u.isAdmin() ? "Sí" : "No";
         }
 

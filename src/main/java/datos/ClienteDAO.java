@@ -4,6 +4,7 @@ import modelos.Cliente;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,8 +21,8 @@ public class ClienteDAO {
         PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, cliente.getCampoNombre());
-            stmt.setString(2, cliente.getCampoCIF());
-            stmt.setString(3, cliente.getCampoEmail());
+            stmt.setString(2, cliente.getcif());
+            stmt.setString(3, cliente.getemail());
             stmt.setString(4, cliente.getCampoPersonaDeContacto());
             stmt.setString(5, cliente.getCampoDireccion());
             stmt.setString(6, cliente.getCampoDescripcion());
@@ -84,8 +85,8 @@ public class ClienteDAO {
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, cliente.getCampoNombre());
-            stmt.setString(2, cliente.getCampoCIF());
-            stmt.setString(3, cliente.getCampoEmail());
+            stmt.setString(2, cliente.getcif());
+            stmt.setString(3, cliente.getemail());
             stmt.setString(4, cliente.getCampoPersonaDeContacto());
             stmt.setString(5, cliente.getCampoDireccion());
             stmt.setString(6, cliente.getCampoDescripcion());
@@ -146,4 +147,23 @@ public class ClienteDAO {
         }
     }
 
-}
+        public static boolean existeCIF(String cif) {
+            String sql = "SELECT COUNT(*) FROM clientes WHERE campocif = ?";
+            try (Connection con = ConexionBD.getConexion();
+                 PreparedStatement ps = con.prepareStatement(sql)) {
+
+                ps.setString(1, cif);
+                ResultSet rs = ps.executeQuery();
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return false;
+        }
+
+    }
+
+

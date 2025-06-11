@@ -63,7 +63,7 @@ public class Form_Home extends javax.swing.JPanel {
                 );
 
                 String nombre = cliente.getCampoNombre();
-                String email = cliente.getCampoEmail();
+                String email = cliente.getemail();
                 String descripcion = cliente.getCampoDescripcion();
                 ImageIcon icono = new ImageIcon(getClass().getResource("/JSWINGICONS/icon/profile.jpg"));
                 ModelStudent student = new ModelStudent(icono, nombre, "Cliente", email, descripcion);

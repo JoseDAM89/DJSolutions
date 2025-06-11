@@ -24,8 +24,8 @@ public class ListarClientes {
             Cliente c = clientes.get(i);
             datos[i][0] = c.getIdcliente();
             datos[i][1] = c.getCampoNombre();
-            datos[i][2] = c.getCampoCIF();
-            datos[i][3] = c.getCampoEmail();
+            datos[i][2] = c.getcif();
+            datos[i][3] = c.getemail();
             datos[i][4] = c.getCampoPersonaDeContacto();
             datos[i][5] = c.getCampoDireccion();
             datos[i][6] = c.getCampoDescripcion();

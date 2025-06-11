@@ -4,25 +4,25 @@ public class Usuario {
     private int id;
     private String nombre;
     private String apellido;
-    private String campoEmail;
+    private String email;
     private String contrasena;
     private boolean admin;
 
     // Constructor sin id (para nuevos usuarios)
-    public Usuario(String nombre, String apellido, String campoEmail, String contrasena, boolean admin) {
+    public Usuario(String nombre, String apellido, String email, String contrasena, boolean admin) {
         this.nombre = nombre;
         this.apellido = apellido;
-        this.campoEmail = campoEmail;
+        this.email = email;
         this.contrasena = contrasena;
         this.admin = admin;
     }
 
     // Constructor con id (por si necesitas cargar usuario existente)
-    public Usuario(int id, String nombre, String apellido, String campoEmail, String contrasena, boolean admin) {
+    public Usuario(int id, String nombre, String apellido, String email, String contrasena, boolean admin) {
         this.id = id;
         this.nombre = nombre;
         this.apellido = apellido;
-        this.campoEmail = campoEmail;
+        this.email = email;
         this.contrasena = contrasena;
         this.admin = admin;
     }
@@ -37,8 +37,8 @@ public class Usuario {
     public String getApellido() { return apellido; }
     public void setApellido(String apellido) { this.apellido = apellido; }
 
-    public String getCampoEmail() { return campoEmail; }
-    public void setCampoEmail(String campoEmail) { this.campoEmail = campoEmail; }
+    public String getemail() { return email; }
+    public void setemail(String email) { this.email = email; }
 
     public String getContrasena() { return contrasena; }
     public void setContrasena(String contrasena) { this.contrasena = contrasena; }

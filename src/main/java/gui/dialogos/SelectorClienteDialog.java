@@ -70,13 +70,13 @@ public class SelectorClienteDialog extends JDialog {
 
         List<Cliente> filtrados = lista.stream()
                 .filter(c -> c.getCampoNombre().toLowerCase().contains(filtro) ||
-                        c.getCampoCIF().toLowerCase().contains(filtro) ||
-                        c.getCampoEmail().toLowerCase().contains(filtro))
+                        c.getcif().toLowerCase().contains(filtro) ||
+                        c.getemail().toLowerCase().contains(filtro))
                 .collect(Collectors.toList());
 
         for (Cliente c : filtrados) {
             modelo.addRow(new Object[]{
-                    c.getIdcliente(), c.getCampoNombre(), c.getCampoCIF(), c.getCampoEmail()
+                    c.getIdcliente(), c.getCampoNombre(), c.getcif(), c.getemail()
             });
         }
     }

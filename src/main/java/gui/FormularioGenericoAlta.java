@@ -92,51 +92,6 @@ public class FormularioGenericoAlta extends JPanel {
                 JTextField textField = new JTextField(20);
                 estilizarTextField(textField);
 
-                if (etiqueta.equalsIgnoreCase("CIF")) {
-                    textField.setInputVerifier(new InputVerifier() {
-                        @Override
-                        public boolean verify(JComponent input) {
-                            String texto = ((JTextField) input).getText().trim();
-                            return texto.matches("^[A-Z]\\d{7}[A-Z0-9]$" // CIF
-                                    + "|^\\d{8}[A-Z]$"                         // DNI
-                                    + "|^[A-Z]{1,3}\\d{6,9}$");
-                                                    // Pasaporte
-
-                        }
-
-                        @Override
-                        public boolean shouldYieldFocus(JComponent input) {
-                            boolean valido = verify(input);
-                            if (!valido) {
-                                JOptionPane.showMessageDialog(FormularioGenericoAlta.this,
-                                        "El CIF debe tener exactamente 1 letra seguida de 8 números.\nEjemplo válido: A12345678",
-                                        "Formato inválido", JOptionPane.WARNING_MESSAGE);
-                            }
-                            return valido;
-                        }
-                    });
-                }else if (etiqueta.equalsIgnoreCase("campoEmail")) {
-                    textField.setInputVerifier(new InputVerifier() {
-                        @Override
-                        public boolean verify(JComponent input) {
-                            String texto = ((JTextField) input).getText().trim();
-                            // Validar que tenga al menos un carácter antes del @, seguido de @, seguido de caracteres, y termine en .com
-                            return texto.matches("^[^@\\s]+@[^@\\s]+\\.com$");
-                        }
-
-                        @Override
-                        public boolean shouldYieldFocus(JComponent input) {
-                            boolean valido = verify(input);
-                            if (!valido) {
-                                JOptionPane.showMessageDialog(FormularioGenericoAlta.this,
-                                        "El correo debe tener el formato correcto y terminar en '.com'.\nEjemplo válido: usuario@dominio.com",
-                                        "Formato inválido", JOptionPane.WARNING_MESSAGE);
-                            }
-                            return valido;
-                        }
-                    });
-                }
-
                 campo = textField;
             }
 

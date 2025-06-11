@@ -5,30 +5,30 @@ public class Cliente {
     private int idcliente; // Clave primaria
 
     private String campoNombre;
-    private String campoCIF;
-    private String campoEmail;
+    private String cif;
+    private String email;
     private String campoPersonaDeContacto;
     private String campoDireccion;
     private String campoDescripcion;
 
     // 🔹 Constructor completo con ID (para consultas y edición)
-    public Cliente(int idcliente, String campoNombre, String campoCIF, String campoEmail,
+    public Cliente(int idcliente, String campoNombre, String cif, String email,
                    String campoPersonaDeContacto, String campoDireccion, String campoDescripcion) {
         this.idcliente = idcliente;
         this.campoNombre = campoNombre;
-        this.campoCIF = campoCIF;
-        this.campoEmail = campoEmail;
+        this.cif = cif;
+        this.email = email;
         this.campoPersonaDeContacto = campoPersonaDeContacto;
         this.campoDireccion = campoDireccion;
         this.campoDescripcion = campoDescripcion;
     }
 
     // 🔹 Constructor sin ID (para inserciones nuevas)
-    public Cliente(String campoNombre, String campoCIF, String campoEmail,
+    public Cliente(String campoNombre, String cif, String email,
                    String campoPersonaDeContacto, String campoDireccion, String campoDescripcion) {
         this.campoNombre = campoNombre;
-        this.campoCIF = campoCIF;
-        this.campoEmail = campoEmail;
+        this.cif = cif;
+        this.email = email;
         this.campoPersonaDeContacto = campoPersonaDeContacto;
         this.campoDireccion = campoDireccion;
         this.campoDescripcion = campoDescripcion;
@@ -43,12 +43,12 @@ public class Cliente {
         return campoNombre;
     }
 
-    public String getCampoCIF() {
-        return campoCIF;
+    public String getcif() {
+        return cif;
     }
 
-    public String getCampoEmail() {
-        return campoEmail;
+    public String getemail() {
+        return email;
     }
 
     public String getCampoPersonaDeContacto() {
@@ -72,12 +72,12 @@ public class Cliente {
         this.campoNombre = campoNombre;
     }
 
-    public void setCampoCIF(String campoCIF) {
-        this.campoCIF = campoCIF;
+    public void setcif(String cif) {
+        this.cif = cif;
     }
 
-    public void setCampoEmail(String campoEmail) {
-        this.campoEmail = campoEmail;
+    public void setemail(String email) {
+        this.email = email;
     }
 
     public void setCampoPersonaDeContacto(String campoPersonaDeContacto) {

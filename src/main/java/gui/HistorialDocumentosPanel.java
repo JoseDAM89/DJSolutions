@@ -94,7 +94,7 @@ public class HistorialDocumentosPanel extends JPanel {
                 return;
             }
 
-            String correoCliente = clienteSeleccionado.getCampoEmail().trim();
+            String correoCliente = clienteSeleccionado.getemail().trim();
 
             // Preguntar si quiere usar otro correo
             String nuevoCorreo = JOptionPane.showInputDialog(this,

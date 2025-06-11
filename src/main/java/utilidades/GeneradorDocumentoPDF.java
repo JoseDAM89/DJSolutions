@@ -162,7 +162,7 @@ public class GeneradorDocumentoPDF {
         datos.addCell(getCelda("Para:", FONT_NEGRITA));
         datos.addCell(getCelda(cliente.getCampoNombre(), FONT_NORMAL));
         datos.addCell(getCelda("CIF:", FONT_NEGRITA));
-        datos.addCell(getCelda(cliente.getCampoCIF(), FONT_NORMAL));
+        datos.addCell(getCelda(cliente.getcif(), FONT_NORMAL));
         datos.addCell(getCelda("Fecha:", FONT_NEGRITA));
 
         String fecha = (tipo.equals("Factura")) ?

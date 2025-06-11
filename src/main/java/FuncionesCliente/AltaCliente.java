@@ -2,6 +2,7 @@ package FuncionesCliente;
 
 import Controladores.AltaGenerico;
 import Controladores.ValidadorGenerico;
+import datos.ClienteDAO;
 import gui.FormularioGenericoAlta;
 
 import javax.swing.*;
@@ -21,8 +22,8 @@ public class AltaCliente {
         // 1. Definir los campos con su tipo (todos tipo texto en este caso)
         Map<String, String> camposConTipos = new LinkedHashMap<>();
         camposConTipos.put("Nombre", "String");
-        camposConTipos.put("CIF", "String");
-        camposConTipos.put("Email", "String");
+        camposConTipos.put("CIF", "cif");
+        camposConTipos.put("Email", "email");
         camposConTipos.put("Persona de Contacto", "String");
         camposConTipos.put("Dirección", "String");
         camposConTipos.put("Descripción", "String");
@@ -32,6 +33,15 @@ public class AltaCliente {
         // 2. Acción del botón Guardar
         ActionListener accionGuardar = e -> {
             HashMap<String, String> valores = formulario[0].getValores();
+
+            //validar si el cif existe
+            String cif = valores.get("CIF");
+            if (ClienteDAO.existeCIF(cif)) {
+                JOptionPane.showMessageDialog(null,
+                        "Ya existe un cliente con el CIF: " + cif,
+                        "CIF duplicado", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
 
             // 3. Validación básica por tipo
             if (!ValidadorGenerico.validar(valores, camposConTipos)) return;
